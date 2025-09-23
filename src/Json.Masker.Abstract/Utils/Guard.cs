@@ -1,5 +1,6 @@
 using System;
-namespace Library.Utils;
+
+namespace Json.Masker.Abstract.Utils;
 
 public static class Guard
 {
