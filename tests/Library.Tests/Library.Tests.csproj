@@ -11,6 +11,8 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../../src/Library/Library.csproj" />
+    <ProjectReference Include="../../src/Json.Masker.Abstract/Json.Masker.Abstract.csproj" />
+    <ProjectReference Include="../../src/Json.Masker.Newtonsoft/Json.Masker.Newtonsoft.csproj" />
+    <ProjectReference Include="../../src/Json.Masker.System.Text.Json/Json.Masker.System.Text.Json.csproj" />
   </ItemGroup>
 </Project>
