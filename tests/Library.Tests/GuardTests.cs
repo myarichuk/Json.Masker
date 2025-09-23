@@ -1,8 +1,8 @@
-using Library.Utils;
 using System;
+using Json.Masker.Abstract.Utils;
 using Xunit;
 
-namespace Library.Tests;
+namespace Json.Masker.Tests;
 
 public class GuardTests
 {
