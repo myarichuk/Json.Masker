@@ -48,8 +48,8 @@ jobs:
           dotnet build --configuration Release --no-restore
           -p:ContinuousIntegrationBuild=true
           -p:CI=true
-          -p:Version=${{ steps.gitversion.outputs.nuGetVersion }}
-          -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersion }}
+          -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+          -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }}
           -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
           -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
           -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
