@@ -1,13 +1,19 @@
 name: Publish & Release
 
 on:
+  workflow_dispatch:
   pull_request:
     types:
       - closed
     branches:
       - main
+
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+permissions:
+  contents: write
+  packages: write
 
 concurrency:
   group: ${{ github.ref }}-publish-release
@@ -16,13 +22,13 @@ concurrency:
 jobs:
   build-and-pack:
     name: Build & Pack
-    if: github.event.pull_request.merged == true
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Setup .NET tooling
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 8.0.x
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v4.1.0
         with:
@@ -39,74 +45,123 @@ jobs:
       - name: Restore
         run: dotnet restore
       - name: Build
-        run: dotnet build --configuration Release /p:CI=true /p:Version=${{ steps.gitversion.outputs.AssemblySemVer }} /p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemVer }} /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} /p:InformationalVersion=${{ steps.gitversion.outputs.InformationalVersion }} --no-restore /bl:"${{ runner.temp }}/_artifacts/build_logs/build.binlog"
+        run: >-
+          dotnet build --configuration Release --no-restore
+          -p:ContinuousIntegrationBuild=true
+          -p:CI=true
+          -p:Version=${{ steps.gitversion.outputs.nuGetVersionV2 }}
+          -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }}
+          -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
+          -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
+          -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
+          /bl:"${{ runner.temp }}/_artifacts/build_logs/build.binlog"
       - name: Test
-        run: dotnet test --configuration Release /p:Version=${{ steps.gitversion.outputs.AssemblySemVer }} /p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemVer }} /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} --no-build --verbosity normal
+        run: >-
+          dotnet test --configuration Release --no-build --verbosity normal
+          -p:ContinuousIntegrationBuild=true
+          -p:CI=true
+          -p:Version=${{ steps.gitversion.outputs.nuGetVersionV2 }}
+          -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
+          -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
       - name: Pack NuGet
-        run: dotnet pack --configuration release /p:CI=true -o:package /p:AssemblyVersion=${{ steps.gitversion.outputs.AssemblySemVer }} /p:Version=${{ steps.gitversion.outputs.AssemblySemVer }} /p:PackageVersion=${{ steps.gitversion.outputs.AssemblySemVer }}
+        run: |
+          mkdir -p package
+          dotnet pack src/Json.Masker.Newtonsoft/Json.Masker.Newtonsoft.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} -p:Version=${{ steps.gitversion.outputs.nuGetVersionV2 }}
+          dotnet pack src/Json.Masker.SystemTextJson/Json.Masker.SystemTextJson.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} -p:Version=${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
       - uses: actions/upload-artifact@v4
         with:
           name: nupkg
           path: |
-            ./package/*.nupkg
-            ./package/*.snupkg
+            package/*.nupkg
+            package/*.snupkg
       - uses: rickstaa/action-create-tag@v1
         with:
-          tag: v${{ steps.gitversion.outputs.AssemblySemVer }}
+          tag: v${{ steps.gitversion.outputs.nuGetVersionV2 }}
     outputs:
-      tag: v${{ steps.gitversion.outputs.AssemblySemVer }}
+      tag: v${{ steps.gitversion.outputs.nuGetVersionV2 }}
+      version: ${{ steps.gitversion.outputs.semVer }}
+      nuget-version: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
 
   publish-nuget:
     name: Publish (NuGet)
     runs-on: ubuntu-latest
     needs: [build-and-pack]
+    env:
+      NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
     steps:
+      - name: NuGet token not supplied
+        if: env.NUGET_TOKEN == ''
+        run: echo "NUGET_TOKEN secret is not configured. Skipping publish step."
       - name: Setup .NET tooling
+        if: env.NUGET_TOKEN != ''
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 8.0.x
       - uses: actions/download-artifact@v5
+        if: env.NUGET_TOKEN != ''
         with:
           name: nupkg
-      - name: Publish to NuGet
-        run: dotnet nuget push ./*.nupkg  -s https://api.nuget.org/v3/index.json  -k ${{ secrets.NUGET_TOKEN }}
+          path: package
+      - name: Publish Json.Masker.Newtonsoft package
+        if: env.NUGET_TOKEN != ''
+        run: dotnet nuget push package/Json.Masker.Newtonsoft*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_TOKEN }} --skip-duplicate
+      - name: Publish Json.Masker.SystemTextJson package
+        if: env.NUGET_TOKEN != ''
+        run: dotnet nuget push package/Json.Masker.SystemTextJson*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_TOKEN }} --skip-duplicate
 
   changelog-release:
     name: Update Changelog & Release
     runs-on: ubuntu-latest
     needs: [build-and-pack]
     steps:
-      - name: Setup .NET tooling
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 6.0.x
       - name: Git Checkout
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v4.1.0
+        with:
+          versionSpec: '5.x'
+      - name: Determine version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v4.1.0
+        with:
+          useConfigFile: true
+          configFilePath: ./.github/gitversion.yml
       - uses: actions/download-artifact@v5
         with:
           name: nupkg
-      - name: Update CHANGELOG
+          path: package
+      - name: Generate conventional changelog
         id: changelog
-        uses: Requarks/changelog-action@v1
+        uses: TriPSs/conventional-changelog-action@v5
         with:
-          token: ${{ github.token }}
-          tag: ${{needs.build-and-pack.outputs.tag}}
-
+          github-token: ${{ github.token }}
+          output-file: CHANGELOG.md
+          preset: conventionalcommits
+          release-count: 0
+          skip-bump: true
+          skip-commit: true
+          skip-tag: true
+          skip-version-file: true
+          tag-prefix: v
+          version: ${{ steps.gitversion.outputs.semVer }}
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           draft: false
-          name: ${{needs.build-and-pack.outputs.tag}}
-          body: ${{ steps.changelog.outputs.changes }}
+          name: ${{ needs.build-and-pack.outputs.tag }}
+          body: ${{ steps.changelog.outputs.clean_changelog }}
           token: ${{ github.token }}
-          tag: ${{needs.build-and-pack.outputs.tag}}
-          artifacts: "*.nupkg, *.snupkg"
-      - name: Install GitReleaseNotes tool
-        run: dotnet tool install --global GitReleaseNotes.Tool
-      - name: Generate CHANGELOG.md
-        run: git-release-notes -p nuget -t vnext -o CHANGELOG.md
+          tag: ${{ needs.build-and-pack.outputs.tag }}
+          artifacts: "package/*.nupkg,package/*.snupkg"
       - name: Commit CHANGELOG.md
+        if: steps.changelog.outputs.skipped == 'false'
         run: |
-            git config --local user.email "action@github.com" && git config --local user.name "GitHub Action" && git commit -am "chore(changelog): update changelog"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add CHANGELOG.md
+          git commit -m "chore(changelog): update changelog"
+          git push

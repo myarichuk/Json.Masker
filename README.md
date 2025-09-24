@@ -1,37 +1,33 @@
-# Library.Template
+# Json.Masker
 
-This is a template for a .Net library project. The main idea is to provide convenient preconfigured project structure that would utilize [Github Flow](https://docs.github.com/en/get-started/quickstart/github-flow) for development process and [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for semantic versioning and generating a change log.
+> **Documentation coming soon.** This repository hosts the in-progress JSON masking utilities that back both Newtonsoft.Json and System.Text.Json pipelines.
 
-## Features
+## Packages
 
-* GitHub Actions
-  * When PR is opened, run tests and lint commit messages for [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standards
-  * When PR is merged, run tests, publish to NuGet, update the changelog file and create GitHub release while using [GitVersion](https://gitversion.net/) to figure out the next version. GitVersion is configured to use Conventional Commits to figure out the next release version.
-* Preconfigured [StyleCop](https://github.com/StyleCop/StyleCop) rules
-* [Pre-Commit](https://pre-commit.com/) configuration and scripts to install the tool and it's hooks
-* Scripts to install dependencies so development can be started quicker
-* Sample Guard utility class for validation
+| Package | Description |
+| --- | --- |
+| `Json.Masker.Abstract` | Shared abstractions, primitives, and helpers that define the masking pipeline. |
+| `Json.Masker.Newtonsoft` | Newtonsoft.Json implementation of the masking abstractions. |
+| `Json.Masker.SystemTextJson` | System.Text.Json implementation of the masking abstractions. |
 
-## Prerequisites
+Each package is versioned together and published to NuGet once changes merge to `main`.
 
-* [.NET SDK](https://dotnet.microsoft.com/) as defined in `global.json`
-* PowerShell on Windows for running the helper scripts
-* [Python](https://www.python.org/) for installing and running `pre-commit`
-
-## How to start development with this template?
-
-1. Create a GitHub repository with this project as its template
-2. Run ``install-dependencies`` (`.ps1` on Windows or `.sh` on Linux). It installs the right .NET SDK, `dotnet-format` and sets up `pre-commit`
-3. Create a [NuGet API key](https://docs.microsoft.com/en-us/nuget/nuget-org/publish-a-package#create-api-keys) and set it in the repository ``secrets`` as ``NUGET_TOKEN``
-4. Replace `COMPANY-PLACEHOLDER` in ``stylecop.json`` with your company or project name
-5. Replace `COMPANY-PLACEHOLDER` values in ``Directory.Build.props`` with the same value
-6. If you use a different strong name key, update ``strongname.snk`` and ``AssemblyInfo.cs`` accordingly
-
-## Publishing a package manually
-
-For testing you may want to publish the package without waiting for the merge workflow. Pack and push the project manually:
+## Building locally
 
 ```bash
-dotnet pack -c Release
-dotnet nuget push "bin/Packages/Release/*.nupkg" -k <API_KEY> -s https://api.nuget.org/v3/index.json
+dotnet restore
+dotnet build
+dotnet test
 ```
+
+> Tip: run `./install-dependencies.sh` (or the PowerShell equivalent on Windows) to install consistent tooling such as the matching .NET SDK and the `pre-commit` hooks.
+
+## Releasing
+
+All releases are automated through GitHub Actions:
+
+1. Create a pull request with conventional commits.
+2. Merge the PR into `main` (or trigger the **Publish & Release** workflow manually).
+3. GitVersion calculates the next semantic version, the workflow packs both NuGet packages (including symbols), updates `CHANGELOG.md`, pushes a GitHub release, and optionally publishes to NuGet when the `NUGET_TOKEN` secret is configured.
+
+Refer to [`CHANGELOG.md`](CHANGELOG.md) for the evolving feature list until fuller documentation is written.
