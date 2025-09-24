@@ -13,6 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="../../src/Json.Masker.Abstract/Json.Masker.Abstract.csproj" />
     <ProjectReference Include="../../src/Json.Masker.Newtonsoft/Json.Masker.Newtonsoft.csproj" />
-    <ProjectReference Include="../../src/Json.Masker.System.Text.Json/Json.Masker.System.Text.Json.csproj" />
+    <ProjectReference Include="../../src/Json.Masker.SystemTextJson/Json.Masker.SystemTextJson.csproj" />
   </ItemGroup>
 </Project>
