@@ -41,6 +41,12 @@ jobs:
         uses: gittools/actions/gitversion/execute@v4
         with:
           configFilePath: ./.github/gitversion.yml
+      - name: Dump GitVersion outputs
+        run: |
+          echo "AssemblySemVer: ${{ steps.gitversion.outputs.assemblySemVer }}"
+          echo "AssemblySemFileVer: ${{ steps.gitversion.outputs.assemblySemFileVer }}"
+          echo "InformationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}"
+          echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nuGetVersionV2 }}" 
       - name: Restore
         run: dotnet restore
       - name: Build
