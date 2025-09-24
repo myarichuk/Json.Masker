@@ -1,7 +1,10 @@
 # Use Conventional Commits standard (https://www.conventionalcommits.org/en/v1.0.0/)
-# Follow GitVersion's recommended configuration for open-source repositories by
+# Also, follow GitVersion's recommended configuration for open-source repositories by
 # using the Mainline mode (see https://gitversion.net/docs/reference/modes/mainline).
-mode: Mainline
+workflow: GitHubFlow/v1
+strategies:
+  - Mainline
+
 major-version-bump-message: "^(build|chore|ci|docs|feat|fix|perf|refactor|refactoring|revert|style|test)(\\([\\w\\s-]*\\))?(!:|:.*\\n\\n((.+\\n)+\\n)?BREAKING CHANGE:\\s.+)"
 minor-version-bump-message: "^(feat|feature)(\\([\\w\\s-]*\\))?:"
 patch-version-bump-message: "^(build|chore|ci|docs|fix|perf|refactor|revert|refactoring|style|test)(\\([\\w\\s-]*\\))?:"
