@@ -17,8 +17,14 @@
     <!-- https://github.com/dotnet/msbuild/blob/main/documentation/ProjectReference-Protocol.md#setplatform-negotiation -->
     <EnableDynamicPlatformResolution>true</EnableDynamicPlatformResolution>
 
-    <!-- Local builds should embed PDBs so we never lose them when a subsequent build occurs. -->
+    <!-- Local builds embed PDBs to stay tidy while CI emits portable symbols for NuGet distribution. -->
     <DebugType Condition=" '$(CI)' != 'true' ">embedded</DebugType>
+    <DebugType Condition=" '$(CI)' == 'true' ">portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <IncludeSymbols Condition=" '$(CI)' == 'true' ">true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <ContinuousIntegrationBuild Condition=" '$(CI)' == 'true' ">true</ContinuousIntegrationBuild>
 
     <Company>Michael Yarichuk</Company>
     <Authors>Michael Yarichuk</Authors>
@@ -26,22 +32,25 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols Condition=" '$(DebugType)' != 'embedded' ">true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <RepositoryUrl>https://github.com/myarichuk/Json.Masker</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/myarichuk/Json.Masker</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>json;masking;redaction</PackageTags>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)strongname.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)README.md">
+    <None Include="$(MSBuildThisFileDirectory)README.md">
       <Pack>true</Pack>
       <PackagePath>README.md</PackagePath>
-    </Content>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="*" PrivateAssets="all" />
-    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="*" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="all" />
+    <PackageReference Include="StyleCop.Analyzers.Unstable" Version="1.2.0.507" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
