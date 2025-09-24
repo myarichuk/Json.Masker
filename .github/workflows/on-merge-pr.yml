@@ -41,6 +41,8 @@ jobs:
         uses: gittools/actions/gitversion/execute@v4
         with:
           configFilePath: ./.github/gitversion.yml
+      - name: Export GitVersion for semantic-release
+        run: echo "RELEASE_VERSION=${{ steps.gitversion.outputs.semVer }}" >> $GITHUB_ENV          
       - name: Restore
         run: dotnet restore
       - name: Build
@@ -131,20 +133,14 @@ jobs:
         with:
           name: nupkg
           path: package
-      - name: Generate conventional changelog
-        id: changelog
-        uses: TriPSs/conventional-changelog-action@v5
+      - name: Generate changelog & GitHub release
+        uses: cycjimmy/semantic-release-action@v4
         with:
-          github-token: ${{ github.token }}
-          output-file: CHANGELOG.md
-          preset: conventionalcommits
-          release-count: 0
-          skip-bump: true
-          skip-commit: true
-          skip-tag: true
-          skip-version-file: true
-          tag-prefix: v
-          version: ${{ steps.gitversion.outputs.semVer }}
+          semantic_version: 21.x
+          branches: main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
