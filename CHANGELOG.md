@@ -8,4 +8,5 @@
 * **ci:** proper config for gitversion ([e0b9845](https://github.com/myarichuk/Json.Masker/commit/e0b984512317bda2571cef353310ac2708f10298))
 * **ci:** try to fix gitversion versioning issue ([8cdd8ed](https://github.com/myarichuk/Json.Masker/commit/8cdd8ed7c13d7e5e1a0664b528bdd20a78344415))
 * **ci:** use GitVersion 6.x ([8dfb8c6](https://github.com/myarichuk/Json.Masker/commit/8dfb8c69738a7378cb77ab895e25cc514d165314))
+* make sure no irrelevant warnings during compilation ([620d17b](https://github.com/myarichuk/Json.Masker/commit/620d17bd7ec1705d038a99ff6151d91e97363b41))
 
