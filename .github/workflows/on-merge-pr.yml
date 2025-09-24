@@ -40,7 +40,6 @@ jobs:
         id: gitversion
         uses: gittools/actions/gitversion/execute@v4.1.0
         with:
-          useConfigFile: true
           configFilePath: ./.github/gitversion.yml
       - name: Restore
         run: dotnet restore
@@ -127,7 +126,6 @@ jobs:
         id: gitversion
         uses: gittools/actions/gitversion/execute@v4.1.0
         with:
-          useConfigFile: true
           configFilePath: ./.github/gitversion.yml
       - uses: actions/download-artifact@v5
         with:
