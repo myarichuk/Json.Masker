@@ -59,14 +59,14 @@ jobs:
           dotnet test --configuration Release --no-build --verbosity normal
           -p:ContinuousIntegrationBuild=true
           -p:CI=true
-          -p:Version=${{ steps.gitversion.outputs.nuGetVersionV2 }}
+          -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
           -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
           -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
       - name: Pack NuGet
         run: |
           mkdir -p package
-          dotnet pack src/Json.Masker.Newtonsoft/Json.Masker.Newtonsoft.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} -p:Version=${{ steps.gitversion.outputs.nuGetVersionV2 }}
-          dotnet pack src/Json.Masker.SystemTextJson/Json.Masker.SystemTextJson.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} -p:Version=${{ steps.gitversion.outputs.nuGetVersionV2 }}
+          dotnet pack src/Json.Masker.Newtonsoft/Json.Masker.Newtonsoft.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+          dotnet pack src/Json.Masker.SystemTextJson/Json.Masker.SystemTextJson.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
 
       - uses: actions/upload-artifact@v4
         with:
@@ -76,11 +76,11 @@ jobs:
             package/*.snupkg
       - uses: rickstaa/action-create-tag@v1
         with:
-          tag: v${{ steps.gitversion.outputs.nuGetVersionV2 }}
+          tag: v${{ steps.gitversion.outputs.assemblySemVer }}
     outputs:
-      tag: v${{ steps.gitversion.outputs.nuGetVersionV2 }}
+      tag: v${{ steps.gitversion.outputs.assemblySemVer }}
       version: ${{ steps.gitversion.outputs.semVer }}
-      nuget-version: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
+      nuget-version: ${{ steps.gitversion.outputs.assemblySemVer }}
 
   publish-nuget:
     name: Publish (NuGet)
