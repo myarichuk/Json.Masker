@@ -28,7 +28,7 @@ jobs:
       - name: Setup .NET tooling
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 8.0.x
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v4.1.0
         with:
@@ -97,7 +97,7 @@ jobs:
         if: env.NUGET_TOKEN != ''
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 8.0.x
       - uses: actions/download-artifact@v5
         if: env.NUGET_TOKEN != ''
         with:
