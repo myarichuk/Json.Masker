@@ -144,7 +144,7 @@ jobs:
           skip-tag: true
           skip-version-file: true
           tag-prefix: v
-          version: ${{ steps.gitversion.outputs.semVer }}
+          version: ${{ steps.gitversion.outputs.assemblySemVer }}
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
