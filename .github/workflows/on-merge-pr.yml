@@ -131,6 +131,15 @@ jobs:
         with:
           name: nupkg
           path: package
+  changelog-release:
+    needs: [build-and-pack]
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          ref: ${{ needs.build-and-pack.outputs.tag }}   # checkout the tag
+
       - name: Generate conventional changelog
         id: changelog
         uses: TriPSs/conventional-changelog-action@v5
@@ -138,13 +147,13 @@ jobs:
           github-token: ${{ github.token }}
           output-file: CHANGELOG.md
           preset: conventionalcommits
-          release-count: 0
+          release-count: 1                    # only the latest release
           skip-bump: true
           skip-commit: true
           skip-tag: true
           skip-version-file: true
           tag-prefix: v
-          version: ${{ steps.gitversion.outputs.assemblySemVer }}
+          version: ${{ needs.build-and-pack.outputs.nuget-version }}
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
