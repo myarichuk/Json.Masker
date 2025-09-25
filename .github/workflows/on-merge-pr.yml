@@ -110,6 +110,7 @@ jobs:
         run: dotnet nuget push package/Json.Masker.SystemTextJson*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_TOKEN }} --skip-duplicate
   changelog-release:
     needs: [build-and-pack]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
         with:
