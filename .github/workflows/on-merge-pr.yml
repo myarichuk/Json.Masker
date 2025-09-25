@@ -76,9 +76,9 @@ jobs:
             package/*.snupkg
       - uses: rickstaa/action-create-tag@v1
         with:
-          tag: v${{ steps.gitversion.outputs.assemblySemVer }}
+          tag: v${{ steps.gitversion.outputs.semVer }}
     outputs:
-      tag: v${{ steps.gitversion.outputs.assemblySemVer }}
+      tag: v${{ steps.gitversion.outputs.semVer }}
       version: ${{ steps.gitversion.outputs.semVer }}
       nuget-version: ${{ steps.gitversion.outputs.assemblySemVer }}
 
@@ -118,15 +118,6 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: 'true'
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v4.1.0
-        with:
-          versionSpec: '6.x'
-      - name: Determine version
-        id: gitversion
-        uses: gittools/actions/gitversion/execute@v4.1.0
-        with:
-          configFilePath: ./.github/gitversion.yml
       - uses: actions/download-artifact@v5
         with:
           name: nupkg
@@ -144,7 +135,7 @@ jobs:
           skip-tag: true
           skip-version-file: true
           tag-prefix: v
-          version: ${{ steps.gitversion.outputs.assemblySemVer }}
+          version: ${{ needs.build-and-pack.outputs.version }}
       - name: Commit CHANGELOG.md
         if: steps.changelog.outputs.skipped == 'false'
         run: |
@@ -156,7 +147,7 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          allowUpdates: trueai
+          allowUpdates: true
           draft: false
           name: ${{ needs.build-and-pack.outputs.tag }}
           body: ${{ steps.changelog.outputs.clean_changelog }}
