@@ -3,6 +3,7 @@
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 public sealed class SensitiveAttribute : Attribute
 {
-    public string Strategy { get; }
-    public SensitiveAttribute(string strategy = "default") => Strategy = strategy;
+    public MaskingStrategy Strategy { get; }
+
+    public SensitiveAttribute(MaskingStrategy strategy = MaskingStrategy.Default) => Strategy = strategy;
 }
