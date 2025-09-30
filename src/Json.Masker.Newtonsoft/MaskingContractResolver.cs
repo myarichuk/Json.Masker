@@ -9,10 +9,8 @@ public sealed class MaskingContractResolver : DefaultContractResolver
 {
     private readonly IMaskingService _maskingService;
 
-    public MaskingContractResolver(IMaskingService maskingService)
-    {
+    public MaskingContractResolver(IMaskingService maskingService) => 
         _maskingService = maskingService;
-    }
 
     protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
     {
@@ -25,7 +23,7 @@ public sealed class MaskingContractResolver : DefaultContractResolver
         }
 
         var inner = prop.ValueProvider;
-        
+
         if (inner != null) 
         {
             prop.ValueProvider = new MaskingValueProvider(inner, _maskingService, sensitiveAttr);
