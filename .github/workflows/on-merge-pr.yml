@@ -74,11 +74,7 @@ jobs:
           path: |
             package/*.nupkg
             package/*.snupkg
-      - uses: rickstaa/action-create-tag@v1
-        with:
-          tag: v${{ steps.gitversion.outputs.semVer }}
     outputs:
-      tag: v${{ steps.gitversion.outputs.semVer }}
       version: ${{ steps.gitversion.outputs.semVer }}
       nuget-version: ${{ steps.gitversion.outputs.assemblySemVer }}
 
@@ -112,45 +108,70 @@ jobs:
     name: Update Changelog & Release
     runs-on: ubuntu-latest
     needs: [build-and-pack]
+    env:
+      GITVERSION_SEMVER: ${{ needs.build-and-pack.outputs.version }}   # e.g. 1.2.3
+      TAG_PREFIX: v
     steps:
       - name: Git Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          fetch-tags: 'true'
+          fetch-tags: true
+
       - uses: actions/download-artifact@v5
         with:
           name: nupkg
           path: package
-      - name: Generate conventional changelog
+
+      - name: Write pre-changelog-generation hook
+        run: |
+          mkdir -p .github/scripts
+          cat > .github/scripts/prechangelog.js <<'EOF'
+          // Force the version/tag used by the action to GitVersion’s output
+          module.exports.preVersionGeneration = (version) => {
+            const gv = process.env.GITVERSION_SEMVER || version;   // 1.2.3
+            return gv;
+          };
+          module.exports.preTagGeneration = (tag) => {
+            const prefix = process.env.TAG_PREFIX || 'v';
+            const gv = process.env.GITVERSION_SEMVER || tag.replace(/^v?/, '');
+            return `${prefix}${gv}`;                               // v1.2.3
+          };
+          EOF
+
+      - name: Generate & commit changelog, tag release
         id: changelog
         uses: TriPSs/conventional-changelog-action@v5
         with:
-          github-token: ${{ github.token }}
+          github-token: ${{ secrets.github_token }}
           output-file: CHANGELOG.md
           preset: conventionalcommits
           release-count: 1
-          skip-bump: true
-          skip-commit: true
-          skip-tag: true
-          skip-version-file: true
           tag-prefix: v
-          version: ${{ needs.build-and-pack.outputs.version }}
-      - name: Commit CHANGELOG.md
+          # we only want changelog + tag, no version-file edits:
+          skip-bump: 'true'
+          skip-version-file: 'true'
+          skip-commit: 'false'   # commit CHANGELOG.md
+          skip-tag: 'false'      # create tag vX.Y.Z (forced by hook)
+          pre-changelog-generation: .github/scripts/prechangelog.js
+          git-user-name: 'Conventional Changelog Action'
+          git-user-email: 'conventional.changelog.action@github.com'
+          # Optional: if you often have "chore:" only commits and still want a release, flip this:
+          # skip-on-empty: 'false'
+
+      - name: Push changes
         if: steps.changelog.outputs.skipped == 'false'
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add CHANGELOG.md
-          git commit -m "chore(changelog): update changelog"
-          git push          
+          git push --follow-tags
+
       - name: Create Release
         uses: ncipollo/release-action@v1
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
         with:
           allowUpdates: true
           draft: false
-          name: ${{ needs.build-and-pack.outputs.tag }}
+          name: ${{ steps.changelog.outputs.tag }}
           body: ${{ steps.changelog.outputs.clean_changelog }}
-          token: ${{ github.token }}
-          tag: ${{ needs.build-and-pack.outputs.tag }}
+          token: ${{ secrets.github_token }}
+          tag: ${{ steps.changelog.outputs.tag }}
           artifacts: "package/*.nupkg,package/*.snupkg"
