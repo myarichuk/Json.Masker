@@ -1,13 +1,7 @@
-## [](https://github.com/myarichuk/Json.Masker/compare/v0.1.5-1...v) (2025-10-08)
-
-
-### Features
-
-* implement basic functionality for both newtonsoft and system.text.json ([a01b5ca](https://github.com/myarichuk/Json.Masker/commit/a01b5ca6e0a1a6eadd7f7bb0cab156563d92a825))
+## [](https://github.com/myarichuk/Json.Masker/compare/v0.2.0-6...v) (2025-10-08)
 
 
 ### Bug Fixes
 
-* **CI:** try to finally make the changelog work! ([be94c14](https://github.com/myarichuk/Json.Masker/commit/be94c14b678a71f40a2b92c59e9760e8150df552))
-* **tests:** make sure we don't use url escaping encoder for tests for system.text.json ([a894fba](https://github.com/myarichuk/Json.Masker/commit/a894fba4cee813bb2b600646ad5d442397e51504))
+* **CI:** attempt to properly generate changelog ([91c9c0a](https://github.com/myarichuk/Json.Masker/commit/91c9c0a35069884b3f415bc258fe65d57f606f10))
 
