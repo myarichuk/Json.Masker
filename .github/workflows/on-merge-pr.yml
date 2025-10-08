@@ -117,6 +117,7 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+          ref: ${{ needs.build-and-pack.outputs.tag }}
 
       - uses: actions/download-artifact@v5
         with:
