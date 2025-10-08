@@ -4,5 +4,6 @@ public enum MaskingStrategy: byte
 {
     Default = 0,
     Creditcard,
-    Ssn
+    Ssn,
+    Redacted
 }

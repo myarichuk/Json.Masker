@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization.Metadata;
+﻿using System.Collections;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Json.Masker.Abstract;
 
 namespace Json.Masker.SystemTextJson;
@@ -7,11 +9,10 @@ public class MaskingTypeInfoModifier(IMaskingService maskingService)
 {
     public void Modify(JsonTypeInfo typeInfo)
     {
-        // TODO: profile this and check how much memory this wastes
         foreach (var prop in typeInfo.Properties)
         {
             var attr = prop.AttributeProvider?
-                .GetCustomAttributes(typeof(SensitiveAttribute), inherit: true)
+                .GetCustomAttributes(typeof(SensitiveAttribute), true)
                 .OfType<SensitiveAttribute>()
                 .FirstOrDefault();
 
@@ -20,18 +21,23 @@ public class MaskingTypeInfoModifier(IMaskingService maskingService)
                 continue;
             }
 
-            // just in case, should never happen
-            if (prop.Get == null)
+            if (IsCollection(prop.PropertyType))
             {
-                continue;
+                prop.CustomConverter =
+                    new MaskingEnumerableConverterFactory(
+                            maskingService, attr.Strategy, prop.CustomConverter)
+                        .CreateConverter(prop.PropertyType, typeInfo.Options);
             }
-            
-            var originalGetter = prop.Get;
-            prop.Get = (obj) =>
+            else
             {
-                var value = originalGetter(obj);
-                return maskingService.Mask(value, attr.Strategy, MaskingContextAccessor.Current);
-            };
+                var convType = typeof(MaskingScalarConverter<>).MakeGenericType(prop.PropertyType);
+                prop.CustomConverter = (JsonConverter)Activator.CreateInstance(
+                    convType, maskingService, attr.Strategy, prop.CustomConverter)!;
+            }
         }
     }
+    
+    private static bool IsCollection(Type t) =>
+        typeof(IEnumerable).IsAssignableFrom(t) && t != typeof(string);
+
 }
