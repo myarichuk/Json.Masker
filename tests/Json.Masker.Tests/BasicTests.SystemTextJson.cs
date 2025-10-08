@@ -16,6 +16,8 @@ public partial class BasicTestsSystemTextJson
         var maskingService = new DefaultMaskingService();
         _options = new JsonSerializerOptions
         {
+            // make sure that for tests it won't generate silly things like "\u003Credacted\u003E"
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             TypeInfoResolver = new DefaultJsonTypeInfoResolver
             {
                 Modifiers =
@@ -80,12 +82,13 @@ public partial class BasicTestsSystemTextJson
     
         AssertSubstringCount("****-****-****-1234", collection.Count, json);
         AssertSubstringCount("***-**-6789", collection.Count, json);
-        AssertSubstringCount("****", collection.Count, json);
+        AssertSubstringCount("\"****\"", collection.Count, json);
         AssertSubstringCount("<redacted>", collection.Count * 2, json);
         
         void AssertSubstringCount(string expectedStr, int expectedCount, string actualStr)
         {
-            var actualSubstringCount = Regex.Matches(actualStr, Regex.Escape($"\"{expectedStr}\"")).Count;
+            var searchPattern = Regex.Escape(expectedStr);
+            var actualSubstringCount = Regex.Matches(actualStr, searchPattern).Count;
             Assert.Equal(expectedCount, actualSubstringCount);
         }
     }    
