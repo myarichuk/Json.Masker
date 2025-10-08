@@ -2,5 +2,5 @@
 
 public interface IMaskingService
 {
-    string Mask(object? value, string strategy, MaskingContext ctx);
+    string Mask(object? value, MaskingStrategy strategy, MaskingContext ctx);
 }
