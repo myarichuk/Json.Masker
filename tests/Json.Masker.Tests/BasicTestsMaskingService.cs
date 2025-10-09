@@ -16,7 +16,7 @@ public class BasicTestsMaskingService
     [InlineData("abcd4111111111111234xyz", "****-****-****-1234")] // garbage inside
     public void Should_normalize_and_mask_creditcard(string raw, string expected)
     {
-        var result = _svc.Mask(raw, MaskingStrategy.Creditcard, Enabled);
+        var result = _svc.Mask(raw, MaskingStrategy.Creditcard, null, Enabled);
         Assert.Equal(expected, result);
     }
 
@@ -26,7 +26,7 @@ public class BasicTestsMaskingService
     [InlineData("  123 45 6789  ", "***-**-6789")]
     public void Should_normalize_and_mask_ssn(string raw, string expected)
     {
-        var result = _svc.Mask(raw, MaskingStrategy.Ssn, Enabled);
+        var result = _svc.Mask(raw, MaskingStrategy.Ssn, null, Enabled);
         Assert.Equal(expected, result);
     }
 
@@ -37,7 +37,7 @@ public class BasicTestsMaskingService
     [InlineData("invalid-email", "****@****")]
     public void Should_mask_email_correctly(string raw, string expected)
     {
-        var result = _svc.Mask(raw, MaskingStrategy.Email, Enabled);
+        var result = _svc.Mask(raw, MaskingStrategy.Email, null, Enabled);
         Assert.Equal(expected, result);
     }
 
@@ -48,7 +48,7 @@ public class BasicTestsMaskingService
     [InlineData("INVALIDIBAN", "****")]
     public void Should_mask_iban_correctly(string raw, string expected)
     {
-        var result = _svc.Mask(raw, MaskingStrategy.Iban, Enabled);
+        var result = _svc.Mask(raw, MaskingStrategy.Iban, null, Enabled);
         Assert.Equal(expected, result);
     }
 
@@ -57,7 +57,7 @@ public class BasicTestsMaskingService
     [InlineData("****", MaskingStrategy.Default)]
     public void Should_return_expected_default_or_redacted_masks(string expected, MaskingStrategy strategy)
     {
-        var result = _svc.Mask("anything", strategy, Enabled);
+        var result = _svc.Mask("anything", strategy,  null, Enabled);
         Assert.Equal(expected, result);
     }
 
@@ -66,7 +66,19 @@ public class BasicTestsMaskingService
     {
         var ctx = new MaskingContext { Enabled = false };
         var raw = "john.doe@example.com";
-        var result = _svc.Mask(raw, MaskingStrategy.Email, ctx);
+        var result = _svc.Mask(raw, MaskingStrategy.Email, null, ctx);
         Assert.Equal(raw, result);
+    }
+    
+    [Theory]
+    [InlineData("Fo1234", "##****", "Fo****")]
+    [InlineData("Fo1234", "##********", "Fo****")]
+    [InlineData("Fo1234", "##**", "Fo****")]
+    [InlineData("ABC1234", "", DefaultMaskingService.DefaultMask)]
+    [InlineData("ABC1234", null, DefaultMaskingService.DefaultMask)]
+    public void Should_mask_pattern_correctly(string raw, string? pattern, string expected)
+    {
+        var result = _svc.Mask(raw, MaskingStrategy.Iban, pattern, Enabled);
+        Assert.Equal(expected, result);
     }
 }

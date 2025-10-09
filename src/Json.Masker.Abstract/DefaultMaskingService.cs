@@ -8,6 +8,11 @@ namespace Json.Masker.Abstract;
 /// </summary>
 public sealed class DefaultMaskingService : IMaskingService
 {
+    /// <summary>
+    /// A mask that would replace sensitive field with "default" strategy
+    /// </summary>
+    public const string DefaultMask = "****";
+    
     // Precompiled regexes for efficiency.
     private static readonly Regex EmailRegex = new(
         @"^(?<user>[^@\s]+)@(?<domain>[^@\s]+)$",
@@ -27,7 +32,7 @@ public sealed class DefaultMaskingService : IMaskingService
 
         var str = value.ToString() ?? string.Empty;
         
-        if (pattern is not null)
+        if (!string.IsNullOrWhiteSpace(pattern))
         {
             return ApplyCustomPattern(str, pattern);
         }
@@ -41,7 +46,7 @@ public sealed class DefaultMaskingService : IMaskingService
                 MaskingStrategy.Email => MaskEmail(str),
                 MaskingStrategy.Iban => MaskIban(str),
                 MaskingStrategy.Redacted => "<redacted>",
-                _ => "****",
+                _ => DefaultMask,
             };
     }
     
