@@ -15,7 +15,7 @@ All notable changes to this project will be documented in this file.
 {{- if ne .Title "Chores" }}
 ### {{ .Title }}
 {{ range .Commits }}
-- {{ if .Scope }}**{{ .Scope }}:** {{ end }}{{ .Subject }} ([{{ .Hash.Short }}]({{ $.Info.RepositoryURL }}/commit/{{ .Hash.String }}))
+- {{ if .Scope }}**{{ .Scope }}:** {{ end }}{{ .Subject }} ([{{ .Hash.Short }}]({{ $.Info.RepositoryURL }}/commit/{{ .Hash.Long }}))
   {{ end }}
   {{ end }}
   {{ end }}
