@@ -3,6 +3,59 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v0.2.20-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.2-2...v0.2.20-2) - 2025-10-09
+
+
+
+### Bug Fixes
+
+- **CI:** unify tags and remove crap ([a7461ab](https://github.com/myarichuk/Json.Masker/commit/a7461abe96f6ca178f4c7a06e6dfcdec0feb602a))
+  
+- **CI:** hopefully last tweak of changelog and releases ([05b1064](https://github.com/myarichuk/Json.Masker/commit/05b1064074e97ce9592716f3f47451e327102090))
+  
+- **CI:** changelog template ([483cbde](https://github.com/myarichuk/Json.Masker/commit/483cbdeead92283e6f9877a3d1e0174845b43de1))
+  
+- **CI:** adjust github action (fix release generation) and adjust changelog template ([d1171ad](https://github.com/myarichuk/Json.Masker/commit/d1171ad435d1e4d115e3bfc9a53e1e85d6091104))
+  
+- **CI:** adjust changlog template ([04fb68d](https://github.com/myarichuk/Json.Masker/commit/04fb68df6de913e881d2470ab085c957d6fae6c4))
+  
+- **CI:** changelog related paths ([afe00af](https://github.com/myarichuk/Json.Masker/commit/afe00af25030c5d0ed2c7ece07afd3429e21dc4c))
+  
+- **CI:** fix changelog tool paths (hopefully kek) ([79b7df2](https://github.com/myarichuk/Json.Masker/commit/79b7df230c7965a9ed70a3c3e61aa832886fc619))
+  
+- **CI:** fix git-chlog installation ([9889a08](https://github.com/myarichuk/Json.Masker/commit/9889a08e3b1c57e21660dedfbb1c93505fabc5aa))
+  
+- **CI:** fix github action yml syntax (facepalm) ([e87dcff](https://github.com/myarichuk/Json.Masker/commit/e87dcff8aed546a2d2fc4e90b374c21b721ab8a6))
+  
+- **CI:** try to switch the github action that does changelog generation ([fdb7275](https://github.com/myarichuk/Json.Masker/commit/fdb7275258b01f4705d43e0454349c068e73336b))
+  
+- **CI:** another tentative (experiment) to make the friggin' changelog generation work ([237c3f3](https://github.com/myarichuk/Json.Masker/commit/237c3f3f0c4b8915c2ca6bcaa2e446a774e384fe))
+  
+  
+  
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#15](https://github.com/myarichuk/Json.Masker/issues/15) from myarichuk/dependabot/nuget/StyleCop.Analyzers.Unstable-1.2.0.556
+  
+- Merge pull request [#17](https://github.com/myarichuk/Json.Masker/issues/17) from myarichuk/dependabot/nuget/src/Json.Masker.Newtonsoft/Newtonsoft.Json-13.0.4
+  
+- Merge pull request [#20](https://github.com/myarichuk/Json.Masker/issues/20) from myarichuk/dependabot/nuget/tests/Json.Masker.Tests/xunit.runner.visualstudio-3.1.5
+  
+- Merge pull request [#21](https://github.com/myarichuk/Json.Masker/issues/21) from myarichuk/dependabot/nuget/tests/Json.Masker.Tests/Microsoft.NET.Test.Sdk-18.0.0
+  
+- Merge pull request [#27](https://github.com/myarichuk/Json.Masker/issues/27) from myarichuk/fix/try-to-make-things-generate-changelog
+  
+- Merge pull request [#25](https://github.com/myarichuk/Json.Masker/issues/25) from myarichuk/fix/try-to-make-things-generate-changelog
+  
+  
+
+
 ## [v0.2.2-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.1-2...v0.2.2-2) - 2025-10-09
 
 
