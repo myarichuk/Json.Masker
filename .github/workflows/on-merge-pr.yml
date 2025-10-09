@@ -104,60 +104,69 @@ jobs:
       - name: Publish Json.Masker.SystemTextJson package
         if: env.NUGET_TOKEN != ''
         run: dotnet nuget push package/Json.Masker.SystemTextJson*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_TOKEN }} --skip-duplicate
-  changelog-release:
-    name: Update Changelog & Release
-    runs-on: ubuntu-latest
-    needs: [build-and-pack]
-    env:
-      GITVERSION_SEMVER: ${{ needs.build-and-pack.outputs.version }}   # e.g. 1.2.3
-      TAG_PREFIX: v
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-          ref: ${{ needs.build-and-pack.outputs.tag }}
+changelog-release:
+  name: Update Changelog & Release (git-chglog)
+  runs-on: ubuntu-latest
+  needs: [build-and-pack]
+  permissions:
+    contents: write
+  steps:
+    - name: Checkout main with tags
+      uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+        ref: main
 
-      - uses: actions/download-artifact@v5
-        with:
-          name: nupkg
-          path: package
-      - name: Generate changelog
-        id: changelog
-        uses: TriPSs/conventional-changelog-action@v5
-        with:
-          github-token: ${{ github.token }}
-          output-file: CHANGELOG.md
-          preset: conventionalcommits
-          release-count: 1
-          tag-prefix: v
-          skip-bump: true
-          skip-version-file: true
-          skip-commit: true
-          skip-tag: true
-          skip-on-empty: true
-      
-      # Switch back to main, commit the file, and push
-      - name: Checkout main
-        run: git checkout main
+    - uses: actions/download-artifact@v5
+      with:
+        name: nupkg
+        path: package
 
-      - name: Commit CHANGELOG.md
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add CHANGELOG.md
-          git commit -m "chore(changelog): update changelog"
-          git push --follow-tags
+    - name: Install git-chglog
+      run: |
+        CHGLOG_VERSION="0.15.4" # latest version in the time of writing
+        curl -sL -o git-chglog \
+          "https://github.com/git-chglog/git-chglog/releases/download/v${CHGLOG_VERSION}/git-chglog_linux_amd64"
+        chmod +x git-chglog
 
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        with:
-          allowUpdates: true
-          draft: false
-          name: ${{ steps.changelog.outputs.tag }}
-          body: ${{ steps.changelog.outputs.clean_changelog }}
-          token: ${{ secrets.github_token }}
-          tag: ${{ steps.changelog.outputs.tag }}
-          artifacts: "package/*.nupkg,package/*.snupkg"
+    - name: Generate CHANGELOG.md (full)
+      run: |
+        ./git-chglog -o CHANGELOG.md
+        if git diff --quiet -- CHANGELOG.md; then
+          echo "NO_CHANGELOG_CHANGES=1" >> $GITHUB_ENV
+        fi
+
+    - name: Commit CHANGELOG.md
+      if: env.NO_CHANGELOG_CHANGES != '1'
+      run: |
+        git config user.email "action@github.com"
+        git config user.name "GitHub Action"
+        git add CHANGELOG.md
+        git commit -m "chore(changelog): update [skip ci]"
+        git push
+
+    - name: Generate release notes for latest tag
+      id: notes
+      run: |
+        LATEST="${{ needs.build-and-pack.outputs.tag }}" # e.g. v0.2.2-2
+        # find previous tag (if any)
+        PREV=$(git tag --sort=-creatordate | sed -n '2p' || true)
+        if [ -z "$PREV" ]; then
+          # first release: only this tag
+          ./git-chglog "$LATEST" > RELEASE_NOTES.md
+        else
+          ./git-chglog "$PREV..$LATEST" > RELEASE_NOTES.md
+        fi
+        echo "notes_ready=true" >> $GITHUB_OUTPUT
+
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      with:
+        allowUpdates: true
+        draft: false
+        name: ${{ needs.build-and-pack.outputs.tag }}
+        tag:  ${{ needs.build-and-pack.outputs.tag }}
+        bodyFile: RELEASE_NOTES.md
+        token: ${{ github.token }}
+        artifacts: "package/*.nupkg,package/*.snupkg"
