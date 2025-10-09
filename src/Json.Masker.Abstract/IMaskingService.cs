@@ -10,7 +10,8 @@ public interface IMaskingService
     /// </summary>
     /// <param name="value">The value to mask.</param>
     /// <param name="strategy">The masking strategy to apply.</param>
+    /// <param name="pattern">Custom masking pattern to apply.</param>
     /// <param name="ctx">The contextual information about the current masking request.</param>
     /// <returns>The masked value.</returns>
-    string Mask(object? value, MaskingStrategy strategy, MaskingContext ctx);
+    string Mask(object? value, MaskingStrategy strategy, string? pattern, MaskingContext ctx);
 }
