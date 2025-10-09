@@ -185,7 +185,5 @@ Tip: run `./install-dependencies.sh` (or the PowerShell equivalent on Windows) t
 Releases are automated through GitHub Actions:
 
 1. Open a pull request with conventional commits.
-2. Merge the PR into `main` (or trigger the **Publish & Release** workflow manually).
-3. GitVersion picks the next semantic version, the workflow packs both NuGet packages (including symbols), updates [`CHANGELOG.md`](CHANGELOG.md), creates a GitHub release, and—if `NUGET_TOKEN` is set—pushes to NuGet.
-
-For a play-by-play of what’s landed so far, see the changelog.
+2. Create a PR into `main`
+3. Once it is merged, a Github Action workflow would publish to NuGet and create downloadable artifacts.
