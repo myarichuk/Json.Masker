@@ -14,15 +14,16 @@ jobs:
       - uses: webiny/action-conventional-commits@v1.3.0
 
 
-  # pr-labeler:
-  #   name: PR Labeler
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: TimonVS/pr-labeler-action@v3
-  #       with:
-  #         configuration-path: .github/pr-labeler.yml # optional, .github/pr-labeler.yml is the default value
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  pr-labeler:
+    name: PR Labeler
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/labeler@v5
+        with:
+          configuration-path: .github/pr-labeler.yml
 
   build-and-test:
     name: Build & Test
