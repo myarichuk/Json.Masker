@@ -157,6 +157,7 @@ jobs:
           pre-changelog-generation: .github/scripts/prechangelog.js
           git-user-name: 'Conventional Changelog Action'
           git-user-email: 'conventional.changelog.action@github.com'
+          version: ${{ needs.build-and-pack.outputs.version }}          
           # Optional: if you often have "chore:" only commits and still want a release, flip this:
           # skip-on-empty: 'false'
 
