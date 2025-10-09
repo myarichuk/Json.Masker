@@ -4,6 +4,9 @@ info:
   title: "CHANGELOG"
   repository_url: https://github.com/myarichuk/Json.Masker
 options:
+  # filter only for tags that start with v followed by a digit: v0.2.2-2, v1.0.0, etc.
+  tag_filter_pattern: '^v[0-9]'
+  
   commits:
     sort: "ASC"
   commit_groups:

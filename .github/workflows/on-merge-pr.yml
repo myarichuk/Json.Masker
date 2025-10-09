@@ -148,6 +148,23 @@ jobs:
           git add CHANGELOG.md
           git commit -m "chore(changelog): update [skip ci]"
           git push
+
+      - name: Resolve tag for release
+        id: tag
+        run: |
+          set -e
+          # Use the tag created in build-and-pack if present
+          TAG="${{ needs.build-and-pack.outputs.tag }}"
+          if [ -z "$TAG" ]; then
+            # Fallback: latest tag in repo
+            TAG=$(git tag --list 'v*' --sort=-creatordate | head -n1 || true)
+          fi
+          if [ -z "$TAG" ]; then
+            echo "No tag found in outputs or repo" >&2
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Resolved TAG=$TAG"  
   
       - name: Generate release notes for latest tag
         id: notes
@@ -162,14 +179,15 @@ jobs:
             /usr/local/bin/git-chglog "$PREV..$LATEST" > RELEASE_NOTES.md
           fi
           echo "notes_ready=true" >> $GITHUB_OUTPUT
-  
+
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
+          tag: ${{ steps.tag.outputs.tag }}
+          name: ${{ steps.tag.outputs.tag }}
+          bodyFile: RELEASE_NOTES.md
           allowUpdates: true
           draft: false
-          name: ${{ needs.build-and-pack.outputs.tag }}
-          tag:  ${{ needs.build-and-pack.outputs.tag }}
-          bodyFile: RELEASE_NOTES.md
           token: ${{ github.token }}
           artifacts: "package/*.nupkg,package/*.snupkg"
+
