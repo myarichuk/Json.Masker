@@ -1,7 +1,7 @@
-## [](https://github.com/myarichuk/Json.Masker/compare/v0.2.0-6...v) (2025-10-08)
+## [](https://github.com/myarichuk/Json.Masker/compare/v0.2.1-2...v) (2025-10-09)
 
 
 ### Bug Fixes
 
-* **CI:** attempt to properly generate changelog ([91c9c0a](https://github.com/myarichuk/Json.Masker/commit/91c9c0a35069884b3f415bc258fe65d57f606f10))
+* **CI:** tentative fix - trying to supply version to changelog github action manually ([03e1373](https://github.com/myarichuk/Json.Masker/commit/03e1373f418941039ebff7b7643b576b7304a611))
 
