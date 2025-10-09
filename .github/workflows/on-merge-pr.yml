@@ -111,13 +111,41 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout main with tags
+      - name: Checkout with full history + tags
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
           fetch-tags: true
-          ref: main
-  
+    
+      - name: Debug refs/tags
+        run: |
+          echo "GITHUB_REF=$GITHUB_REF"
+          git fetch --tags --force
+          echo "Tags (newest first):"
+          git tag --list --sort=-creatordate | head -n 10
+    
+      - name: Resolve latest/previous tags
+        id: tags
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+          
+          # Only accept sane tags like v1.2.3 or v0.2.2-2 — ignore a stray 'v'
+          mapfile -t TAGS < <(git tag --list 'v[0-9]*' --sort=-creatordate)
+          
+          if [[ ${#TAGS[@]} -lt 1 ]]; then
+            echo "No valid v* tags found" >&2
+            exit 1
+          fi
+          
+          LATEST="${TAGS[0]}"
+          PREV="${TAGS[1]:-}"
+          
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+          echo "prev=$PREV"     >> "$GITHUB_OUTPUT"
+          echo "Resolved: LATEST=$LATEST PREV=${PREV:-<none>}"
+      
       - uses: actions/download-artifact@v5
         with:
           name: nupkg
@@ -149,45 +177,25 @@ jobs:
           git commit -m "chore(changelog): update [skip ci]"
           git push
 
-      - name: Resolve tag for release
-        id: tag
+      - name: Generate release notes for resolved range
         run: |
-          set -e
-          # Use the tag created in build-and-pack if present
-          TAG="${{ needs.build-and-pack.outputs.tag }}"
-          if [ -z "$TAG" ]; then
-            # Fallback: latest tag in repo
-            TAG=$(git tag --list 'v*' --sort=-creatordate | head -n1 || true)
-          fi
-          if [ -z "$TAG" ]; then
-            echo "No tag found in outputs or repo" >&2
-            exit 1
-          fi
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "Resolved TAG=$TAG"  
-  
-      - name: Generate release notes for latest tag
-        id: notes
-        run: |
-          LATEST="${{ needs.build-and-pack.outputs.tag }}" # e.g. v0.2.2-2
-          # find previous tag (if any)
-          PREV=$(git tag --sort=-creatordate | sed -n '2p' || true)
-          if [ -z "$PREV" ]; then
-            # first release: only this tag
-            /usr/local/bin/git-chglog "$LATEST" > RELEASE_NOTES.md
+          set -euo pipefail
+          if [[ -z "${{ steps.tags.outputs.prev }}" ]]; then
+            /usr/local/bin/git-chglog "${{ steps.tags.outputs.latest }}" > RELEASE_NOTES.md
           else
-            /usr/local/bin/git-chglog "$PREV..$LATEST" > RELEASE_NOTES.md
+            /usr/local/bin/git-chglog "${{ steps.tags.outputs.prev }}..${{ steps.tags.outputs.latest }}" > RELEASE_NOTES.md
           fi
-          echo "notes_ready=true" >> $GITHUB_OUTPUT
+          sed -n '1,80p' RELEASE_NOTES.md
 
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.tag.outputs.tag }}
-          name: ${{ steps.tag.outputs.tag }}
+          tag:  ${{ steps.tags.outputs.latest }}
+          name: ${{ steps.tags.outputs.latest }}
           bodyFile: RELEASE_NOTES.md
           allowUpdates: true
           draft: false
           token: ${{ github.token }}
           artifacts: "package/*.nupkg,package/*.snupkg"
+
 
