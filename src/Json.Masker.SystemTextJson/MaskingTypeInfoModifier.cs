@@ -5,8 +5,16 @@ using Json.Masker.Abstract;
 
 namespace Json.Masker.SystemTextJson;
 
+/// <summary>
+/// Applies masking converters to properties that are marked with <see cref="SensitiveAttribute"/>.
+/// </summary>
+/// <param name="maskingService">The masking service that will generate masked values.</param>
 public class MaskingTypeInfoModifier(IMaskingService maskingService)
 {
+    /// <summary>
+    /// Configures the provided <see cref="JsonTypeInfo"/> to use masking converters for sensitive members.
+    /// </summary>
+    /// <param name="typeInfo">The type information to modify.</param>
     public void Modify(JsonTypeInfo typeInfo)
     {
         foreach (var prop in typeInfo.Properties)
@@ -39,5 +47,4 @@ public class MaskingTypeInfoModifier(IMaskingService maskingService)
     
     private static bool IsCollection(Type t) =>
         typeof(IEnumerable).IsAssignableFrom(t) && t != typeof(string);
-
 }
