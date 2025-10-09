@@ -1,6 +1,6 @@
 # Json.Masker
 
-Json.Masker is the tiny library we use to make sure sensitive values stay private when you serialize them to JSON. Mark a property with `[Sensitive]`, flip the ambient masking context on, and the library does the rest—no custom DTOs, no brittle string hacks.
+Json.Masker is a simple library mask sensitive values when serializing them to JSON. Mark a property with `[Sensitive]`, flip the ambient masking context on, and the library does the rest—no custom DTOs, no brittle string hacks.
 
 The repository contains the core abstractions plus concrete integrations for both Newtonsoft.Json and `System.Text.Json` so you can keep your favorite serializer and still get automatic masking.
 
