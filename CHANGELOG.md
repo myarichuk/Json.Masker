@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v0.2.22-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.20-2...v0.2.22-2) - 2025-10-09
+
+
+
+  
+### Documentation
+
+- expand plumbing guidance ([16b3841](https://github.com/myarichuk/Json.Masker/commit/16b38413bf07a19a92834465406e07a53cb69635))
+  
+  
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#36](https://github.com/myarichuk/Json.Masker/issues/36) from myarichuk/codex/update-readme-with-examples-and-descriptions
+  
+  
+
+
 ## [v0.2.20-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.2-2...v0.2.20-2) - 2025-10-09
 
 
