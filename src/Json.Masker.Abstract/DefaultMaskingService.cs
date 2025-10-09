@@ -1,7 +1,11 @@
-﻿namespace Json.Masker.Abstract;
+namespace Json.Masker.Abstract;
 
+/// <summary>
+/// Default implementation of <see cref="IMaskingService"/> that provides masking strategies for sensitive data.
+/// </summary>
 public sealed class DefaultMaskingService : IMaskingService
 {
+    /// <inheritdoc />
     public string Mask(object? value, MaskingStrategy strategy, MaskingContext ctx)
     {
         if (!ctx.Enabled || value is null)
