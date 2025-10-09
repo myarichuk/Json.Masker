@@ -104,69 +104,69 @@ jobs:
       - name: Publish Json.Masker.SystemTextJson package
         if: env.NUGET_TOKEN != ''
         run: dotnet nuget push package/Json.Masker.SystemTextJson*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_TOKEN }} --skip-duplicate
-changelog-release:
-  name: Update Changelog & Release (git-chglog)
-  runs-on: ubuntu-latest
-  needs: [build-and-pack]
-  permissions:
-    contents: write
-  steps:
-    - name: Checkout main with tags
-      uses: actions/checkout@v5
-      with:
-        fetch-depth: 0
-        fetch-tags: true
-        ref: main
-
-    - uses: actions/download-artifact@v5
-      with:
-        name: nupkg
-        path: package
-
-    - name: Install git-chglog
-      run: |
-        CHGLOG_VERSION="0.15.4" # latest version in the time of writing
-        curl -sL -o git-chglog \
-          "https://github.com/git-chglog/git-chglog/releases/download/v${CHGLOG_VERSION}/git-chglog_linux_amd64"
-        chmod +x git-chglog
-
-    - name: Generate CHANGELOG.md (full)
-      run: |
-        ./git-chglog -o CHANGELOG.md
-        if git diff --quiet -- CHANGELOG.md; then
-          echo "NO_CHANGELOG_CHANGES=1" >> $GITHUB_ENV
-        fi
-
-    - name: Commit CHANGELOG.md
-      if: env.NO_CHANGELOG_CHANGES != '1'
-      run: |
-        git config user.email "action@github.com"
-        git config user.name "GitHub Action"
-        git add CHANGELOG.md
-        git commit -m "chore(changelog): update [skip ci]"
-        git push
-
-    - name: Generate release notes for latest tag
-      id: notes
-      run: |
-        LATEST="${{ needs.build-and-pack.outputs.tag }}" # e.g. v0.2.2-2
-        # find previous tag (if any)
-        PREV=$(git tag --sort=-creatordate | sed -n '2p' || true)
-        if [ -z "$PREV" ]; then
-          # first release: only this tag
-          ./git-chglog "$LATEST" > RELEASE_NOTES.md
-        else
-          ./git-chglog "$PREV..$LATEST" > RELEASE_NOTES.md
-        fi
-        echo "notes_ready=true" >> $GITHUB_OUTPUT
-
-    - name: Create Release
-      uses: ncipollo/release-action@v1
-      with:
-        allowUpdates: true
-        draft: false
-        name: ${{ needs.build-and-pack.outputs.tag }}
-        tag:  ${{ needs.build-and-pack.outputs.tag }}
-        bodyFile: RELEASE_NOTES.md
-        token: ${{ github.token }}
-        artifacts: "package/*.nupkg,package/*.snupkg"
+  changelog-release:
+    name: Update Changelog & Release (git-chglog)
+    runs-on: ubuntu-latest
+    needs: [build-and-pack]
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout main with tags
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          ref: main
+  
+      - uses: actions/download-artifact@v5
+        with:
+          name: nupkg
+          path: package
+  
+      - name: Install git-chglog
+        run: |
+          CHGLOG_VERSION="0.15.4" # latest version in the time of writing
+          curl -sL -o git-chglog \
+            "https://github.com/git-chglog/git-chglog/releases/download/v${CHGLOG_VERSION}/git-chglog_linux_amd64"
+          chmod +x git-chglog
+  
+      - name: Generate CHANGELOG.md (full)
+        run: |
+          ./git-chglog -o CHANGELOG.md
+          if git diff --quiet -- CHANGELOG.md; then
+            echo "NO_CHANGELOG_CHANGES=1" >> $GITHUB_ENV
+          fi
+  
+      - name: Commit CHANGELOG.md
+        if: env.NO_CHANGELOG_CHANGES != '1'
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add CHANGELOG.md
+          git commit -m "chore(changelog): update [skip ci]"
+          git push
+  
+      - name: Generate release notes for latest tag
+        id: notes
+        run: |
+          LATEST="${{ needs.build-and-pack.outputs.tag }}" # e.g. v0.2.2-2
+          # find previous tag (if any)
+          PREV=$(git tag --sort=-creatordate | sed -n '2p' || true)
+          if [ -z "$PREV" ]; then
+            # first release: only this tag
+            ./git-chglog "$LATEST" > RELEASE_NOTES.md
+          else
+            ./git-chglog "$PREV..$LATEST" > RELEASE_NOTES.md
+          fi
+          echo "notes_ready=true" >> $GITHUB_OUTPUT
+  
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          draft: false
+          name: ${{ needs.build-and-pack.outputs.tag }}
+          tag:  ${{ needs.build-and-pack.outputs.tag }}
+          bodyFile: RELEASE_NOTES.md
+          token: ${{ github.token }}
+          artifacts: "package/*.nupkg,package/*.snupkg"
