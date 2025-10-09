@@ -1,3 +1,6 @@
+using System.Text;
+using System.Text.RegularExpressions;
+
 namespace Json.Masker.Abstract;
 
 /// <summary>
@@ -5,6 +8,15 @@ namespace Json.Masker.Abstract;
 /// </summary>
 public sealed class DefaultMaskingService : IMaskingService
 {
+    // Precompiled regexes for efficiency.
+    private static readonly Regex EmailRegex = new(
+        @"^(?<user>[^@\s]+)@(?<domain>[^@\s]+)$",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
+    private static readonly Regex IbanRegex = new(
+        @"^[A-Z]{2}\d{2}[A-Z0-9]{4}\d{7}([A-Z0-9]?){0,16}$",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
     /// <inheritdoc />
     public string Mask(object? value, MaskingStrategy strategy, MaskingContext ctx)
     {
@@ -20,23 +32,98 @@ public sealed class DefaultMaskingService : IMaskingService
             {
                 MaskingStrategy.Creditcard => MaskCreditCard(str),
                 MaskingStrategy.Ssn => MaskSsn(str),
+                MaskingStrategy.Email => MaskEmail(str),
+                MaskingStrategy.Iban => MaskIban(str),
                 MaskingStrategy.Redacted => "<redacted>",
                 _ => "****",
             };
     }
+    
+    private static string NormalizeDigits(ReadOnlySpan<char> raw)
+    {
+        var sb = new StringBuilder(raw.Length);
+        foreach (var c in raw)
+        {
+            if (c is >= '0' and <= '9')
+            {
+                sb.Append(c);
+            }
+        }
+        
+        return sb.ToString();
+    }    
 
     private static string MaskCreditCard(string raw)
     {
-        // avoid multiple substrings — slice from the back
-        var span = raw.AsSpan();
+        var digits = NormalizeDigits(raw);
+        if (digits.Length == 0)
+        {
+            return "****";
+        }
+
+        var span = digits.AsSpan();
         var last4 = span.Length >= 4 ? span[^4..] : span;
         return $"****-****-****-{last4}";
     }
 
     private static string MaskSsn(string raw)
     {
-        var span = raw.AsSpan();
+        var digits = NormalizeDigits(raw);
+        if (digits.Length == 0)
+        {
+            return "***-**-****";
+        }
+
+        var span = digits.AsSpan();
         var last4 = span.Length >= 4 ? span[^4..] : span;
-        return $"***-**-{last4}";
+
+        return $"***-**-{last4.ToString().PadLeft(4, '*')}";
     }
+    
+    private static string MaskEmail(string raw)
+    {
+        var match = EmailRegex.Match(raw);
+        if (!match.Success)
+        {
+            return "****@****";
+        }
+
+        var user = match.Groups["user"].Value;
+        var domain = match.Groups["domain"].Value;
+
+        var maskedUser = user.Length > 1
+            ? user[0] + new string('*', Math.Min(user.Length - 1, 5))
+            : "*";
+
+        var parts = domain.Split('.');
+        if (parts.Length < 2)
+        {
+            return $"{maskedUser}@****";
+        }
+
+        var first = parts[0];
+        var maskedFirst =
+            first.Length switch
+            {
+                <= 1 => "*",
+                <= 3 => first[0] + new string('*', 4),
+                _ => first[0] + new string('*', Math.Min(first.Length - 1, 4)),
+            };
+
+        var maskedDomain = string.Join('.', new[] { maskedFirst }.Concat(parts.Skip(1)));
+
+        return $"{maskedUser}@{maskedDomain}";
+    }
+
+    private static string MaskIban(string raw)
+    {
+        var compact = raw.Replace(" ", string.Empty).ToUpperInvariant();
+        if (!IbanRegex.IsMatch(compact))
+        {
+            return "****";
+        }
+
+        var visible = compact.Length >= 4 ? compact[^4..] : compact;
+        return $"{compact[..2]}** **** **** **** {visible}";
+    }    
 }
