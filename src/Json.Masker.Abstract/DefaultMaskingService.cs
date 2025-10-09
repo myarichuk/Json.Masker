@@ -18,14 +18,20 @@ public sealed class DefaultMaskingService : IMaskingService
         RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
     /// <inheritdoc />
-    public string Mask(object? value, MaskingStrategy strategy, MaskingContext ctx)
+    public string Mask(object? value, MaskingStrategy strategy, string? pattern, MaskingContext ctx)
     {
         if (!ctx.Enabled || value is null)
         {
             return value?.ToString() ?? string.Empty;
         }
 
-        var str = value.ToString();
+        var str = value.ToString() ?? string.Empty;
+        
+        if (pattern is not null)
+        {
+            return ApplyCustomPattern(str, pattern);
+        }
+        
         return string.IsNullOrEmpty(str)
             ? string.Empty
             : strategy switch
@@ -37,6 +43,41 @@ public sealed class DefaultMaskingService : IMaskingService
                 MaskingStrategy.Redacted => "<redacted>",
                 _ => "****",
             };
+    }
+    
+    private static string ApplyCustomPattern(string input, string pattern)
+    {
+        var sb = new StringBuilder(input.Length);
+        int i = 0;
+
+        foreach (var c in pattern)
+        {
+            if (i >= input.Length)
+            {
+                break;
+            }
+
+            switch (c)
+            {
+                case '#':
+                    sb.Append(input[i++]);
+                    break;
+                case '*':
+                    sb.Append('*');
+                    i++;
+                    break;
+                default:
+                    sb.Append(c);
+                    break;
+            }
+        }
+
+        while (i++ < input.Length)
+        {
+            sb.Append('*');
+        }
+
+        return sb.ToString();
     }
     
     private static string NormalizeDigits(ReadOnlySpan<char> raw)
