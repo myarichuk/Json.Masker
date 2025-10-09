@@ -135,7 +135,7 @@ jobs:
   
       - name: Generate CHANGELOG.md (full)
         run: |
-          ./git-chglog -o CHANGELOG.md
+          /usr/local/bin/git-chglog -o CHANGELOG.md
           if git diff --quiet -- CHANGELOG.md; then
             echo "NO_CHANGELOG_CHANGES=1" >> $GITHUB_ENV
           fi
@@ -157,9 +157,9 @@ jobs:
           PREV=$(git tag --sort=-creatordate | sed -n '2p' || true)
           if [ -z "$PREV" ]; then
             # first release: only this tag
-            ./git-chglog "$LATEST" > RELEASE_NOTES.md
+            /usr/local/bin/git-chglog "$LATEST" > RELEASE_NOTES.md
           else
-            ./git-chglog "$PREV..$LATEST" > RELEASE_NOTES.md
+            /usr/local/bin/git-chglog "$PREV..$LATEST" > RELEASE_NOTES.md
           fi
           echo "notes_ready=true" >> $GITHUB_OUTPUT
   
