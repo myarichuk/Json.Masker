@@ -3,6 +3,45 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v0.3.0-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.26-2...v0.3.0-2) - 2025-10-09
+
+
+
+### Features
+
+- more masking patterns ([f70a22a](https://github.com/myarichuk/Json.Masker/commit/f70a22a2473f3823b33c59bdb9e65e4042b31e41))
+  
+  
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#38](https://github.com/myarichuk/Json.Masker/issues/38) from myarichuk/feat/more-mask-patterns
+  
+  
+
+
+## [v0.2.26-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.22-2...v0.2.26-2) - 2025-10-09
+
+
+
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#37](https://github.com/myarichuk/Json.Masker/issues/37) from myarichuk/codex/add-xml-documentation-comments-for-public-items
+  
+  
+
+
 ## [v0.2.22-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.20-2...v0.2.22-2) - 2025-10-09
 
 
