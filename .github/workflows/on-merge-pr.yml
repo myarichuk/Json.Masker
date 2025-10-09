@@ -122,13 +122,16 @@ jobs:
         with:
           name: nupkg
           path: package
-  
+
       - name: Install git-chglog
         run: |
-          CHGLOG_VERSION="0.15.4" # latest version in the time of writing
-          curl -sL -o git-chglog \
-            "https://github.com/git-chglog/git-chglog/releases/download/v${CHGLOG_VERSION}/git-chglog_linux_amd64"
-          chmod +x git-chglog
+          set -euxo pipefail
+          CHGLOG_VERSION="0.15.4"
+          curl -sSL \
+            "https://github.com/git-chglog/git-chglog/releases/download/v${CHGLOG_VERSION}/git-chglog_${CHGLOG_VERSION}_linux_amd64.tar.gz" \
+            -o /tmp/git-chglog.tar.gz
+          tar -xzf /tmp/git-chglog.tar.gz -C /usr/local/bin git-chglog
+          /usr/local/bin/git-chglog --version
   
       - name: Generate CHANGELOG.md (full)
         run: |
