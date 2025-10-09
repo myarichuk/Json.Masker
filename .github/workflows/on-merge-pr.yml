@@ -123,47 +123,31 @@ jobs:
         with:
           name: nupkg
           path: package
-
-      - name: Write pre-changelog-generation hook
-        run: |
-          mkdir -p .github/scripts
-          cat > .github/scripts/prechangelog.js <<'EOF'
-          // Force the version/tag used by the action to GitVersion’s output
-          module.exports.preVersionGeneration = (version) => {
-            const gv = process.env.GITVERSION_SEMVER || version;   // 1.2.3
-            return gv;
-          };
-          module.exports.preTagGeneration = (tag) => {
-            const prefix = process.env.TAG_PREFIX || 'v';
-            const gv = process.env.GITVERSION_SEMVER || tag.replace(/^v?/, '');
-            return `${prefix}${gv}`;                               // v1.2.3
-          };
-          EOF
-
-      - name: Generate & commit changelog, tag release
+      - name: Generate changelog
         id: changelog
         uses: TriPSs/conventional-changelog-action@v5
         with:
-          github-token: ${{ secrets.github_token }}
+          github-token: ${{ github.token }}
           output-file: CHANGELOG.md
           preset: conventionalcommits
           release-count: 1
           tag-prefix: v
-          # we only want changelog + tag, no version-file edits:
-          skip-bump: 'true'
-          skip-version-file: 'true'
-          skip-commit: 'false'   # commit CHANGELOG.md
-          skip-tag: 'false'      # create tag vX.Y.Z (forced by hook)
-          pre-changelog-generation: .github/scripts/prechangelog.js
-          git-user-name: 'Conventional Changelog Action'
-          git-user-email: 'conventional.changelog.action@github.com'
-          version: ${{ needs.build-and-pack.outputs.version }}          
-          # Optional: if you often have "chore:" only commits and still want a release, flip this:
-          # skip-on-empty: 'false'
+          skip-bump: true
+          skip-version-file: true
+          skip-commit: true
+          skip-tag: true
+          skip-on-empty: true
+      
+      # Switch back to main, commit the file, and push
+      - name: Checkout main
+        run: git checkout main
 
-      - name: Push changes
-        if: steps.changelog.outputs.skipped == 'false'
+      - name: Commit CHANGELOG.md
         run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add CHANGELOG.md
+          git commit -m "chore(changelog): update changelog"
           git push --follow-tags
 
       - name: Create Release
