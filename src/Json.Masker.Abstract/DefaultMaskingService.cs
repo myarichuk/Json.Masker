@@ -6,23 +6,16 @@ namespace Json.Masker.Abstract;
 /// <summary>
 /// Default implementation of <see cref="IMaskingService"/> that provides masking strategies for sensitive data.
 /// </summary>
-public sealed class DefaultMaskingService : IMaskingService
+// ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
+public partial class DefaultMaskingService : IMaskingService
 {
     /// <summary>
     /// The default mask applied when no specific strategy is provided.
     /// </summary>
-    public const string DefaultMask = "****";
-    
-    private static readonly Regex EmailRegex = new(
-        @"^(?<user>[^@\s]+)@(?<domain>[^@\s]+)$",
-        RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-
-    private static readonly Regex IbanRegex = new(
-        @"^[A-Z]{2}\d{2}[A-Z0-9]{4}\d{7}([A-Z0-9]?){0,16}$",
-        RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+    public virtual string DefaultMask => "****";
 
     /// <inheritdoc />
-    public string Mask(object? value, MaskingStrategy strategy, string? pattern, MaskingContext ctx)
+    public virtual string Mask(object? value, MaskingStrategy strategy, string? pattern, MaskingContext ctx)
     {
         if (!ctx.Enabled || value is null)
         {
@@ -72,6 +65,10 @@ public sealed class DefaultMaskingService : IMaskingService
                     break;
                 default:
                     sb.Append(c);
+                    if (i < input.Length && input[i] == c)
+                    {
+                        i++;
+                    }
                     break;
             }
         }
@@ -98,12 +95,12 @@ public sealed class DefaultMaskingService : IMaskingService
         return sb.ToString();
     }    
 
-    private static string MaskCreditCard(string raw)
+    protected virtual string MaskCreditCard(string raw)
     {
         var digits = NormalizeDigits(raw);
         if (digits.Length == 0)
         {
-            return "****";
+            return DefaultMask;
         }
 
         var span = digits.AsSpan();
@@ -111,7 +108,7 @@ public sealed class DefaultMaskingService : IMaskingService
         return $"****-****-****-{last4}";
     }
 
-    private static string MaskSsn(string raw)
+    protected virtual string MaskSsn(string raw)
     {
         var digits = NormalizeDigits(raw);
         if (digits.Length == 0)
@@ -125,9 +122,9 @@ public sealed class DefaultMaskingService : IMaskingService
         return $"***-**-{last4.ToString().PadLeft(4, '*')}";
     }
     
-    private static string MaskEmail(string raw)
+    protected virtual string MaskEmail(string raw)
     {
-        var match = EmailRegex.Match(raw);
+        var match = EmailRegex().Match(raw);
         if (!match.Success)
         {
             return "****@****";
@@ -160,15 +157,21 @@ public sealed class DefaultMaskingService : IMaskingService
         return $"{maskedUser}@{maskedDomain}";
     }
 
-    private static string MaskIban(string raw)
+    protected virtual string MaskIban(string raw)
     {
         var compact = raw.Replace(" ", string.Empty).ToUpperInvariant();
-        if (!IbanRegex.IsMatch(compact))
+        if (!IbanRegex().IsMatch(compact))
         {
-            return "****";
+            return DefaultMask;
         }
 
         var visible = compact.Length >= 4 ? compact[^4..] : compact;
         return $"{compact[..2]}** **** **** **** {visible}";
-    }    
+    }
+
+    [GeneratedRegex(@"^(?<user>[^@\s]+)@(?<domain>[^@\s]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant)]
+    private static partial Regex EmailRegex();
+    
+    [GeneratedRegex(@"^[A-Z]{2}\d{2}[A-Z0-9]{4}\d{7}([A-Z0-9]?){0,16}$", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant)]
+    private static partial Regex IbanRegex();
 }
