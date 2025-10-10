@@ -32,6 +32,11 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <!-- local containers do not necessarily expose git remotes, so disable SCM queries to avoid
+         SourceLink warnings when building outside CI -->
+    <EnableSourceControlManagerQueries Condition=" '$(CI)' != 'true' ">false</EnableSourceControlManagerQueries>
+    <EnableSourceLink Condition=" '$(CI)' != 'true' ">false</EnableSourceLink>
+    <SourceLinkCreate Condition=" '$(CI)' != 'true' ">false</SourceLinkCreate>
     <RepositoryUrl>https://github.com/myarichuk/Json.Masker</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/myarichuk/Json.Masker</PackageProjectUrl>
