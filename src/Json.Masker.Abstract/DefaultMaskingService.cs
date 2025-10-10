@@ -13,7 +13,6 @@ public sealed class DefaultMaskingService : IMaskingService
     /// </summary>
     public const string DefaultMask = "****";
     
-    // Precompiled regexes for efficiency.
     private static readonly Regex EmailRegex = new(
         @"^(?<user>[^@\s]+)@(?<domain>[^@\s]+)$",
         RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);

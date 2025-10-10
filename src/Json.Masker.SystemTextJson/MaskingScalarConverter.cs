@@ -96,8 +96,26 @@ public sealed class MaskingScalarConverter<T> : JsonConverter<T>
                 JsonSerializer.Serialize(tmpWriter, value, options);
             }
 
-            var rawJson = Encoding.UTF8.GetString(buffer.ToArray());
-            masked = _maskingService.Mask(rawJson, _strategy, _pattern, ctx);
+            tmpWriter.Flush();
+
+            string rawJson;
+            if (buffer.TryGetBuffer(out var segment) && segment.Array is not null)
+            {
+                rawJson = Encoding.UTF8.GetString(segment.Array, segment.Offset, segment.Count);
+            }
+            else
+            {
+                rawJson = Encoding.UTF8.GetString(buffer.ToArray());
+            }
+
+            var rawValue = rawJson;
+
+            if (rawJson is ['"', _, ..] && rawJson[^1] == '"')
+            {
+                rawValue = JsonSerializer.Deserialize<string>(rawJson) ?? string.Empty;
+            }
+
+            masked = _maskingService.Mask(rawValue, _strategy, _pattern, ctx);
         }
 
         // Always emit as string so the masked output is valid JSON
