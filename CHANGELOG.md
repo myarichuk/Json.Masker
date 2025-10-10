@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v0.4.4-2](https://github.com/myarichuk/Json.Masker/compare/v0.4.2-2...v0.4.4-2) - 2025-10-10
+
+
+
+### Bug Fixes
+
+- restore writable masking service option ([28dba14](https://github.com/myarichuk/Json.Masker/commit/28dba140a53612284baede591bf3707f274c7d49))
+  
+  
+  
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#41](https://github.com/myarichuk/Json.Masker/issues/41) from myarichuk/codex/conduct-detailed-code-review
+  
+  
+
+
 ## [v0.4.2-2](https://github.com/myarichuk/Json.Masker/compare/v0.4.0-7...v0.4.2-2) - 2025-10-10
 
 
