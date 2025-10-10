@@ -10,7 +10,7 @@ namespace Json.Masker.Abstract;
 public partial class DefaultMaskingService : IMaskingService
 {
     /// <summary>
-    /// The default mask applied when no specific strategy is provided.
+    /// Gets the default mask applied when no specific strategy is provided.
     /// </summary>
     public virtual string DefaultMask => "****";
 
@@ -42,59 +42,11 @@ public partial class DefaultMaskingService : IMaskingService
             };
     }
     
-    private static string ApplyCustomPattern(string input, string pattern)
-    {
-        var sb = new StringBuilder(input.Length);
-        int i = 0;
-
-        foreach (var c in pattern)
-        {
-            if (i >= input.Length)
-            {
-                break;
-            }
-
-            switch (c)
-            {
-                case '#':
-                    sb.Append(input[i++]);
-                    break;
-                case '*':
-                    sb.Append('*');
-                    i++;
-                    break;
-                default:
-                    sb.Append(c);
-                    if (i < input.Length && input[i] == c)
-                    {
-                        i++;
-                    }
-                    break;
-            }
-        }
-
-        while (i++ < input.Length)
-        {
-            sb.Append('*');
-        }
-
-        return sb.ToString();
-    }
-    
-    private static string NormalizeDigits(ReadOnlySpan<char> raw)
-    {
-        var sb = new StringBuilder(raw.Length);
-        foreach (var c in raw)
-        {
-            if (c is >= '0' and <= '9')
-            {
-                sb.Append(c);
-            }
-        }
-        
-        return sb.ToString();
-    }    
-
+    /// <summary>
+    /// Masks a credit card number, keeping the last four digits visible.
+    /// </summary>
+    /// <param name="raw">The raw credit card value to mask.</param>
+    /// <returns>The masked credit card number.</returns>
     protected virtual string MaskCreditCard(string raw)
     {
         var digits = NormalizeDigits(raw);
@@ -108,6 +60,11 @@ public partial class DefaultMaskingService : IMaskingService
         return $"****-****-****-{last4}";
     }
 
+    /// <summary>
+    /// Masks a Social Security Number, revealing only the last four digits.
+    /// </summary>
+    /// <param name="raw">The raw SSN value to mask.</param>
+    /// <returns>The masked SSN.</returns>
     protected virtual string MaskSsn(string raw)
     {
         var digits = NormalizeDigits(raw);
@@ -121,7 +78,12 @@ public partial class DefaultMaskingService : IMaskingService
 
         return $"***-**-{last4.ToString().PadLeft(4, '*')}";
     }
-    
+
+    /// <summary>
+    /// Masks an email address by obscuring parts of the user and domain sections.
+    /// </summary>
+    /// <param name="raw">The raw email value to mask.</param>
+    /// <returns>The masked email address.</returns>
     protected virtual string MaskEmail(string raw)
     {
         var match = EmailRegex().Match(raw);
@@ -157,6 +119,11 @@ public partial class DefaultMaskingService : IMaskingService
         return $"{maskedUser}@{maskedDomain}";
     }
 
+    /// <summary>
+    /// Masks an International Bank Account Number (IBAN), revealing only key sections.
+    /// </summary>
+    /// <param name="raw">The raw IBAN value to mask.</param>
+    /// <returns>The masked IBAN.</returns>
     protected virtual string MaskIban(string raw)
     {
         var compact = raw.Replace(" ", string.Empty).ToUpperInvariant();
@@ -167,6 +134,60 @@ public partial class DefaultMaskingService : IMaskingService
 
         var visible = compact.Length >= 4 ? compact[^4..] : compact;
         return $"{compact[..2]}** **** **** **** {visible}";
+    }
+
+    private static string ApplyCustomPattern(string input, string pattern)
+    {
+        var sb = new StringBuilder(input.Length);
+        int i = 0;
+
+        foreach (var c in pattern)
+        {
+            if (i >= input.Length)
+            {
+                break;
+            }
+
+            switch (c)
+            {
+                case '#':
+                    sb.Append(input[i++]);
+                    break;
+                case '*':
+                    sb.Append('*');
+                    i++;
+                    break;
+                default:
+                    sb.Append(c);
+                    if (i < input.Length && input[i] == c)
+                    {
+                        i++;
+                    }
+
+                    break;
+            }
+        }
+
+        while (i++ < input.Length)
+        {
+            sb.Append('*');
+        }
+
+        return sb.ToString();
+    }
+
+    private static string NormalizeDigits(ReadOnlySpan<char> raw)
+    {
+        var sb = new StringBuilder(raw.Length);
+        foreach (var c in raw)
+        {
+            if (c is >= '0' and <= '9')
+            {
+                sb.Append(c);
+            }
+        }
+
+        return sb.ToString();
     }
 
     [GeneratedRegex(@"^(?<user>[^@\s]+)@(?<domain>[^@\s]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant)]
