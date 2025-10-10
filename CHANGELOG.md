@@ -3,6 +3,45 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v0.4.0-7](https://github.com/myarichuk/Json.Masker/compare/v0.3.0-2...v0.4.0-7) - 2025-10-10
+
+
+
+### Bug Fixes
+
+-  missing parameter at reflection ctor ([7acf54a](https://github.com/myarichuk/Json.Masker/commit/7acf54a0dbe2dc97042efa87789d2a634bcae314))
+  
+- **CI:** remove unneeded pr labeler ([f6330b1](https://github.com/myarichuk/Json.Masker/commit/f6330b15ed00f95c8b685431c99bd7b4f9ec5280))
+  
+- **CI:** make sure github action that triggers on PR runs even if new commit is added ([81331a7](https://github.com/myarichuk/Json.Masker/commit/81331a7891091765446808a952eeeaaec6268b9d))
+  
+  
+  
+  
+### Features
+
+- implement custom masking pattern support (DSL-like) ([1742a34](https://github.com/myarichuk/Json.Masker/commit/1742a34f0bc554e527802460d48bc748ea4850fb))
+  
+  
+  
+### Tests
+
+- implement tests for custom pattern masking ([cb6470a](https://github.com/myarichuk/Json.Masker/commit/cb6470a13eea02f68ce8d7f82dce1d6c9cd31490))
+  
+  
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#39](https://github.com/myarichuk/Json.Masker/issues/39) from myarichuk/feat/custom-pattern
+  
+  
+
+
 ## [v0.3.0-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.26-2...v0.3.0-2) - 2025-10-09
 
 
