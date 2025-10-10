@@ -164,6 +164,41 @@ var json = JsonSerializer.Serialize(customer, options);
 
 Behind the scenes the modifier swaps in custom converters that call the masking service for both scalars and collections, so you get the same result.
 
+## Contribution guide
+
+### Local workflow tips
+
+* Run `dotnet restore`, `dotnet build`, and `dotnet test` from the repository root to validate changes. The solution and test project share the same SDK version via `global.json`, so you will get consistent compiler behavior.
+* Use `./install-dependencies.sh` (or the PowerShell equivalent) to install the expected .NET SDK and the repository's `pre-commit` hooks.
+* Execute `./run-pre-commit.sh` locally before opening a PR. It runs analyzers and formatters so CI does not fail on style issues.
+
+### Extending masking behavior
+
+The built-in `DefaultMaskingService` is intentionally straightforward so you can replace it when needed:
+
+1. Implement `IMaskingService` in a new class with whatever masking rules your domain requires.
+2. Register your implementation via `MaskingOptions` (as shown earlier) or by adding it to the DI container.
+3. Add tests under `tests/Json.Masker.Tests` to describe the new behavior. The existing tests include helpers for exercising both serializers.
+
+If the new behavior is reusable, consider contributing it back by adding a new value to `MaskingStrategy` and wiring it into `DefaultMaskingService`.
+
+### Overriding the built-in service
+
+When you only need to tweak a specific masking rule, inherit from `DefaultMaskingService` and override the protected masking helpers (for example `MaskCreditCard` or `MaskEmail`). The top-level `Mask` method delegates to those helpers, so overriding one method updates every serializer integration automatically. Remember to register your derived service via DI so the adapters pick it up.
+
+## Implementation guide
+
+### Adding another serializer integration
+
+Both existing adapters wrap `IMaskingService` behind an `IJsonMaskingConfigurator`. To support a new serializer:
+
+1. Create a project under `src/` that references `Json.Masker.Abstract`.
+2. Implement `IJsonMaskingConfigurator` to hook the masking service into the serializer's configuration model.
+3. Expose a `AddJsonMasking` extension (mirroring the current adapters) so consumers get a consistent experience.
+4. Cover the integration with tests that exercise the new serializer and ensure sensitive members are masked.
+
+Following this pattern keeps the developer ergonomics identical regardless of serializer choice.
+
 ### Masking strategies
 
 The built-in `DefaultMaskingService` supports a few common strategies:
