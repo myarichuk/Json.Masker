@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v0.4.10-5](https://github.com/myarichuk/Json.Masker/compare/v0.4.6-2...v0.4.10-5) - 2025-10-10
+
+
+
+### Bug Fixes
+
+- solve merge conflict ([f9129f5](https://github.com/myarichuk/Json.Masker/commit/f9129f523f024b367a317e447b5cd6b797704e86))
+  
+  
+  
+  
+### Tests
+
+- handle more edge cases - to be more specific, add tests for cases where pre-existing converters exist - they should be respected by maskers ([d43de1d](https://github.com/myarichuk/Json.Masker/commit/d43de1d8d8b706119877c61166bc37687039d5a0))
+  
+  
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#43](https://github.com/myarichuk/Json.Masker/issues/43) from myarichuk/codex/suggest-missing-edge-cases-for-tests
+  
+  
+
+
 ## [v0.4.6-2](https://github.com/myarichuk/Json.Masker/compare/v0.4.4-2...v0.4.6-2) - 2025-10-10
 
 
