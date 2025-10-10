@@ -91,5 +91,21 @@ public partial class BasicTestsSystemTextJson
             var actualSubstringCount = Regex.Matches(actualStr, searchPattern).Count;
             Assert.Equal(expectedCount, actualSubstringCount);
         }
-    }    
+    }
+
+    [Fact]
+    public void Should_mask_using_existing_scalar_converter_pattern()
+    {
+        var customer = new CustomerWithSystemTextJsonConverter
+        {
+            Anniversary = new DateTime(2024, 3, 15)
+        };
+
+        MaskingContextAccessor.Set(new MaskingContext { Enabled = true });
+
+        var json = JsonSerializer.Serialize(customer, _options);
+
+        Assert.Contains("\"Anniversary\":\"2024-**-****\"", json);
+        Assert.DoesNotContain("2024-03-15", json);
+    }
 }
