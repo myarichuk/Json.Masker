@@ -9,7 +9,7 @@ namespace Json.Masker.Abstract;
 public sealed class DefaultMaskingService : IMaskingService
 {
     /// <summary>
-    /// A mask that would replace sensitive field with "default" strategy
+    /// The default mask applied when no specific strategy is provided.
     /// </summary>
     public const string DefaultMask = "****";
     

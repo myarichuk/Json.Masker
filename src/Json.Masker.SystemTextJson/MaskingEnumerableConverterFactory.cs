@@ -9,6 +9,7 @@ namespace Json.Masker.SystemTextJson;
 /// </summary>
 /// <param name="maskingService">The masking service used to mask values.</param>
 /// <param name="strategy">The masking strategy to apply.</param>
+/// <param name="pattern">A custom masking pattern to apply when masking values.</param>
 /// <param name="originalConverter">An optional original converter to consult for compatibility.</param>
 public class MaskingEnumerableConverterFactory(
     IMaskingService maskingService,
