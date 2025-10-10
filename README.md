@@ -35,6 +35,15 @@ Pick the style that fits your app:
   Once that extension is in place you can inject `IJsonMaskingConfigurator` wherever you configure the serializer (for example in MVC setup) and let it bolt on the masking bits for you.
 * **Wire it manually** if you're configuring the serializer yourself or aren't using DI. Just new up `DefaultMaskingService` (or your own implementation) and pass it into the resolver/modifier shown in the manual samples below.
 
+  The options expose a writeable `MaskingService` property, so you can swap in your own masking logic:
+
+  ```csharp
+  builder.Services.AddJsonMasking(options =>
+  {
+      options.MaskingService = new MyCustomMaskingService();
+  });
+  ```
+
 Either way, masking kicks in once you mark your models and flip the context switch.
 
 ### Mask the model
