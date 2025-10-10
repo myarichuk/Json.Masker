@@ -96,7 +96,7 @@ public partial class BasicTestsNewtonsoft
 
         var json = JsonConvert.SerializeObject(customer, Formatting.None, _options);
 
-        Assert.Contains("\"Anniversary\":\"2024-**-****\"", json);
+        Assert.Contains("\"Anniversary\":\"2024-**-**\"", json);
         Assert.DoesNotContain("2024-03-15", json);
     }
 }
