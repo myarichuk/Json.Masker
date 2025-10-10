@@ -74,6 +74,8 @@ public class BasicTestsMaskingService
     [InlineData("Fo1234", "##****", "Fo****")]
     [InlineData("Fo1234", "##********", "Fo****")]
     [InlineData("Fo1234", "##**", "Fo****")]
+    [InlineData("1234567", "###-####", "123-4567")]
+    [InlineData("1234-456-789", "*##*-***-***", "*23*-***-***")]
     public void Should_mask_pattern_correctly(string raw, string? pattern, string expected)
     {
         var result = _svc.Mask(raw, MaskingStrategy.Iban, pattern, Enabled);

@@ -65,7 +65,10 @@ public partial class DefaultMaskingService : IMaskingService
                     break;
                 default:
                     sb.Append(c);
-                    i++;
+                    if (i < input.Length && input[i] == c)
+                    {
+                        i++;
+                    }
                     break;
             }
         }
