@@ -3,12 +3,32 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v0.5.3-2](https://github.com/myarichuk/Json.Masker/compare/v0.5.1-2...v0.5.3-2) - 2025-10-10
+
+
+
+  
+### Fixes
+
+- revert changelog generator template so it would properly work ([a055c40](https://github.com/myarichuk/Json.Masker/commit/a055c406eeae7d62090424789b36adaf839913bd))
+  
+  
+  
+  
+
+
+
+
+
+
 ## [v0.5.1-2](https://github.com/myarichuk/Json.Masker/compare/v0.5.0-5...v0.5.1-2) - 2025-10-10
 
 
 
   
   
+
+
 
 
 
@@ -41,6 +61,13 @@ All notable changes to this project will be documented in this file.
 
 
 
+### Merges
+
+- Merge pull request [#44](https://github.com/myarichuk/Json.Masker/issues/44) from myarichuk/feat/more-flexible-masker
+  
+  
+
+
 ## [v0.4.10-5](https://github.com/myarichuk/Json.Masker/compare/v0.4.6-2...v0.4.10-5) - 2025-10-10
 
 
@@ -63,6 +90,13 @@ All notable changes to this project will be documented in this file.
 
 
 
+### Merges
+
+- Merge pull request [#43](https://github.com/myarichuk/Json.Masker/issues/43) from myarichuk/codex/suggest-missing-edge-cases-for-tests
+  
+  
+
+
 ## [v0.4.6-2](https://github.com/myarichuk/Json.Masker/compare/v0.4.4-2...v0.4.6-2) - 2025-10-10
 
 
@@ -77,6 +111,13 @@ All notable changes to this project will be documented in this file.
   
 
 
+
+
+### Merges
+
+- Merge pull request [#42](https://github.com/myarichuk/Json.Masker/issues/42) from myarichuk/codex/suggest-improvements-for-developer-story
+  
+  
 
 
 ## [v0.4.4-2](https://github.com/myarichuk/Json.Masker/compare/v0.4.2-2...v0.4.4-2) - 2025-10-10
@@ -95,6 +136,13 @@ All notable changes to this project will be documented in this file.
 
 
 
+### Merges
+
+- Merge pull request [#41](https://github.com/myarichuk/Json.Masker/issues/41) from myarichuk/codex/conduct-detailed-code-review
+  
+  
+
+
 ## [v0.4.2-2](https://github.com/myarichuk/Json.Masker/compare/v0.4.0-7...v0.4.2-2) - 2025-10-10
 
 
@@ -109,6 +157,13 @@ All notable changes to this project will be documented in this file.
   
 
 
+
+
+### Merges
+
+- Merge pull request [#40](https://github.com/myarichuk/Json.Masker/issues/40) from myarichuk/codex/add-xml-documentation-comments-and-tests
+  
+  
 
 
 ## [v0.4.0-7](https://github.com/myarichuk/Json.Masker/compare/v0.3.0-2...v0.4.0-7) - 2025-10-10
@@ -143,6 +198,13 @@ All notable changes to this project will be documented in this file.
 
 
 
+### Merges
+
+- Merge pull request [#39](https://github.com/myarichuk/Json.Masker/issues/39) from myarichuk/feat/custom-pattern
+  
+  
+
+
 ## [v0.3.0-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.26-2...v0.3.0-2) - 2025-10-09
 
 
@@ -158,6 +220,13 @@ All notable changes to this project will be documented in this file.
 
 
 
+### Merges
+
+- Merge pull request [#38](https://github.com/myarichuk/Json.Masker/issues/38) from myarichuk/feat/more-mask-patterns
+  
+  
+
+
 ## [v0.2.26-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.22-2...v0.2.26-2) - 2025-10-09
 
 
@@ -166,6 +235,13 @@ All notable changes to this project will be documented in this file.
   
 
 
+
+
+### Merges
+
+- Merge pull request [#37](https://github.com/myarichuk/Json.Masker/issues/37) from myarichuk/codex/add-xml-documentation-comments-for-public-items
+  
+  
 
 
 ## [v0.2.22-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.20-2...v0.2.22-2) - 2025-10-09
@@ -182,6 +258,13 @@ All notable changes to this project will be documented in this file.
   
 
 
+
+
+### Merges
+
+- Merge pull request [#36](https://github.com/myarichuk/Json.Masker/issues/36) from myarichuk/codex/update-readme-with-examples-and-descriptions
+  
+  
 
 
 ## [v0.2.20-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.2-2...v0.2.20-2) - 2025-10-09
@@ -220,6 +303,23 @@ All notable changes to this project will be documented in this file.
 
 
 
+### Merges
+
+- Merge pull request [#15](https://github.com/myarichuk/Json.Masker/issues/15) from myarichuk/dependabot/nuget/StyleCop.Analyzers.Unstable-1.2.0.556
+  
+- Merge pull request [#17](https://github.com/myarichuk/Json.Masker/issues/17) from myarichuk/dependabot/nuget/src/Json.Masker.Newtonsoft/Newtonsoft.Json-13.0.4
+  
+- Merge pull request [#20](https://github.com/myarichuk/Json.Masker/issues/20) from myarichuk/dependabot/nuget/tests/Json.Masker.Tests/xunit.runner.visualstudio-3.1.5
+  
+- Merge pull request [#21](https://github.com/myarichuk/Json.Masker/issues/21) from myarichuk/dependabot/nuget/tests/Json.Masker.Tests/Microsoft.NET.Test.Sdk-18.0.0
+  
+- Merge pull request [#27](https://github.com/myarichuk/Json.Masker/issues/27) from myarichuk/fix/try-to-make-things-generate-changelog
+  
+- Merge pull request [#25](https://github.com/myarichuk/Json.Masker/issues/25) from myarichuk/fix/try-to-make-things-generate-changelog
+  
+  
+
+
 ## [v0.2.2-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.1-2...v0.2.2-2) - 2025-10-09
 
 
@@ -236,6 +336,13 @@ All notable changes to this project will be documented in this file.
 
 
 
+### Merges
+
+- Merge pull request [#24](https://github.com/myarichuk/Json.Masker/issues/24) from myarichuk/fix/try-to-make-things-generate-changelog
+  
+  
+
+
 ## [v0.2.1-2](https://github.com/myarichuk/Json.Masker/compare/v0.2.0-6...v0.2.1-2) - 2025-10-08
 
 
@@ -250,6 +357,13 @@ All notable changes to this project will be documented in this file.
   
 
 
+
+
+### Merges
+
+- Merge pull request [#23](https://github.com/myarichuk/Json.Masker/issues/23) from myarichuk/fix/try-to-make-things-generate-changelog
+  
+  
 
 
 ## [v0.2.0-6](https://github.com/myarichuk/Json.Masker/compare/v0.1.5-1...v0.2.0-6) - 2025-10-08
@@ -282,12 +396,21 @@ All notable changes to this project will be documented in this file.
 
 
 
+### Merges
+
+- Merge pull request [#22](https://github.com/myarichuk/Json.Masker/issues/22) from myarichuk/implement-basic-functionality
+  
+  
+
+
 ## [v0.1.5-1](https://github.com/myarichuk/Json.Masker/compare/v0.1.4-2...v0.1.5-1) - 2025-09-25
 
 
 
   
   
+
+
 
 
 
@@ -302,12 +425,21 @@ All notable changes to this project will be documented in this file.
 
 
 
+### Merges
+
+- Merge pull request [#14](https://github.com/myarichuk/Json.Masker/issues/14) from myarichuk/codex/evaluate-ci-pipeline-for-changelog-generation
+  
+  
+
+
 ## [v0.1.2.0](https://github.com/myarichuk/Json.Masker/compare/v0.1.1.0...v0.1.2.0) - 2025-09-25
 
 
 
   
   
+
+
 
 
 
@@ -330,6 +462,8 @@ All notable changes to this project will be documented in this file.
 
 
 
+
+
 ## [v0.0.17.0](https://github.com/myarichuk/Json.Masker/compare/v0.0.16.0...v0.0.17.0) - 2025-09-24
 
 
@@ -346,12 +480,16 @@ All notable changes to this project will be documented in this file.
 
 
 
+
+
 ## [v0.0.16.0](https://github.com/myarichuk/Json.Masker/compare/v0.0.14.0...v0.0.16.0) - 2025-09-24
 
 
 
   
   
+
+
 
 
 
@@ -387,5 +525,27 @@ All notable changes to this project will be documented in this file.
 
 
 
-  <!-- closes .Versions -->
+
+### Merges
+
+- Merge pull request [#12](https://github.com/myarichuk/Json.Masker/issues/12) from myarichuk/fix/versioning-issue2
+  
+- Merge pull request [#11](https://github.com/myarichuk/Json.Masker/issues/11) from myarichuk/fix/versioning-issue
+  
+- Merge pull request [#10](https://github.com/myarichuk/Json.Masker/issues/10) from myarichuk/codex/fix-ci-build-issues-and-update-versioning
+  
+- Merge pull request [#9](https://github.com/myarichuk/Json.Masker/issues/9) from myarichuk/codex/fix-gitversion.tool-version-error
+  
+- Merge pull request [#8](https://github.com/myarichuk/Json.Masker/issues/8) from myarichuk/codex/refactor-project-structure-and-ci-setup
+  
+- Merge pull request [#1](https://github.com/myarichuk/Json.Masker/issues/1) from myarichuk/dependabot/github_actions/actions/checkout-5
+  
+- Merge pull request [#7](https://github.com/myarichuk/Json.Masker/issues/7) from myarichuk/codex/update-to-.net-8-in-global.json
+  
+- Merge pull request [#6](https://github.com/myarichuk/Json.Masker/issues/6) from myarichuk/codex/adjust-project-structure-for-multiple-json-libraries
+  
+- Merge pull request [#5](https://github.com/myarichuk/Json.Masker/issues/5) from myarichuk/codex/rename-placeholders-to-json.masker-and-michael-yarichuk
+  
+  
+
 
