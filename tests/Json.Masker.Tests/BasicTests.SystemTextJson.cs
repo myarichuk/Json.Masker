@@ -105,7 +105,7 @@ public partial class BasicTestsSystemTextJson
 
         var json = JsonSerializer.Serialize(customer, _options);
 
-        Assert.Contains("\"Anniversary\":\"2024-**-****\"", json);
+        Assert.Contains("\"Anniversary\":\"2024-**-**\"", json);
         Assert.DoesNotContain("2024-03-15", json);
     }
 }
