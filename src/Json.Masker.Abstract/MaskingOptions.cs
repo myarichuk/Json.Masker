@@ -6,7 +6,7 @@ namespace Json.Masker.Abstract;
 public sealed class MaskingOptions
 {
     /// <summary>
-    /// Gets the masking service that should be used.
+    /// Gets or sets the masking service that should be used.
     /// </summary>
-    public IMaskingService? MaskingService { get; init; }
+    public IMaskingService? MaskingService { get; set; }
 }
