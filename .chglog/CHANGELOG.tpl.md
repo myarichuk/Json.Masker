@@ -30,5 +30,11 @@ All notable changes to this project will be documented in this file.
   {{ end }}
   {{ end }}
 
-{{ end }}  <!-- closes .Versions -->
+{{ if .MergeCommits }}
+### Merges
+{{ range .MergeCommits }}
+- {{ .Header }}
+  {{ end }}
+  {{ end }}
 
+{{ end }}
