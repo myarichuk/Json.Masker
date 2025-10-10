@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v0.4.6-2](https://github.com/myarichuk/Json.Masker/compare/v0.4.4-2...v0.4.6-2) - 2025-10-10
+
+
+
+  
+### Refactoring
+
+- make default mask overridable ([fef09a8](https://github.com/myarichuk/Json.Masker/commit/fef09a845bc49e7a6960918c76be8efc76090585))
+  
+  
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#42](https://github.com/myarichuk/Json.Masker/issues/42) from myarichuk/codex/suggest-improvements-for-developer-story
+  
+  
+
+
 ## [v0.4.4-2](https://github.com/myarichuk/Json.Masker/compare/v0.4.2-2...v0.4.4-2) - 2025-10-10
 
 
