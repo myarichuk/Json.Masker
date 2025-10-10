@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Json.Masker.Abstract;
@@ -17,20 +17,24 @@ public sealed class MaskingScalarConverter<T> : JsonConverter<T>
     private readonly IMaskingService _maskingService;
     private readonly MaskingStrategy _strategy;
     private readonly JsonConverter<T>? _inner;
+    private readonly string? _pattern;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MaskingScalarConverter{T}"/> class.
     /// </summary>
     /// <param name="maskingService">The masking service used to mask values.</param>
     /// <param name="strategy">The strategy that determines how masking is applied.</param>
+    /// <param name="pattern">Custom masking pattern to apply non-standard masking.</param>
     /// <param name="inner">An optional inner converter for delegating serialization.</param>
     public MaskingScalarConverter(
         IMaskingService maskingService,
         MaskingStrategy strategy,
+        string? pattern,
         JsonConverter? inner = null)
     {
         _maskingService = maskingService;
         _strategy = strategy;
+        _pattern = pattern;
         _inner = inner as JsonConverter<T>;
     }
 
@@ -76,7 +80,7 @@ public sealed class MaskingScalarConverter<T> : JsonConverter<T>
         string masked;
         if (value is string valueAsString)
         {
-            masked = _maskingService.Mask(valueAsString, _strategy, ctx);
+            masked = _maskingService.Mask(valueAsString, _strategy, _pattern, ctx);
         }
         else
         {
@@ -93,7 +97,7 @@ public sealed class MaskingScalarConverter<T> : JsonConverter<T>
             }
 
             var rawJson = Encoding.UTF8.GetString(buffer.ToArray());
-            masked = _maskingService.Mask(rawJson, _strategy, ctx);
+            masked = _maskingService.Mask(rawJson, _strategy, _pattern, ctx);
         }
 
         // Always emit as string so the masked output is valid JSON

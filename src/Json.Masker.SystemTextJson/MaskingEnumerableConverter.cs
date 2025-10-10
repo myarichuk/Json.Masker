@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Json.Masker.Abstract;
 
@@ -11,9 +10,11 @@ namespace Json.Masker.SystemTextJson;
 /// <typeparam name="T">The element type of the enumerable.</typeparam>
 /// <param name="maskingService">The masking service used to produce masked values.</param>
 /// <param name="strategy">The strategy that determines how masking is applied.</param>
+/// <param name="pattern">Custom masking pattern to apply non-standard masking.</param>
 public class MaskingEnumerableConverter<T>(
     IMaskingService maskingService,
-    MaskingStrategy strategy)
+    MaskingStrategy strategy,
+    string? pattern)
     : JsonConverter<IEnumerable<T>>
 {
     /// <summary>
@@ -24,7 +25,7 @@ public class MaskingEnumerableConverter<T>(
     /// <param name="options">The serializer options in use.</param>
     /// <returns>This method always throws a <see cref="NotSupportedException"/>.</returns>
     /// <exception cref="NotSupportedException">Always thrown because deserialization is not supported.</exception>
-    public override IEnumerable<T>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override IEnumerable<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         => throw new NotSupportedException("Sensitive values should not be deserialized");
 
     /// <summary>
@@ -44,7 +45,7 @@ public class MaskingEnumerableConverter<T>(
         writer.WriteStartArray();
         foreach (var v in value)
         {
-            var masked = maskingService.Mask(v, strategy, MaskingContextAccessor.Current);
+            var masked = maskingService.Mask(v, strategy, pattern, MaskingContextAccessor.Current);
             writer.WriteStringValue(masked);
         }
 

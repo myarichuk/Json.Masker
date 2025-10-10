@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using Json.Masker.Abstract;
 using Newtonsoft.Json;
@@ -61,13 +60,13 @@ public class MaskingContractResolver(IMaskingService maskingService) : DefaultCo
                 var masked = new List<string>();
                 foreach (var item in enumerable)
                 {
-                    masked.Add(maskingService.Mask(item, attr.Strategy, MaskingContextAccessor.Current) ?? "****");
+                    masked.Add(maskingService.Mask(item, attr.Strategy, attr.Pattern, MaskingContextAccessor.Current) ?? "****");
                 }
 
                 return masked;
             }
 
-            return maskingService.Mask(raw, attr.Strategy, MaskingContextAccessor.Current) ?? "****";
+            return maskingService.Mask(raw, attr.Strategy, attr.Pattern, MaskingContextAccessor.Current) ?? "****";
         }
 
         /// <summary>
