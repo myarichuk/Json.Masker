@@ -13,6 +13,7 @@ namespace Json.Masker.SystemTextJson;
 public class MaskingEnumerableConverterFactory(
     IMaskingService maskingService,
     MaskingStrategy strategy,
+    string? pattern,
     JsonConverter? originalConverter = null)
     : JsonConverterFactory
 {
@@ -46,6 +47,6 @@ public class MaskingEnumerableConverterFactory(
             : type.GetGenericArguments().FirstOrDefault() ?? typeof(object);
 
         var converterType = typeof(MaskingEnumerableConverter<>).MakeGenericType(elementType);
-        return (JsonConverter)Activator.CreateInstance(converterType, maskingService, strategy)!;
+        return (JsonConverter)Activator.CreateInstance(converterType, maskingService, strategy, pattern)!;
     }
 }

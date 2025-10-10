@@ -33,14 +33,14 @@ public class MaskingTypeInfoModifier(IMaskingService maskingService)
             {
                 prop.CustomConverter =
                     new MaskingEnumerableConverterFactory(
-                            maskingService, attr.Strategy, prop.CustomConverter)
+                            maskingService, attr.Strategy, attr.Pattern, prop.CustomConverter)
                         .CreateConverter(prop.PropertyType, typeInfo.Options);
             }
             else
             {
                 var convType = typeof(MaskingScalarConverter<>).MakeGenericType(prop.PropertyType);
                 prop.CustomConverter = (JsonConverter)Activator.CreateInstance(
-                    convType, maskingService, attr.Strategy, prop.CustomConverter)!;
+                    convType, maskingService, attr.Strategy, attr.Pattern, prop.CustomConverter)!;
             }
         }
     }
