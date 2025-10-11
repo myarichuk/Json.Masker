@@ -1,0 +1,34 @@
+@baseUrl = http://localhost:5000
+
+### Get all customers
+GET {{baseUrl}}/api/customers
+Accept: application/json
+
+> {%
+    if (response.status === 200 && Array.isArray(response.body) && response.body.length > 0) {
+        client.global.set("customerId", response.body[0].id);
+    }
+%}
+
+### Get a customer by id
+GET {{baseUrl}}/api/customers/{{customerId}}
+Accept: application/json
+
+### Get all orders
+GET {{baseUrl}}/api/orders
+Accept: application/json
+
+> {%
+    if (response.status === 200 && Array.isArray(response.body) && response.body.length > 0) {
+        client.global.set("orderId", response.body[0].id);
+        client.global.set("orderNumber", response.body[0].orderNumber);
+    }
+%}
+
+### Get an order by id
+GET {{baseUrl}}/api/orders/{{orderId}}
+Accept: application/json
+
+### Get an order by order number
+GET {{baseUrl}}/api/orders/number/{{orderNumber}}
+Accept: application/json
