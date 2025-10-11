@@ -1,5 +1,6 @@
 using System.Linq;
 using Bogus;
+using Bogus.Extensions.UnitedStates;
 using Json.Masker.IntegrationSample.Models;
 
 namespace Json.Masker.IntegrationSample.Services;
@@ -40,7 +41,7 @@ public class FakeBusinessDataService
         var paymentFaker = new Faker<PaymentDetail>()
             .RuleFor(payment => payment.Method, faker => faker.PickRandom("Credit Card", "ACH", "Wire Transfer"))
             .RuleFor(payment => payment.CardIssuer, (faker, payment) =>
-                payment.Method == "Credit Card" ? faker.Finance.CreditCardIssuer() : string.Empty)
+                payment.Method == "Credit Card" ? faker.CreditCardIssuer() : string.Empty)
             .RuleFor(payment => payment.CardNumber, (faker, payment) =>
                 payment.Method == "Credit Card" ? faker.Finance.CreditCardNumber() : string.Empty)
             .RuleFor(payment => payment.BankAccountIban, (faker, payment) =>
