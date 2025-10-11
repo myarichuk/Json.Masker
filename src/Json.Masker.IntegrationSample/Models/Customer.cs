@@ -12,11 +12,17 @@ public class Customer
     [Sensitive]
     public string LastName { get; set; } = string.Empty;
 
-    [Sensitive]
+    [Sensitive(MaskingStrategy.Email)]
     public string Email { get; set; } = string.Empty;
 
-    [Sensitive]
+    [Sensitive("***-***-####")]
     public string PhoneNumber { get; set; } = string.Empty;
+
+    [Sensitive(MaskingStrategy.Ssn)]
+    public string NationalId { get; set; } = string.Empty;
+
+    [Sensitive("LOY-***-####")]
+    public string LoyaltyNumber { get; set; } = string.Empty;
 
     [Sensitive]
     public Address BillingAddress { get; set; } = new();

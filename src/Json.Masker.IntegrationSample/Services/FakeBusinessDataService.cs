@@ -41,11 +41,14 @@ public class FakeBusinessDataService
             .RuleFor(payment => payment.Method, faker => faker.PickRandom("Credit Card", "ACH", "Wire Transfer"))
             .RuleFor(payment => payment.CardIssuer, (faker, payment) =>
                 payment.Method == "Credit Card" ? faker.Finance.CreditCardIssuer() : string.Empty)
-            .RuleFor(payment => payment.CardLast4, (faker, payment) =>
-                payment.Method == "Credit Card" ? new string(faker.Finance.CreditCardNumber().TakeLast(4).ToArray()) : string.Empty)
-            .RuleFor(payment => payment.TransactionReference, faker => faker.Finance.TransactionReference())
+            .RuleFor(payment => payment.CardNumber, (faker, payment) =>
+                payment.Method == "Credit Card" ? faker.Finance.CreditCardNumber() : string.Empty)
+            .RuleFor(payment => payment.BankAccountIban, (faker, payment) =>
+                payment.Method == "Credit Card" ? string.Empty : faker.Finance.Iban())
+            .RuleFor(payment => payment.TransactionReference, faker => faker.Random.Replace("####-########-####"))
             .RuleFor(payment => payment.PaidAt, faker => faker.Date.PastOffset(1))
-            .RuleFor(payment => payment.Refunded, faker => faker.Random.Bool(0.05f));
+            .RuleFor(payment => payment.Refunded, faker => faker.Random.Bool(0.05f))
+            .RuleFor(payment => payment.InternalNotes, faker => faker.Lorem.Sentence());
 
         var orderItemFaker = new Faker<OrderItem>()
             .RuleFor(item => item.Sku, faker => faker.Commerce.Ean13())
@@ -63,6 +66,7 @@ public class FakeBusinessDataService
             .RuleFor(order => order.FulfillmentChannel, faker => faker.PickRandom("Warehouse", "Drop-Ship", "In-Store Pickup"))
             .RuleFor(order => order.Items, faker => orderItemFaker.Generate(faker.Random.Int(1, 5)))
             .RuleFor(order => order.Payment, faker => paymentFaker.Generate())
+            .RuleFor(order => order.InternalReviewNotes, faker => faker.Lorem.Sentence())
             .FinishWith((faker, order) =>
             {
                 order.Subtotal = order.Items.Sum(item => item.LineTotal);
@@ -86,6 +90,9 @@ public class FakeBusinessDataService
             .RuleFor(customer => customer.LastName, faker => faker.Name.LastName())
             .RuleFor(customer => customer.Email, (faker, customer) => faker.Internet.Email(customer.FirstName, customer.LastName))
             .RuleFor(customer => customer.PhoneNumber, faker => faker.Phone.PhoneNumber("###-###-####"))
+            .RuleFor(customer => customer.NationalId, faker => faker.Person.Ssn())
+            .RuleFor(customer => customer.LoyaltyNumber, faker =>
+                $"LOY-{faker.Random.Number(100, 999)}-{faker.Random.Number(1000, 9999)}")
             .RuleFor(customer => customer.BillingAddress, faker => addressFaker.Generate())
             .RuleFor(customer => customer.ShippingAddress, (faker, customer) => faker.Random.Bool() ? customer.BillingAddress : addressFaker.Generate())
             .RuleFor(customer => customer.RegisteredAt, faker => faker.Date.PastOffset(3))
