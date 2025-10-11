@@ -28,6 +28,8 @@ public class CustomersController : ControllerBase
                 FullName = customer.FullName,
                 Email = customer.Email,
                 PhoneNumber = customer.PhoneNumber,
+                NationalId = customer.NationalId,
+                LoyaltyNumber = customer.LoyaltyNumber,
                 Status = customer.Status,
                 RegisteredAt = customer.RegisteredAt,
                 OrderCount = customer.Orders.Count,

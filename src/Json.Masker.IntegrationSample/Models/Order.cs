@@ -5,7 +5,7 @@ namespace Json.Masker.IntegrationSample.Models;
 public class Order
 {
     public Guid Id { get; set; }
-    [Sensitive]
+    [Sensitive("SO-***###")]
     public string OrderNumber { get; set; } = string.Empty;
     public Guid CustomerId { get; set; }
     [Sensitive]
@@ -16,6 +16,9 @@ public class Order
     public List<OrderItem> Items { get; set; } = new();
     [Sensitive]
     public PaymentDetail Payment { get; set; } = new();
+
+    [Sensitive(MaskingStrategy.Redacted)]
+    public string InternalReviewNotes { get; set; } = string.Empty;
     public decimal Subtotal { get; set; }
     public decimal Tax { get; set; }
     public decimal Total { get; set; }
