@@ -5,24 +5,53 @@ using Json.Masker.IntegrationSample.Models;
 
 namespace Json.Masker.IntegrationSample.Services;
 
+/// <summary>
+/// Provides seeded sample data for the integration sample API.
+/// </summary>
 public class FakeBusinessDataService
 {
     private readonly IReadOnlyList<Customer> _customers;
     private readonly IReadOnlyList<Order> _orders;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FakeBusinessDataService"/> class.
+    /// </summary>
     public FakeBusinessDataService()
     {
         (_customers, _orders) = GenerateData();
     }
 
+    /// <summary>
+    /// Gets the collection of customers from the sample data set.
+    /// </summary>
+    /// <returns>An immutable list of customers.</returns>
     public IReadOnlyList<Customer> GetCustomers() => _customers;
 
+    /// <summary>
+    /// Gets a customer by identifier from the sample data set.
+    /// </summary>
+    /// <param name="id">The customer identifier to search for.</param>
+    /// <returns>The matching customer, or <c>null</c> if none was found.</returns>
     public Customer? GetCustomer(Guid id) => _customers.FirstOrDefault(customer => customer.Id == id);
 
+    /// <summary>
+    /// Gets the collection of orders from the sample data set.
+    /// </summary>
+    /// <returns>An immutable list of orders.</returns>
     public IReadOnlyList<Order> GetOrders() => _orders;
 
+    /// <summary>
+    /// Gets an order by identifier from the sample data set.
+    /// </summary>
+    /// <param name="id">The order identifier to search for.</param>
+    /// <returns>The matching order, or <c>null</c> if none was found.</returns>
     public Order? GetOrder(Guid id) => _orders.FirstOrDefault(order => order.Id == id);
 
+    /// <summary>
+    /// Gets an order using its human-readable order number.
+    /// </summary>
+    /// <param name="orderNumber">The order number to look up.</param>
+    /// <returns>The matching order, or <c>null</c> if none was found.</returns>
     public Order? GetOrderByNumber(string orderNumber) =>
         _orders.FirstOrDefault(order => string.Equals(order.OrderNumber, orderNumber, StringComparison.OrdinalIgnoreCase));
 
