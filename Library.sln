@@ -36,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Masker.Newtonsoft", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Masker.SystemTextJson", "src\Json.Masker.SystemTextJson\Json.Masker.SystemTextJson.csproj", "{108192C6-0C5F-43C4-9D93-44C61D19E414}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Masker.IntegrationSample", "src\Json.Masker.IntegrationSample\Json.Masker.IntegrationSample.csproj", "{FFA03887-B55D-4BF3-BDE4-D155CDA91356}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{108192C6-0C5F-43C4-9D93-44C61D19E414}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{108192C6-0C5F-43C4-9D93-44C61D19E414}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{108192C6-0C5F-43C4-9D93-44C61D19E414}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFA03887-B55D-4BF3-BDE4-D155CDA91356}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFA03887-B55D-4BF3-BDE4-D155CDA91356}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFA03887-B55D-4BF3-BDE4-D155CDA91356}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFA03887-B55D-4BF3-BDE4-D155CDA91356}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +74,7 @@ Global
 		{DB790D93-F19A-453C-9E76-244A66688053} = {698242D0-C732-49B2-8FC8-1C973A81A118}
 		{CE7232C7-C5B2-4C5F-88B7-3D716DA480DB} = {698242D0-C732-49B2-8FC8-1C973A81A118}
 		{108192C6-0C5F-43C4-9D93-44C61D19E414} = {698242D0-C732-49B2-8FC8-1C973A81A118}
+		{FFA03887-B55D-4BF3-BDE4-D155CDA91356} = {698242D0-C732-49B2-8FC8-1C973A81A118}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B2F59F0-7149-4FF1-BF84-43FFFBC1622E}
