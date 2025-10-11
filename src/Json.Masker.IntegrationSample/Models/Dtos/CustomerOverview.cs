@@ -1,12 +1,18 @@
-namespace Json.Masker.IntegrationSample.Models.Dtos;
-
+using Json.Masker.Abstract;
 using Json.Masker.IntegrationSample.Models;
+
+namespace Json.Masker.IntegrationSample.Models.Dtos;
 
 public class CustomerOverview
 {
     public Guid Id { get; init; }
+    [Sensitive]
     public string FullName { get; init; } = string.Empty;
+
+    [Sensitive]
     public string Email { get; init; } = string.Empty;
+
+    [Sensitive]
     public string PhoneNumber { get; init; } = string.Empty;
     public CustomerStatus Status { get; init; }
     public DateTimeOffset RegisteredAt { get; init; }
