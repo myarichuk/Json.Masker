@@ -10,9 +10,25 @@ Accept: application/json
     }
 %}
 
+### Get all customers (masked)
+GET {{baseUrl}}/api/customers
+Accept: application/json
+X-Json-Mask: true
+
+> {%
+    if (response.status === 200 && Array.isArray(response.body) && response.body.length > 0) {
+        client.global.set("customerId", response.body[0].id);
+    }
+%}
+
 ### Get a customer by id
 GET {{baseUrl}}/api/customers/{{customerId}}
 Accept: application/json
+
+### Get a customer by id (Masked)
+GET {{baseUrl}}/api/customers/{{customerId}}
+Accept: application/json
+X-Json-Mask: true
 
 ### Get all orders
 GET {{baseUrl}}/api/orders
