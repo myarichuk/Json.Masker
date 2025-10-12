@@ -5,6 +5,7 @@ using Json.Masker.Abstract;
 using Json.Masker.Newtonsoft;
 using Json.Masker.SystemTextJson;
 using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace DefaultMaskerBenchmark;
 
@@ -13,8 +14,8 @@ public class DefaultMaskingServiceSerializationBenchmark
 {
     private static readonly MaskingContext DisabledMaskingContext = new();
 
-    private readonly MaskingContext _maskingContext = new() { Enabled = true };
-    private readonly SampleCustomer _customer = new()
+    private readonly MaskingContext maskingContext = new() { Enabled = true };
+    private readonly SampleCustomer customer = new()
     {
         Name = "Alice",
         CreditCard = "4111111111111234",
@@ -25,35 +26,35 @@ public class DefaultMaskingServiceSerializationBenchmark
             "Knitting",
             "Skiing",
             "Gardening"
-        ]
+        ],
     };
 
-    private JsonSerializerSettings _newtonsoftSettings = default!;
-    private JsonSerializerOptions _systemTextOptions = default!;
+    private JsonSerializerSettings newtonsoftSettings = default!;
+    private JsonSerializerOptions systemTextOptions = default!;
 
     [GlobalSetup]
     public void Setup()
     {
         var maskingService = new DefaultMaskingService();
 
-        _newtonsoftSettings = new JsonSerializerSettings();
-        new NewtonsoftJsonMaskingConfigurator(maskingService).Configure(_newtonsoftSettings);
+        newtonsoftSettings = new JsonSerializerSettings();
+        new NewtonsoftJsonMaskingConfigurator(maskingService).Configure(newtonsoftSettings);
 
-        _systemTextOptions = new JsonSerializerOptions();
-        new SystemTextJsonMaskingConfigurator(maskingService).Configure(_systemTextOptions);
+        systemTextOptions = new JsonSerializerOptions();
+        new SystemTextJsonMaskingConfigurator(maskingService).Configure(systemTextOptions);
     }
 
     [Benchmark]
     public string NewtonsoftSerialization() =>
-        ExecuteWithMasking(() => JsonConvert.SerializeObject(_customer, Formatting.None, _newtonsoftSettings));
+        ExecuteWithMasking(() => JsonConvert.SerializeObject(customer, Formatting.None, newtonsoftSettings));
 
     [Benchmark]
     public string SystemTextJsonSerialization() =>
-        ExecuteWithMasking(() => JsonSerializer.Serialize(_customer, _systemTextOptions));
+        ExecuteWithMasking(() => JsonSerializer.Serialize(customer, systemTextOptions));
 
     private string ExecuteWithMasking(Func<string> serializer)
     {
-        MaskingContextAccessor.Set(_maskingContext);
+        MaskingContextAccessor.Set(maskingContext);
 
         try
         {

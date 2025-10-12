@@ -8,7 +8,7 @@ namespace Json.Masker.SystemTextJson;
 /// Configures System.Text.Json to apply masking during serialization.
 /// </summary>
 /// <param name="maskingService">The masking service to use.</param>
-internal class SystemTextJsonMaskingConfigurator(IMaskingService maskingService) : IJsonMaskingConfigurator
+public class SystemTextJsonMaskingConfigurator(IMaskingService maskingService) : IJsonMaskingConfigurator
 {
     /// <inheritdoc />
     public void Configure(object settings)
