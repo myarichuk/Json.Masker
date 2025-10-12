@@ -13,7 +13,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Json.Masker.AspNet\Json.Masker.AspNet.csproj" />
       <ProjectReference Include="..\Json.Masker.SystemTextJson\Json.Masker.SystemTextJson.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
     </ItemGroup>
 
 </Project>

@@ -1,3 +1,4 @@
+using Json.Masker.AspNet;
 using Json.Masker.IntegrationSample.Services;
 using Json.Masker.SystemTextJson;
 
@@ -16,5 +17,6 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseTextJsonMasking();
 app.MapControllers();
 app.Run();
