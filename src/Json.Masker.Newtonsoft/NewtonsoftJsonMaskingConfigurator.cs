@@ -7,7 +7,7 @@ namespace Json.Masker.Newtonsoft;
 /// Configures Newtonsoft.Json to apply masking during serialization.
 /// </summary>
 /// <param name="maskingService">The masking service to use.</param>
-internal class NewtonsoftJsonMaskingConfigurator(IMaskingService maskingService) : IJsonMaskingConfigurator
+public class NewtonsoftJsonMaskingConfigurator(IMaskingService maskingService) : IJsonMaskingConfigurator
 {
     /// <inheritdoc />
     public void Configure(object settings)
