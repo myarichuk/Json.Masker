@@ -3,6 +3,47 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v1.0.0-17](https://github.com/myarichuk/Json.Masker/compare/v0.5.5-2...v1.0.0-17) - 2025-10-12
+
+
+
+### Build
+
+- disable implicit static web assets in sample ([52a4f83](https://github.com/myarichuk/Json.Masker/commit/52a4f83269aad0796b8f2818f68a4147a9893fb2))
+  
+  
+  
+  
+### Fixes
+
+- revert changelog generator template so it would properly work ([7131f88](https://github.com/myarichuk/Json.Masker/commit/7131f88303ac8b964a5b8c1f264a4e9451ff17eb))
+  
+  
+  
+### Performance
+
+- reduce allocations in scalar masking ([de6e67f](https://github.com/myarichuk/Json.Masker/commit/de6e67f4bed6974834cb7362f03e91ca7ea62a6a))
+  
+  
+  
+### Refactoring
+
+- showcase masking strategies in sample data ([891b09c](https://github.com/myarichuk/Json.Masker/commit/891b09cec00f3f1dbd5a2953176b50a29576edce))
+  
+  
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#49](https://github.com/myarichuk/Json.Masker/issues/49) from myarichuk/feat/add-integration-sample
+  
+  
+
+
 ## [v0.5.5-2](https://github.com/myarichuk/Json.Masker/compare/v0.5.3-2...v0.5.5-2) - 2025-10-10
 
 

@@ -40,6 +40,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "benchmarks", "benchmarks", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultMaskerBenchmark", "benchmarks\DefaultMaskerBenchmark\DefaultMaskerBenchmark.csproj", "{E54F0E00-66CB-44F4-B244-80ADB9AFD618}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Masker.IntegrationSample", "src\Json.Masker.IntegrationSample\Json.Masker.IntegrationSample.csproj", "{FFA03887-B55D-4BF3-BDE4-D155CDA91356}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Masker.AspNet", "src\Json.Masker.AspNet\Json.Masker.AspNet.csproj", "{471B1020-84E8-47DE-B287-82D202D5634A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Masker.AspNet.Newtonsoft", "src\Json.Masker.AspNet.Newtonsoft\Json.Masker.AspNet.Newtonsoft.csproj", "{FA810D73-09A9-43DC-B34C-22829DADEA3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +72,18 @@ Global
 		{E54F0E00-66CB-44F4-B244-80ADB9AFD618}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E54F0E00-66CB-44F4-B244-80ADB9AFD618}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E54F0E00-66CB-44F4-B244-80ADB9AFD618}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFA03887-B55D-4BF3-BDE4-D155CDA91356}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFA03887-B55D-4BF3-BDE4-D155CDA91356}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFA03887-B55D-4BF3-BDE4-D155CDA91356}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFA03887-B55D-4BF3-BDE4-D155CDA91356}.Release|Any CPU.Build.0 = Release|Any CPU
+		{471B1020-84E8-47DE-B287-82D202D5634A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{471B1020-84E8-47DE-B287-82D202D5634A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{471B1020-84E8-47DE-B287-82D202D5634A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{471B1020-84E8-47DE-B287-82D202D5634A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA810D73-09A9-43DC-B34C-22829DADEA3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA810D73-09A9-43DC-B34C-22829DADEA3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA810D73-09A9-43DC-B34C-22829DADEA3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA810D73-09A9-43DC-B34C-22829DADEA3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +95,9 @@ Global
 		{CE7232C7-C5B2-4C5F-88B7-3D716DA480DB} = {698242D0-C732-49B2-8FC8-1C973A81A118}
 		{108192C6-0C5F-43C4-9D93-44C61D19E414} = {698242D0-C732-49B2-8FC8-1C973A81A118}
 		{E54F0E00-66CB-44F4-B244-80ADB9AFD618} = {586F7D10-EC72-4AA4-9BE7-270D4DA35A2D}
+		{FFA03887-B55D-4BF3-BDE4-D155CDA91356} = {698242D0-C732-49B2-8FC8-1C973A81A118}
+		{471B1020-84E8-47DE-B287-82D202D5634A} = {698242D0-C732-49B2-8FC8-1C973A81A118}
+		{FA810D73-09A9-43DC-B34C-22829DADEA3B} = {698242D0-C732-49B2-8FC8-1C973A81A118}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B2F59F0-7149-4FF1-BF84-43FFFBC1622E}
