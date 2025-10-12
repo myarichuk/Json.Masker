@@ -10,6 +10,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 namespace DefaultMaskerBenchmark;
 
 [MemoryDiagnoser]
+[ThreadingDiagnoser]
 public class DefaultMaskingServiceSerializationBenchmark
 {
     private static readonly MaskingContext DisabledMaskingContext = new();
