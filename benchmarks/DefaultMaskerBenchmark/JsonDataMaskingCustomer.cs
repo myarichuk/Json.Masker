@@ -1,11 +1,11 @@
-using Json.Masker.Abstract;
+using JsonDataMasking.Attributes;
 
 namespace DefaultMaskerBenchmark;
 
 /// <summary>
-/// Represents the customer contract used to exercise the default masking service.
+/// Represents the customer contract configured for the JsonDataMasking benchmarks.
 /// </summary>
-public sealed class SampleCustomer
+public sealed class JsonDataMaskingCustomer
 {
     /// <summary>
     /// Gets or sets the customer's name, which remains unmasked.
@@ -15,24 +15,24 @@ public sealed class SampleCustomer
     /// <summary>
     /// Gets or sets the customer's credit card number and masks all but the last four digits.
     /// </summary>
-    [Sensitive(MaskingStrategy.Creditcard)]
+    [SensitiveData(ShowLast = 4)]
     public string CreditCard { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the customer's social security number and masks all but the last four digits.
     /// </summary>
-    [Sensitive(MaskingStrategy.Ssn)]
+    [SensitiveData(ShowLast = 4)]
     public string SSN { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the customer's age and masks the numeric value.
+    /// Gets or sets the customer's age. The value is represented as a string to align with JsonDataMasking's supported types.
     /// </summary>
-    [Sensitive]
-    public int Age { get; set; }
+    [SensitiveData(SubstituteText = "***")]
+    public string Age { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the customer's hobbies and redacts each entry.
+    /// Gets or sets the customer's hobbies and replaces each entry with a redacted placeholder.
     /// </summary>
-    [Sensitive(MaskingStrategy.Redacted)]
+    [SensitiveData(SubstituteText = "REDACTED")]
     public List<string> Hobbies { get; set; } = [];
 }
