@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v1.0.3-21](https://github.com/myarichuk/Json.Masker/compare/v1.0.0-17...v1.0.3-21) - 2025-10-12
+
+
+
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#53](https://github.com/myarichuk/Json.Masker/issues/53) from myarichuk/codex/add-benchmarks-folder-and-implement-benchmark.net
+  
+  
+
+
 ## [v1.0.0-17](https://github.com/myarichuk/Json.Masker/compare/v0.5.5-2...v1.0.0-17) - 2025-10-12
 
 
