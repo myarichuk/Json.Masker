@@ -1,8 +1,9 @@
-﻿using System.Text;
+﻿using System;
+using System.Buffers;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Json.Masker.Abstract;
-using Microsoft.IO;
 
 namespace Json.Masker.SystemTextJson;
 
@@ -12,8 +13,6 @@ namespace Json.Masker.SystemTextJson;
 /// <typeparam name="T">The type being converted.</typeparam>
 public sealed class MaskingScalarConverter<T> : JsonConverter<T>
 {
-    private static readonly RecyclableMemoryStreamManager StreamManager = new();
-
     private readonly IMaskingService _maskingService;
     private readonly MaskingStrategy _strategy;
     private readonly JsonConverter<T>? _inner;
@@ -84,8 +83,8 @@ public sealed class MaskingScalarConverter<T> : JsonConverter<T>
         }
         else
         {
-            using var buffer = StreamManager.GetStream();
-            using var tmpWriter = new Utf8JsonWriter((Stream)buffer);
+            using var buffer = new PooledByteBufferWriter();
+            using var tmpWriter = new Utf8JsonWriter(buffer);
 
             if (_inner is not null)
             {
@@ -98,21 +97,16 @@ public sealed class MaskingScalarConverter<T> : JsonConverter<T>
 
             tmpWriter.Flush();
 
-            string rawJson;
-            if (buffer.TryGetBuffer(out var segment) && segment.Array is not null)
+            var writtenSpan = buffer.WrittenSpan;
+            string rawValue;
+
+            if (writtenSpan.Length >= 2 && writtenSpan[0] == '"' && writtenSpan[^1] == '"')
             {
-                rawJson = Encoding.UTF8.GetString(segment.Array, segment.Offset, segment.Count);
+                rawValue = JsonSerializer.Deserialize<string>(writtenSpan) ?? string.Empty;
             }
             else
             {
-                rawJson = Encoding.UTF8.GetString(buffer.ToArray());
-            }
-
-            var rawValue = rawJson;
-
-            if (rawJson is ['"', _, ..] && rawJson[^1] == '"')
-            {
-                rawValue = JsonSerializer.Deserialize<string>(rawJson) ?? string.Empty;
+                rawValue = Encoding.UTF8.GetString(writtenSpan);
             }
 
             masked = _maskingService.Mask(rawValue, _strategy, _pattern, ctx);
@@ -120,5 +114,70 @@ public sealed class MaskingScalarConverter<T> : JsonConverter<T>
 
         // Always emit as string so the masked output is valid JSON
         writer.WriteStringValue(masked);
+    }
+
+    private sealed class PooledByteBufferWriter : IBufferWriter<byte>, IDisposable
+    {
+        private byte[] _buffer;
+        private int _index;
+
+        public PooledByteBufferWriter(int initialCapacity = 256)
+        {
+            _buffer = ArrayPool<byte>.Shared.Rent(initialCapacity);
+        }
+
+        public ReadOnlySpan<byte> WrittenSpan => _buffer.AsSpan(0, _index);
+
+        public void Advance(int count)
+        {
+            _index += count;
+        }
+
+        public Memory<byte> GetMemory(int sizeHint = 0)
+        {
+            EnsureCapacity(sizeHint);
+            return _buffer.AsMemory(_index);
+        }
+
+        public Span<byte> GetSpan(int sizeHint = 0)
+        {
+            EnsureCapacity(sizeHint);
+            return _buffer.AsSpan(_index);
+        }
+
+        public void Dispose()
+        {
+            var buffer = _buffer;
+            _buffer = Array.Empty<byte>();
+            if (buffer.Length > 0)
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
+            }
+        }
+
+        private void EnsureCapacity(int sizeHint)
+        {
+            if (sizeHint < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(sizeHint));
+            }
+
+            if (sizeHint == 0)
+            {
+                sizeHint = 1;
+            }
+
+            var required = _index + sizeHint;
+            if (required <= _buffer.Length)
+            {
+                return;
+            }
+
+            var newSize = Math.Max(required, _buffer.Length * 2);
+            var newBuffer = ArrayPool<byte>.Shared.Rent(newSize);
+            _buffer.AsSpan(0, _index).CopyTo(newBuffer);
+            ArrayPool<byte>.Shared.Return(_buffer);
+            _buffer = newBuffer;
+        }
     }
 }
