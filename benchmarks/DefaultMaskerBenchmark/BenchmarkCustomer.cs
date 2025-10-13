@@ -18,7 +18,7 @@ public sealed class BenchmarkCustomer
     /// <summary>
     /// Gets or sets the customer's credit card number. Only the last four digits should remain visible.
     /// </summary>
-    [Sensitive(MaskingStrategy.Creditcard)]
+    [Sensitive]
     [Masked]
     [SensitiveData(ShowLast = 4)]
     public string CreditCard { get; set; } = string.Empty;
@@ -26,7 +26,7 @@ public sealed class BenchmarkCustomer
     /// <summary>
     /// Gets or sets the customer's social security number. Only the last four digits should remain visible.
     /// </summary>
-    [Sensitive(MaskingStrategy.Ssn)]
+    [Sensitive]
     [Masked]
     [SensitiveData(ShowLast = 4)]
     public string SSN { get; set; } = string.Empty;
@@ -34,7 +34,7 @@ public sealed class BenchmarkCustomer
     /// <summary>
     /// Gets or sets the customer's email address. The user and domain segments are masked during serialization.
     /// </summary>
-    [Sensitive(MaskingStrategy.Email)]
+    [Sensitive]
     [Masked]
     [SensitiveData(SubstituteText = "***@***.***")]
     public string Email { get; set; } = string.Empty;
@@ -42,7 +42,7 @@ public sealed class BenchmarkCustomer
     /// <summary>
     /// Gets or sets the customer's International Bank Account Number (IBAN).
     /// </summary>
-    [Sensitive(MaskingStrategy.Iban)]
+    [Sensitive]
     [Masked]
     [SensitiveData(ShowLast = 4)]
     public string Iban { get; set; } = string.Empty;
