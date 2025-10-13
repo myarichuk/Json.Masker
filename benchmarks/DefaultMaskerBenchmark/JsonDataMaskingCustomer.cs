@@ -34,5 +34,5 @@ public sealed class JsonDataMaskingCustomer
     /// Gets or sets the customer's hobbies and replaces each entry with a redacted placeholder.
     /// </summary>
     [SensitiveData(SubstituteText = "REDACTED")]
-    public List<string> Hobbies { get; set; } = [];
+    public List<string> Hobbies { get; set; } = ["Knitting", "Fishing", "Coding"];
 }
