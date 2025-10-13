@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JsonDataMasking" Version="2.0.1" />
     <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
   </ItemGroup>
 
@@ -15,5 +14,11 @@
     <ProjectReference Include="..\..\src\Json.Masker.Abstract\Json.Masker.Abstract.csproj" />
     <ProjectReference Include="..\..\src\Json.Masker.Newtonsoft\Json.Masker.Newtonsoft.csproj" />
     <ProjectReference Include="..\..\src\Json.Masker.SystemTextJson\Json.Masker.SystemTextJson.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="JsonDataMasking">
+      <HintPath>..\JsonDataMasking.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

@@ -34,5 +34,5 @@ public sealed class SampleCustomer
     /// Gets or sets the customer's hobbies and redacts each entry.
     /// </summary>
     [Sensitive(MaskingStrategy.Redacted)]
-    public List<string> Hobbies { get; set; } = [];
+    public List<string> Hobbies { get; set; } = ["Knitting", "Fishing", "Coding"];
 }
