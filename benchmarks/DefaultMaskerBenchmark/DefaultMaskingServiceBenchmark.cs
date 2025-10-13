@@ -1,4 +1,3 @@
-using System;
 using System.Text.Json;
 using BenchmarkDotNet.Attributes;
 using Json.Masker.Abstract;
@@ -14,17 +13,16 @@ namespace DefaultMaskerBenchmark;
 /// Benchmarks the default masking service against different JSON serializers and a third-party masking library.
 /// </summary>
 [MemoryDiagnoser]
-[ThreadingDiagnoser]
-public class DefaultMaskingServiceSerializationBenchmark
+public class DefaultMaskingServiceBenchmark
 {
     private static readonly MaskingContext DisabledMaskingContext = new();
 
-    private readonly MaskingContext maskingContext = new() { Enabled = true };
-    private readonly SampleCustomer customer = SampleDataFactory.CreateSampleCustomer();
-    private readonly JsonDataMaskingCustomer jsonDataMaskingCustomer = SampleDataFactory.CreateJsonDataMaskingCustomer();
+    private readonly MaskingContext _maskingContext = new() { Enabled = true };
+    private readonly SampleCustomer _customer = SampleDataFactory.CreateSampleCustomer();
+    private readonly JsonDataMaskingCustomer _jsonDataMaskingCustomer = SampleDataFactory.CreateJsonDataMaskingCustomer();
 
-    private JsonSerializerSettings newtonsoftSettings = default!;
-    private JsonSerializerOptions systemTextOptions = default!;
+    private JsonSerializerSettings _newtonsoftSettings = default!;
+    private JsonSerializerOptions _systemTextOptions = default!;
 
     /// <summary>
     /// Configures the serializer options required for the benchmarks.
@@ -35,12 +33,12 @@ public class DefaultMaskingServiceSerializationBenchmark
         var maskingService = new DefaultMaskingService();
 
         var newtonsoftConfigurator = new NewtonsoftJsonMaskingConfigurator(maskingService);
-        newtonsoftSettings = new JsonSerializerSettings();
-        newtonsoftConfigurator.Configure(newtonsoftSettings);
+        _newtonsoftSettings = new JsonSerializerSettings();
+        newtonsoftConfigurator.Configure(_newtonsoftSettings);
 
         var systemTextConfigurator = new SystemTextJsonMaskingConfigurator(maskingService);
-        systemTextOptions = new JsonSerializerOptions();
-        systemTextConfigurator.Configure(systemTextOptions);
+        _systemTextOptions = new JsonSerializerOptions();
+        systemTextConfigurator.Configure(_systemTextOptions);
     }
 
     /// <summary>
@@ -48,14 +46,14 @@ public class DefaultMaskingServiceSerializationBenchmark
     /// </summary>
     [Benchmark]
     public string NewtonsoftSerialization() =>
-        SerializeWithMaskingContext(() => JsonConvert.SerializeObject(customer, Formatting.None, newtonsoftSettings));
+        SerializeWithMaskingContext(() => JsonConvert.SerializeObject(_customer, Formatting.None, _newtonsoftSettings));
 
     /// <summary>
     /// Serializes the sample customer using System.Text.Json while the default masking service is enabled.
     /// </summary>
     [Benchmark]
     public string SystemTextJsonSerialization() =>
-        SerializeWithMaskingContext(() => JsonSerializer.Serialize(customer, systemTextOptions));
+        SerializeWithMaskingContext(() => JsonSerializer.Serialize(_customer, _systemTextOptions));
 
     /// <summary>
     /// Masks the sample customer with the JsonDataMasking library and serializes it using Newtonsoft.Json.
@@ -63,7 +61,7 @@ public class DefaultMaskingServiceSerializationBenchmark
     [Benchmark]
     public string JsonDataMaskingSerialization()
     {
-        var maskedCustomer = JsonMask.MaskSensitiveData(jsonDataMaskingCustomer);
+        var maskedCustomer = JsonMask.MaskSensitiveData(_jsonDataMaskingCustomer);
         return JsonConvert.SerializeObject(maskedCustomer, Formatting.None);
     }
 
@@ -72,7 +70,7 @@ public class DefaultMaskingServiceSerializationBenchmark
     /// </summary>
     private string SerializeWithMaskingContext(Func<string> serializer)
     {
-        MaskingContextAccessor.Set(maskingContext);
+        MaskingContextAccessor.Set(_maskingContext);
 
         try
         {
