@@ -1,17 +1,12 @@
-using System.Globalization;
-using System.Linq;
+using System;
 using System.Text.Json;
 using BenchmarkDotNet.Attributes;
-using Byndyusoft.MaskedSerialization;
 using Byndyusoft.MaskedSerialization.Helpers;
 using Json.Masker.Abstract;
 using Json.Masker.Newtonsoft;
 using Json.Masker.SystemTextJson;
 using JsonDataMasking.Masks;
 using JsonMasking;
-using Microsoft.Extensions.Compliance.Classification;
-using Microsoft.Extensions.Compliance.Redaction;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -24,12 +19,11 @@ namespace DefaultMaskerBenchmark;
 public class SerializationBenchmark
 {
     private static readonly MaskingContext DisabledMaskingContext = new();
-    private const string JsonMaskingReplacement = "***";
+    private const string JsonMaskingReplacement = "****";
 
     private readonly MaskingContext _maskingContext = new() { Enabled = true };
-    private readonly SampleCustomer _customer = SampleDataFactory.CreateSampleCustomer();
-    private readonly JsonDataMaskingCustomer _jsonDataMaskingCustomer = SampleDataFactory.CreateJsonDataMaskingCustomer();
-    private ByndyusoftCustomer _byndyusoftCustomer = null!;
+    private BenchmarkCustomer _customer = null!;
+    private BenchmarkCustomer _byndyusoftCustomer = null!;
 
     private JsonSerializerSettings _newtonsoftSettings = null!;
     private JsonSerializerOptions _systemTextOptions = null!;
@@ -45,6 +39,9 @@ public class SerializationBenchmark
     {
         var maskingService = new DefaultMaskingService();
 
+        _customer = SampleDataFactory.CreateCustomer();
+        _byndyusoftCustomer = SampleDataFactory.CreateCustomer();
+
         var newtonsoftConfigurator = new NewtonsoftJsonMaskingConfigurator(maskingService);
         _newtonsoftSettings = new JsonSerializerSettings();
         newtonsoftConfigurator.Configure(_newtonsoftSettings);
@@ -53,12 +50,13 @@ public class SerializationBenchmark
         _systemTextOptions = new JsonSerializerOptions();
         systemTextConfigurator.Configure(_systemTextOptions);
 
-        _byndyusoftCustomer = SampleDataFactory.CreateByndyusoftCustomer();
         _byndyusoftOptions = new JsonSerializerOptions();
         MaskedSerializationHelper.SetupOptionsForMaskedSerialization(_byndyusoftOptions);
 
         _jsonMaskingPayload = SampleDataFactory.CreateJsonMaskingPayload();
-        _jsonMaskingTargets = ["CreditCard", "SSN", "Age", "Hobbies", "Hobbies.*"];
+        _jsonMaskingTargets = SampleDataFactory.CreateJsonMaskingTargets();
+
+        MaskingContextAccessor.Set(DisabledMaskingContext);
     }
 
     /// <summary>
@@ -81,7 +79,7 @@ public class SerializationBenchmark
     [Benchmark]
     public string JsonDataMaskingSerialization()
     {
-        var maskedCustomer = JsonMask.MaskSensitiveData(_jsonDataMaskingCustomer);
+        var maskedCustomer = JsonMask.MaskSensitiveData(SampleDataFactory.CreateCustomer());
         return JsonConvert.SerializeObject(maskedCustomer, Formatting.None);
     }
 
