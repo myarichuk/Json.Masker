@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v1.1.1-3](https://github.com/myarichuk/Json.Masker/compare/v1.0.7-2...v1.1.1-3) - 2025-10-13
+
+
+
+  
+### Features
+
+- **benchmarks:** expand masking comparisons ([bab50b5](https://github.com/myarichuk/Json.Masker/commit/bab50b53f352e55237920d611c9645b3b1b655a1))
+  
+  
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#61](https://github.com/myarichuk/Json.Masker/issues/61) from myarichuk/chore/improve-benchmark-and-optimize
+  
+- Merge pull request [#56](https://github.com/myarichuk/Json.Masker/issues/56) from myarichuk/codex/add-libraries-to-benchmark-project
+  
+  
+
+
 ## [v1.0.7-2](https://github.com/myarichuk/Json.Masker/compare/v1.0.5-2...v1.0.7-2) - 2025-10-13
 
 
