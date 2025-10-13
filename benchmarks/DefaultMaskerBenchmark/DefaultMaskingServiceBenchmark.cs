@@ -1,162 +1,65 @@
-using System.Globalization;
-using System.Linq;
-using System.Text.Json;
-using BenchmarkDotNet.Attributes;
-using Byndyusoft.MaskedSerialization;
+﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Configs;
 using Json.Masker.Abstract;
-using Json.Masker.Newtonsoft;
-using Json.Masker.SystemTextJson;
-using JsonDataMasking.Masks;
-using JsonMasking;
-using Microsoft.Extensions.Compliance.Classification;
-using Microsoft.Extensions.Compliance.Redaction;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace DefaultMaskerBenchmark;
 
-/// <summary>
-/// Benchmarks the default masking service against different JSON serializers and a third-party masking library.
-/// </summary>
 [MemoryDiagnoser]
-public class DefaultMaskingServiceBenchmark
+[Config(typeof(Config))]
+public class DefaultMaskingServiceBenchmarks
 {
-    private static readonly MaskingContext DisabledMaskingContext = new();
-    private static readonly DataClassificationSet CreditCardClassification = new(new DataClassification("Customer", "CreditCard"));
-    private static readonly DataClassificationSet SsnClassification = new(new DataClassification("Customer", "SocialSecurityNumber"));
-    private static readonly DataClassificationSet AgeClassification = new(new DataClassification("Customer", "Age"));
-    private static readonly DataClassificationSet HobbiesClassification = new(new DataClassification("Customer", "Hobbies"));
-    private const string JsonMaskingReplacement = "***";
+    private readonly DefaultMaskingService _service = new();
+    private readonly MaskingContext _ctx = new() { Enabled = true };
 
-    private readonly MaskingContext _maskingContext = new() { Enabled = true };
-    private readonly SampleCustomer _customer = SampleDataFactory.CreateSampleCustomer();
-    private readonly JsonDataMaskingCustomer _jsonDataMaskingCustomer = SampleDataFactory.CreateJsonDataMaskingCustomer();
-    private ByndyusoftCustomer _byndyusoftCustomer = default!;
+    [Params(
+        "4111111111111111",
+        "123-45-6789",
+        "john.doe@example.com",
+        "DE89370400440532013000",
+        "SensitiveValue"
+    )]
+    public string Input { get; set; } = string.Empty;
 
-    private JsonSerializerSettings _newtonsoftSettings = default!;
-    private JsonSerializerOptions _systemTextOptions = default!;
-    private JsonSerializerOptions _byndyusoftOptions = default!;
-    private string _jsonMaskingPayload = string.Empty;
-    private string[] _jsonMaskingTargets = Array.Empty<string>();
-    private ServiceProvider? _complianceProvider;
-    private Redactor _creditCardRedactor = default!;
-    private Redactor _ssnRedactor = default!;
-    private Redactor _ageRedactor = default!;
-    private Redactor _hobbiesRedactor = default!;
+    [Params(
+        MaskingStrategy.Creditcard,
+        MaskingStrategy.Ssn,
+        MaskingStrategy.Email,
+        MaskingStrategy.Iban,
+        MaskingStrategy.Redacted,
+        MaskingStrategy.Default
+    )]
+    public MaskingStrategy Strategy { get; set; }
 
-    /// <summary>
-    /// Configures the serializer options required for the benchmarks.
-    /// </summary>
-    [GlobalSetup]
-    public void Setup()
+    [Benchmark(Baseline = true, Description = "Unified Mask() entrypoint")]
+    public string Unified_Mask()
     {
-        var maskingService = new DefaultMaskingService();
-
-        var newtonsoftConfigurator = new NewtonsoftJsonMaskingConfigurator(maskingService);
-        _newtonsoftSettings = new JsonSerializerSettings();
-        newtonsoftConfigurator.Configure(_newtonsoftSettings);
-
-        var systemTextConfigurator = new SystemTextJsonMaskingConfigurator(maskingService);
-        _systemTextOptions = new JsonSerializerOptions();
-        systemTextConfigurator.Configure(_systemTextOptions);
-
-        _byndyusoftCustomer = SampleDataFactory.CreateByndyusoftCustomer();
-        _byndyusoftOptions = new JsonSerializerOptions();
-        MaskedSerializationHelper.SetupSettingsForMaskedSerialization(_byndyusoftOptions);
-
-        _jsonMaskingPayload = SampleDataFactory.CreateJsonMaskingPayload();
-        _jsonMaskingTargets = ["CreditCard", "SSN", "Age", "Hobbies", "Hobbies.*"];
-
-        var services = new ServiceCollection();
-        services.AddRedaction(builder =>
-        {
-            builder.SetRedactor<FixedAsteriskRedactor>(CreditCardClassification, SsnClassification, AgeClassification, HobbiesClassification);
-            builder.SetFallbackRedactor<FixedAsteriskRedactor>();
-        });
-
-        _complianceProvider = services.BuildServiceProvider();
-        var redactorProvider = _complianceProvider.GetRequiredService<IRedactorProvider>();
-        _creditCardRedactor = redactorProvider.GetRedactor(CreditCardClassification);
-        _ssnRedactor = redactorProvider.GetRedactor(SsnClassification);
-        _ageRedactor = redactorProvider.GetRedactor(AgeClassification);
-        _hobbiesRedactor = redactorProvider.GetRedactor(HobbiesClassification);
+        return _service.Mask(Input, Strategy, pattern: null, _ctx);
     }
 
-    /// <summary>
-    /// Serializes the sample customer using Newtonsoft.Json while the default masking service is enabled.
-    /// </summary>
-    [Benchmark]
-    public string NewtonsoftSerialization() =>
-        SerializeWithMaskingContext(() => JsonConvert.SerializeObject(_customer, Formatting.None, _newtonsoftSettings));
+    [Benchmark(Description = "Mask Credit Card Direct")]
+    public string Mask_CreditCard() => _service.Mask("4111111111111111", MaskingStrategy.Creditcard, null, _ctx);
 
-    /// <summary>
-    /// Serializes the sample customer using System.Text.Json while the default masking service is enabled.
-    /// </summary>
-    [Benchmark]
-    public string SystemTextJsonSerialization() =>
-        SerializeWithMaskingContext(() => JsonSerializer.Serialize(_customer, _systemTextOptions));
+    [Benchmark(Description = "Mask SSN Direct")]
+    public string Mask_SSN() => _service.Mask("123-45-6789", MaskingStrategy.Ssn, null, _ctx);
 
-    /// <summary>
-    /// Masks the sample customer with the JsonDataMasking library and serializes it using Newtonsoft.Json.
-    /// </summary>
-    [Benchmark]
-    public string JsonDataMaskingSerialization()
+    [Benchmark(Description = "Mask Email Direct")]
+    public string Mask_Email() => _service.Mask("john.doe@example.com", MaskingStrategy.Email, null, _ctx);
+
+    [Benchmark(Description = "Mask IBAN Direct")]
+    public string Mask_Iban() => _service.Mask("DE89370400440532013000", MaskingStrategy.Iban, null, _ctx);
+
+    [Benchmark(Description = "Custom Pattern Masking")]
+    public string Mask_CustomPattern()
     {
-        var maskedCustomer = JsonMask.MaskSensitiveData(_jsonDataMaskingCustomer);
-        return JsonConvert.SerializeObject(maskedCustomer, Formatting.None);
+        return _service.Mask("ABCDEFG1234567", MaskingStrategy.Default, "###-***-###", _ctx);
     }
 
-    /// <summary>
-    /// Masks the sample payload using the JsonMasking library and returns the resulting JSON.
-    /// </summary>
-    [Benchmark]
-    public string JsonMaskingSerialization() => _jsonMaskingPayload.MaskFields(_jsonMaskingTargets, JsonMaskingReplacement);
-
-    /// <summary>
-    /// Serializes the Byndyusoft masked customer with System.Text.Json using the library's helper configuration.
-    /// </summary>
-    [Benchmark]
-    public string ByndyusoftSystemTextJsonSerialization() => JsonSerializer.Serialize(_byndyusoftCustomer, _byndyusoftOptions);
-
-    /// <summary>
-    /// Redacts the sample customer using Microsoft.Extensions.Compliance.Redaction before serializing with System.Text.Json.
-    /// </summary>
-    [Benchmark]
-    public string MicrosoftComplianceRedactionSerialization()
+    public class Config : ManualConfig
     {
-        var redactedCustomer = new
+        public Config()
         {
-            _customer.Name,
-            CreditCard = _creditCardRedactor.Redact(_customer.CreditCard),
-            SSN = _ssnRedactor.Redact(_customer.SSN),
-            Age = _ageRedactor.Redact(_customer.Age.ToString(CultureInfo.InvariantCulture)),
-            Hobbies = _customer.Hobbies.Select(hobby => _hobbiesRedactor.Redact(hobby)).ToArray(),
-        };
-
-        return JsonSerializer.Serialize(redactedCustomer);
-    }
-
-    /// <summary>
-    /// Runs a serialization delegate within an enabled masking context to capture masked output.
-    /// </summary>
-    private string SerializeWithMaskingContext(Func<string> serializer)
-    {
-        MaskingContextAccessor.Set(_maskingContext);
-
-        try
-        {
-            return serializer();
-        }
-        finally
-        {
-            MaskingContextAccessor.Set(DisabledMaskingContext);
+            AddColumn(BenchmarkDotNet.Columns.StatisticColumn.AllStatistics);
+            AddDiagnoser(BenchmarkDotNet.Diagnosers.MemoryDiagnoser.Default);
         }
     }
-
-    /// <summary>
-    /// Disposes resources created for the Microsoft.Extensions.Compliance.Redaction benchmark.
-    /// </summary>
-    [GlobalCleanup]
-    public void Cleanup() => _complianceProvider?.Dispose();
 }

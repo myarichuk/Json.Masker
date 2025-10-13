@@ -231,3 +231,16 @@ Releases are automated through GitHub Actions:
 1. Open a pull request with conventional commits.
 2. Create a PR into `main`
 3. Once it is merged, a Github Action workflow would publish to NuGet and create downloadable artifacts.
+
+## Performance
+
+The current performance benchmarks look like this:  
+
+| Method                                    | Mean       | Error     | StdDev    | Median     | Gen0   | Allocated |
+|-------------------------------------------|-----------:|----------:|----------:|-----------:|-------:|----------:|
+| NewtonsoftSerialization (Json.Masker)     | 1,691.8 ns | 182.84 ns | 539.10 ns | 1,407.0 ns | 0.2050 |    2576 B |
+| SystemTextJsonSerialization (Json.Masker) | 1,713.7 ns |  94.32 ns | 273.65 ns | 1,668.7 ns | 0.0954 |    1224 B |
+| JsonDataMaskingSerialization              | 8,185.4 ns | 215.26 ns | 600.06 ns | 8,040.9 ns | 0.3662 |    4856 B |
+| JsonMaskingSerialization                  | 4,844.0 ns | 168.92 ns | 453.79 ns | 4,749.0 ns | 0.2975 |    3744 B |
+| ByndyusoftSystemTextJsonSerialization     |   320.9 ns |  14.02 ns |  40.01 ns |   305.8 ns | 0.0124 |     160 B |
+| MicrosoftComplianceRedactionSerialization |   601.6 ns |  11.81 ns |  33.71 ns |   593.6 ns | 0.0744 |     944 B |
