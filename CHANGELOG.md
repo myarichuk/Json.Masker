@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v1.0.7-2](https://github.com/myarichuk/Json.Masker/compare/v1.0.5-2...v1.0.7-2) - 2025-10-13
+
+
+
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#55](https://github.com/myarichuk/Json.Masker/issues/55) from myarichuk/adjust-benchmark
+  
+  
+
+
 ## [v1.0.5-2](https://github.com/myarichuk/Json.Masker/compare/v1.0.3-21...v1.0.5-2) - 2025-10-12
 
 
