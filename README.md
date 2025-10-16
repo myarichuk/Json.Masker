@@ -2,7 +2,7 @@
 
 Json.Masker is a simple library mask sensitive values when serializing them to JSON. Mark a property with `[Sensitive]`, flip the ambient masking context on, and the library does the rest—no custom DTOs, no brittle string hacks.
 
-> **Work in progress:** A new `Json.Masker.Cli` tool is under active development. The current placeholder build is not suitable for production use yet, but the long-term goal is to ship a self-contained CLI that teams can run in CI/CD pipelines to redact sensitive log output and other JSON artifacts.
+> **Work in progress:** A new `Json.Masker.Cli` tool is under active development. The current placeholder build is not suitable for production use yet, but the long-term goal is to ship a self-contained CLI that teams can run in CI/CD pipelines to redact sensitive log output and other JSON artifacts. The prototype accepts `json-masker --config <rules.json> [--input <payload.json>] [--output <masked.json>]`, requiring a JsonPath rules file and defaulting to STDIN/STDOUT for piping scenarios.
 
 The repository contains the core abstractions plus concrete integrations for both Newtonsoft.Json and `System.Text.Json` so you can keep your favorite serializer and still get automatic masking.
 
@@ -15,7 +15,7 @@ The repository contains the core abstractions plus concrete integrations for bot
 | `Json.Masker.SystemTextJson` | `JsonTypeInfo` modifier that swaps in masking converters when the built-in source generator runs. |
 | `Json.Masker.AspNet` | Middleware and helpers that toggle masking per request and hook the System.Text.Json stack into ASP.NET Core. |
 | `Json.Masker.AspNet.Newtonsoft` | Middleware and helpers that wire the Newtonsoft.Json integration into ASP.NET Core's MVC pipeline. |
-| `Json.Masker.Cli` | **Work in progress.** Placeholder command-line tool intended for CI/CD pipelines to redact sensitive JSON logs. |
+| `Json.Masker.Cli` | **Work in progress.** Placeholder command-line tool intended for CI/CD pipelines to redact sensitive JSON logs. Requires a JsonPath configuration supplied via `--config`. |
 
 All packages version together and ship to NuGet whenever `main` is updated.
 
