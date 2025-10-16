@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v1.1.5-2](https://github.com/myarichuk/Json.Masker/compare/v1.1.3-8...v1.1.5-2) - 2025-10-16
+
+
+
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#66](https://github.com/myarichuk/Json.Masker/issues/66) from myarichuk/codex/add-xml-documentation-and-update-readme
+  
+  
+
+
 ## [v1.1.3-8](https://github.com/myarichuk/Json.Masker/compare/v1.1.1-3...v1.1.3-8) - 2025-10-16
 
 
