@@ -15,7 +15,6 @@ public sealed class MaskingScalarConverter<T> : JsonConverter<T>
 {
     private readonly IMaskingService _maskingService;
     private readonly MaskingStrategy _strategy;
-    private readonly JsonConverter<T>? _inner;
     private readonly string? _pattern;
 
     /// <summary>
@@ -28,18 +27,16 @@ public sealed class MaskingScalarConverter<T> : JsonConverter<T>
     public MaskingScalarConverter(
         IMaskingService maskingService,
         MaskingStrategy strategy,
-        string? pattern,
-        JsonConverter? inner = null)
+        string? pattern)
     {
         _maskingService = maskingService;
         _strategy = strategy;
         _pattern = pattern;
-        _inner = inner as JsonConverter<T>;
     }
 
     /// <inheritdoc />
-    public override bool CanConvert(Type typeToConvert) =>
-        _inner?.CanConvert(typeToConvert) ?? true;
+    public override bool CanConvert(Type typeToConvert) => 
+        typeToConvert == typeof(T);
 
     /// <summary>
     /// Deserialization is not supported for sensitive values.
@@ -62,122 +59,23 @@ public sealed class MaskingScalarConverter<T> : JsonConverter<T>
     {
         var ctx = MaskingContextAccessor.Current;
 
-        if (!ctx.Enabled)
+        // short-circuit
+        if (!ctx.Enabled) 
         {
-            if (_inner is not null)
-            {
-                _inner.Write(writer, value!, options);
-            }
-            else
-            {
-                JsonSerializer.Serialize(writer, value, options);
-            }
-
+            JsonSerializer.Serialize(writer, value, options);
             return;
         }
 
-        string masked;
-        if (value is string valueAsString)
+        string masked; // fallback, can't convert value to string
+        if (value.TryConvertToString(out var valueAsString))
         {
-            masked = _maskingService.Mask(valueAsString, _strategy, _pattern, ctx);
+            masked = _maskingService.Mask(valueAsString ?? string.Empty, _strategy, _pattern);
         }
         else
         {
-            using var buffer = new PooledByteBufferWriter();
-            using var tmpWriter = new Utf8JsonWriter(buffer);
-
-            if (_inner is not null)
-            {
-                _inner.Write(tmpWriter, value!, options);
-            }
-            else
-            {
-                JsonSerializer.Serialize(tmpWriter, value, options);
-            }
-
-            tmpWriter.Flush();
-
-            var writtenSpan = buffer.WrittenSpan;
-            string rawValue;
-
-            if (writtenSpan.Length >= 2 && writtenSpan[0] == '"' && writtenSpan[^1] == '"')
-            {
-                rawValue = JsonSerializer.Deserialize<string>(writtenSpan) ?? string.Empty;
-            }
-            else
-            {
-                rawValue = Encoding.UTF8.GetString(writtenSpan);
-            }
-
-            masked = _maskingService.Mask(rawValue, _strategy, _pattern, ctx);
+            masked = _maskingService.DefaultMask;
         }
 
-        // Always emit as string so the masked output is valid JSON
         writer.WriteStringValue(masked);
-    }
-
-    private sealed class PooledByteBufferWriter : IBufferWriter<byte>, IDisposable
-    {
-        private byte[] _buffer;
-        private int _index;
-
-        public PooledByteBufferWriter(int initialCapacity = 256)
-        {
-            _buffer = ArrayPool<byte>.Shared.Rent(initialCapacity);
-        }
-
-        public ReadOnlySpan<byte> WrittenSpan => _buffer.AsSpan(0, _index);
-
-        public void Advance(int count)
-        {
-            _index += count;
-        }
-
-        public Memory<byte> GetMemory(int sizeHint = 0)
-        {
-            EnsureCapacity(sizeHint);
-            return _buffer.AsMemory(_index);
-        }
-
-        public Span<byte> GetSpan(int sizeHint = 0)
-        {
-            EnsureCapacity(sizeHint);
-            return _buffer.AsSpan(_index);
-        }
-
-        public void Dispose()
-        {
-            var buffer = _buffer;
-            _buffer = Array.Empty<byte>();
-            if (buffer.Length > 0)
-            {
-                ArrayPool<byte>.Shared.Return(buffer);
-            }
-        }
-
-        private void EnsureCapacity(int sizeHint)
-        {
-            if (sizeHint < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(sizeHint));
-            }
-
-            if (sizeHint == 0)
-            {
-                sizeHint = 1;
-            }
-
-            var required = _index + sizeHint;
-            if (required <= _buffer.Length)
-            {
-                return;
-            }
-
-            var newSize = Math.Max(required, _buffer.Length * 2);
-            var newBuffer = ArrayPool<byte>.Shared.Rent(newSize);
-            _buffer.AsSpan(0, _index).CopyTo(newBuffer);
-            ArrayPool<byte>.Shared.Return(_buffer);
-            _buffer = newBuffer;
-        }
     }
 }

@@ -20,7 +20,7 @@ public sealed class IsoDateOnlyConverter : System.Text.Json.Serialization.JsonCo
 /// <summary>
 /// Model that exercises masking when a System.Text.Json converter already formats the value.
 /// </summary>
-public sealed class CustomerWithSystemTextJsonConverter
+public class CustomerWithSystemTextJsonConverter
 {
     [System.Text.Json.Serialization.JsonConverter(typeof(IsoDateOnlyConverter))]
     [Sensitive("####-**-**")]

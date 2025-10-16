@@ -33,8 +33,12 @@ public sealed class MaskingValueProvider : IValueProvider
     public object? GetValue(object target)
     {
         var value = _inner.GetValue(target);
-        var masked = _maskingService.Mask(value, _attr.Strategy, _attr.Pattern, MaskingContextAccessor.Current);
-        return masked;
+        if (value.TryConvertToString(out var valueAsString))
+        {
+            return _maskingService.Mask(valueAsString ?? string.Empty, _attr.Strategy, _attr.Pattern);
+        }
+        
+        return _maskingService.DefaultMask;
     }
 
     /// <summary>

@@ -8,10 +8,14 @@ public interface IMaskingService
     /// <summary>
     /// Produces a masked representation of the provided value using the supplied context and strategy.
     /// </summary>
-    /// <param name="value">The value to mask.</param>
+    /// <param name="str">The value to mask.</param>
     /// <param name="strategy">The masking strategy to apply.</param>
     /// <param name="pattern">Custom masking pattern to apply.</param>
-    /// <param name="ctx">The contextual information about the current masking request.</param>
     /// <returns>The masked value.</returns>
-    string Mask(object? value, MaskingStrategy strategy, string? pattern, MaskingContext ctx);
+    string Mask(ReadOnlySpan<char> str, MaskingStrategy strategy, string? pattern);
+
+    /// <summary>
+    /// Gets the default mask applied when no specific strategy is provided.
+    /// </summary>
+    string DefaultMask { get; }
 }

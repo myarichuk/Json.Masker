@@ -24,27 +24,27 @@ public class DefaultMaskingServiceBenchmarks
 
     [Benchmark(Baseline = true, Description = "Simple Mask")]
     public string Mask_Simple() => 
-        _service.Mask("4111111111111111", MaskingStrategy.Default, pattern: null, _ctx);
+        _service.Mask("4111111111111111", MaskingStrategy.Default, pattern: null);
 
     [Benchmark(Description = "Mask Credit Card Direct")]
     public string Mask_CreditCard() => 
-        _service.Mask("4111111111111111", MaskingStrategy.Creditcard, null, _ctx);
+        _service.Mask("4111111111111111", MaskingStrategy.Creditcard, null);
 
     [Benchmark(Description = "Mask SSN Direct")]
     public string Mask_SSN() => 
-        _service.Mask("123-45-6789", MaskingStrategy.Ssn, null, _ctx);
+        _service.Mask("123-45-6789", MaskingStrategy.Ssn, null);
 
     [Benchmark(Description = "Mask Email Direct")]
     public string Mask_Email() => 
-        _service.Mask("john.doe@example.com", MaskingStrategy.Email, null, _ctx);
+        _service.Mask("john.doe@example.com", MaskingStrategy.Email, null);
 
     [Benchmark(Description = "Mask IBAN Direct")]
     public string Mask_Iban() => 
-        _service.Mask("DE89370400440532013000", MaskingStrategy.Iban, null, _ctx);
+        _service.Mask("DE89370400440532013000", MaskingStrategy.Iban, null);
 
     [Benchmark(Description = "Custom Pattern Masking")]
     public string Mask_CustomPattern() => 
-        _service.Mask("ABCDEFG1234567", MaskingStrategy.Default, "###-***-###", _ctx);
+        _service.Mask("ABCDEFG1234567", MaskingStrategy.Default, "###-***-###");
 
     public class Config : ManualConfig
     {
