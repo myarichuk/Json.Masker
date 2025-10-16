@@ -1,4 +1,4 @@
-namespace DefaultMaskerBenchmark;
+namespace SerializationBenchmarks;
 
 /// <summary>
 /// Provides factory methods for creating shared benchmark sample data.

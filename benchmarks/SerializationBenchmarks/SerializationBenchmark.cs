@@ -10,7 +10,7 @@ using JsonMasking;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace DefaultMaskerBenchmark;
+namespace SerializationBenchmarks;
 
 /*
 Latest:
@@ -37,9 +37,13 @@ Latest:
  */
 
 /// <summary>
-/// Benchmarks various JSON masking and serialization implementations
-/// (Json.Masker, JsonDataMasking, JsonMasking, Byndyusoft.MaskedSerialization)
-/// against a plain System.Text.Json baseline.
+/// Benchmarks Json.Masker against several popular masking libraries to provide
+/// guidance on throughput and allocation trade-offs when serializing rich DTOs.
+///
+/// Compared projects:
+///  * JsonDataMasking (https://github.com/IvanJosipovic/JsonDataMasking)
+///  * JsonMasking (https://github.com/dnauck/JsonMasking)
+///  * Byndyusoft.MaskedSerialization (https://github.com/Byndyusoft/Byndyusoft.MaskedSerialization)
 /// </summary>
 [MemoryDiagnoser]
 public class SerializationBenchmark
@@ -65,21 +69,24 @@ public class SerializationBenchmark
         _customer = SampleDataFactory.CreateCustomer();
         _byndyusoftCustomer = SampleDataFactory.CreateCustomer();
 
-        // Json.Masker (Newtonsoft)
+        // Json.Masker (Newtonsoft) - https://github.com/AvivaSolutions/Json.Masker
         var newtonsoftConfigurator = new NewtonsoftJsonMaskingConfigurator(maskingService);
         _jsonMaskerNewtonsoftSettings = new JsonSerializerSettings();
         newtonsoftConfigurator.Configure(_jsonMaskerNewtonsoftSettings);
 
-        // Json.Masker (System.Text.Json)
+        // Json.Masker (System.Text.Json) - https://github.com/AvivaSolutions/Json.Masker
         var systemTextConfigurator = new SystemTextJsonMaskingConfigurator(maskingService);
         _jsonMaskerSystemTextOptions = new JsonSerializerOptions();
         systemTextConfigurator.Configure(_jsonMaskerSystemTextOptions);
 
-        // Byndyusoft.MaskedSerialization
+        // Byndyusoft.MaskedSerialization (https://github.com/Byndyusoft/Byndyusoft.MaskedSerialization)
+        // The library applies attribute-driven masking but currently skips collections and
+        // ignores custom JsonSerializerOptions converters, so we benchmark a payload that
+        // highlights those limitations next to Json.Masker's richer support.
         _byndyusoftOptions = new JsonSerializerOptions();
         MaskedSerializationHelper.SetupOptionsForMaskedSerialization(_byndyusoftOptions);
 
-        // JsonMasking
+        // JsonMasking (https://github.com/dnauck/JsonMasking)
         _jsonMaskingPayload = SampleDataFactory.CreateJsonMaskingPayload();
         _jsonMaskingTargets = SampleDataFactory.CreateJsonMaskingTargets();
 
@@ -119,7 +126,8 @@ public class SerializationBenchmark
     // --------------------------------------------------
 
     /// <summary>
-    /// JsonDataMasking library (masks before serialization).
+    /// JsonDataMasking library (https://github.com/IvanJosipovic/JsonDataMasking) masks
+    /// the object graph before serialization using its own attribute model.
     /// </summary>
     [Benchmark]
     public string JsonDataMasking_Newtonsoft()
@@ -133,7 +141,8 @@ public class SerializationBenchmark
     // --------------------------------------------------
 
     /// <summary>
-    /// JsonMasking library (string-based masking).
+    /// JsonMasking (https://github.com/dnauck/JsonMasking) performs string-based masking
+    /// and therefore requires pre-computed JSON payloads plus target paths.
     /// </summary>
     [Benchmark]
     public string JsonMasking_PayloadMasking() =>
@@ -144,7 +153,9 @@ public class SerializationBenchmark
     // --------------------------------------------------
 
     /// <summary>
-    /// Byndyusoft.MaskedSerialization with System.Text.Json.
+    /// Byndyusoft.MaskedSerialization (https://github.com/Byndyusoft/Byndyusoft.MaskedSerialization)
+    /// with System.Text.Json. The library does not mask nested collections and does not
+    /// honor pre-registered converters, so complex payloads can leak data.
     /// </summary>
     [Benchmark]
     public string Byndyusoft_SystemTextJson() =>

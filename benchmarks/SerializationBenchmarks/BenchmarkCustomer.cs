@@ -3,7 +3,7 @@ using Byndyusoft.MaskedSerialization.Annotations.Attributes;
 using Json.Masker.Abstract;
 using JsonDataMasking.Attributes;
 
-namespace DefaultMaskerBenchmark;
+namespace SerializationBenchmarks;
 
 /// <summary>
 /// Shared DTO used across serialization benchmarks so each framework masks identical payloads.

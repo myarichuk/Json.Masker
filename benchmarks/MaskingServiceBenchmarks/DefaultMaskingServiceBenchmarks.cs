@@ -2,7 +2,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using Json.Masker.Abstract;
 
-namespace DefaultMaskerBenchmark;
+namespace MaskingServiceBenchmarks;
 
 /*
 | Method                    | Mean      | Error     | StdDev     | StdErr    | Min        | Q1         | Median     | Q3        | Max       | Op/s          | Ratio | RatioSD | Gen0   | Allocated | Alloc Ratio |
@@ -17,10 +17,12 @@ namespace DefaultMaskerBenchmark;
 
 [MemoryDiagnoser]
 [Config(typeof(Config))]
+/// <summary>
+/// Benchmarks the intrinsic cost of Json.Masker's <see cref="DefaultMaskingService"/> strategies.
+/// </summary>
 public class DefaultMaskingServiceBenchmarks
 {
     private readonly DefaultMaskingService _service = new();
-    private readonly MaskingContext _ctx = new() { Enabled = true };
 
     [Benchmark(Baseline = true, Description = "Simple Mask")]
     public string Mask_Simple() => 

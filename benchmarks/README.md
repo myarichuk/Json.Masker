@@ -1,67 +1,30 @@
-[![NuGet Version](https://img.shields.io/nuget/v/JsonDataMasking)](https://www.nuget.org/packages/JsonDataMasking/)
-![CI](https://github.com/luizaes/json-data-masking/actions/workflows/ci.yml/badge.svg)
+# Benchmarks
 
-# JSON Data Masking
+The `benchmarks` folder hosts two independent BenchmarkDotNet runners that make
+it easy to analyse Json.Masker's performance characteristics.
 
-*Note: including this library in the benchmark project thanks to its MIT license - not using NuGet because it was compiled as Debug!*
+## Projects
 
-JSON Data Masking is a library for .NET Core applications that simplifies the masking process of PII/sensitive information.
+| Project | Description |
+| --- | --- |
+| `MaskingServiceBenchmarks` | Micro-benchmarks that exercise `DefaultMaskingService` strategies directly to determine the intrinsic cost of each masking operation. |
+| `SerializationBenchmarks` | End-to-end serialization benchmarks that compare Json.Masker with other masking libraries such as JsonDataMasking, JsonMasking, and Byndyusoft.MaskedSerialization. |
 
-## Usage
+## Running
 
-After installing the Nuget package in your project, you need to take the following steps:
+Each project is a standalone executable targeting .NET 8.0. From the repository
+root you can execute them with:
 
-1. Add the `[SensitiveData]` attribute in your class properties to indicate what should be masked, and use its available fields to configure the masking:
+```bash
+# Run the micro-benchmarks
+dotnet run --project benchmarks/MaskingServiceBenchmarks/MaskingServiceBenchmarks.csproj -c Release
 
-    - **PreserveLength**: Set to `true` to keep the property length when masking its value. By default this setting is set to `false`.
-    - **ShowFirst**: If set, shows the first `N` characters of the property, not masking them. The default value is 0.
-    - **ShowLast**: If set, shows the last `N` characters of the property, not masking them. The default value is 0.
-    - **SubstituteText**: If set, the entire property value will be override with this text. Note that using this setting will ignore all other settings.
-    - **Mask**: Set to a character to use it when masking the property's value. By default, the character `*` is used.
-
-2. Call the `JsonMask.MaskSensitiveData()` function, passing in your object instance as a parameter.
-
-## Support
-
-This library supports masking of `string` fields only, although it also supports `List<string>`/`IEnumerable<string>` and `Dictionary<string, string>`. Nested class properties are also masked, independently of depth. 
-
-| Property Type 	| Support 	|
-|:---:	|:---:	|
-| string 	| ✅ 	|
-| List\<T>, where T is a class or string 	| ✅ 	|
-| IEnumerable\<T>, where T is a class or string 	| ✅ 	|
-| Dictionary<string, string> 	| ✅ 	|
-| Any other collection type, such as Array, ArrayList\<T>, etc 	| ❌ 	|
-| Any other base type different from string 	| ❌ 	|
-
-## Examples
-
-### Attributes
-```csharp
-public class PropertiesExamples
-{
-    /// 123456789 results in "*****"
-    [SensitiveData]
-    public string DefaultMask { get; set; }
-
-    /// 123456789 results in "REDACTED"
-    [SensitiveData(SubstituteText = "REDACTED")]
-    public string SubstituteMask { get; set; }
-
-    /// 123456789 results in "123*****789"
-    [SensitiveData(ShowFirst = 3, ShowLast = 3)]
-    public string ShowCharactersMask { get; set; }
-
-    /// 123456789 results in "#########"
-    [SensitiveData(PreserveLength = true, Mask = "#")]
-    public string PreserveCustomMask { get; set; }
-}
+# Run the serialization comparison suite
+# (requires the JsonDataMasking.dll included next to the benchmarks)
+dotnet run --project benchmarks/SerializationBenchmarks/SerializationBenchmarks.csproj -c Release
 ```
 
-### Functions
-```csharp
-var maskedData = JsonMask.MaskSensitiveData(data);
-```
-
-## Dependencies
-- [DeepCloner](https://github.com/force-net/DeepCloner)
+The serialization suite documents the GitHub repositories for each competing
+library in the benchmark source files and explains important behavioural
+differences—such as Byndyusoft.MaskedSerialization skipping collections and not
+respecting existing converters—so results can be interpreted correctly.

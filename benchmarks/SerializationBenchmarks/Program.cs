@@ -1,9 +1,9 @@
 using BenchmarkDotNet.Running;
 
-namespace DefaultMaskerBenchmark;
+namespace SerializationBenchmarks;
 
 /// <summary>
-/// Entry point for running the benchmark suite.
+/// Entry point for running the cross-library serialization benchmarks.
 /// </summary>
 public static class Program
 {
