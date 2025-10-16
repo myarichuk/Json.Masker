@@ -24,6 +24,16 @@ Latest:
 | JsonMasking_PayloadMasking | 6,957.8 ns | 140.71 ns | 382.81 ns | 6,860.4 ns | 12.31 |    1.07 | 0.4272 |    5720 B |        7.61 |
 | Byndyusoft_SystemTextJson  |   514.8 ns |  61.66 ns | 169.84 ns |   471.6 ns |  0.90 |    0.29 | 0.0181 |     232 B |        0.31 |
 
+| Method                     | Mean       | Error     | StdDev    | Median     | Ratio | RatioSD | Gen0   | Allocated | Alloc Ratio |
+|--------------------------- |-----------:|----------:|----------:|-----------:|------:|--------:|-------:|----------:|------------:|
+| Plain_SystemTextJson       |   479.9 ns |   9.48 ns |  10.14 ns |   475.7 ns |  1.00 |    0.00 | 0.0591 |     752 B |        1.00 |
+| JsonMasker_Newtonsoft      |   947.5 ns |  17.93 ns |  19.19 ns |   945.0 ns |  1.97 |    0.04 | 0.1698 |    2152 B |        2.86 |
+| JsonMasker_SystemTextJson  |   938.0 ns |  32.83 ns |  91.52 ns |   943.7 ns |  1.96 |    0.34 | 0.0515 |     648 B |        0.86 |
+| JsonDataMasking_Newtonsoft | 9,122.8 ns | 238.08 ns | 683.09 ns | 8,905.6 ns | 18.67 |    1.34 | 0.4883 |    6761 B |        8.99 |
+| JsonMasking_PayloadMasking | 7,136.8 ns | 131.23 ns | 161.16 ns | 7,145.7 ns | 14.84 |    0.46 | 0.4272 |    5720 B |        7.61 |
+| Byndyusoft_SystemTextJson  |   366.5 ns |  11.00 ns |  31.91 ns |   366.5 ns |  0.75 |    0.06 | 0.0181 |     232 B |        0.31 |
+
+
  */
 
 /// <summary>

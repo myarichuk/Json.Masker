@@ -16,14 +16,22 @@ public class MaskingEnumerableConverter<TCollection, TElement>(
     public override TCollection? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         => JsonSerializer.Deserialize<TCollection>(ref reader, options);
 
-    public override void Write(Utf8JsonWriter writer, TCollection value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, TCollection? value, JsonSerializerOptions options)
     {
-        writer.WriteStartArray();
-        foreach (var item in value ?? Enumerable.Empty<TElement>())
+        // short-circuit
+        if (value is null)
         {
-            if (ElementIsScalar)
+            writer.WriteStartArray();
+            writer.WriteEndArray();
+            return;
+        }
+        
+        writer.WriteStartArray();
+        foreach (var item in value)
+        {
+            if (ElementIsScalar && item.TryConvertToString(out var itemAsString))
             {
-                var masked = maskingService.Mask(item?.ToString(), strategy, pattern);
+                var masked = maskingService.Mask(itemAsString, strategy, pattern);
                 writer.WriteStringValue(masked);
             }
             else

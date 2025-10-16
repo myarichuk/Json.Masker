@@ -6,7 +6,7 @@ namespace Json.Masker.Tests;
 /// <summary>
 /// Serializes <see cref="DateTime"/> values using the ISO <c>yyyy-MM-dd</c> format for masking tests.
 /// </summary>
-public sealed class IsoDateOnlyConverter : System.Text.Json.Serialization.JsonConverter<DateTime>
+public class IsoDateOnlyConverter : System.Text.Json.Serialization.JsonConverter<DateTime>
 {
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         => throw new NotSupportedException();
@@ -30,7 +30,7 @@ public class CustomerWithSystemTextJsonConverter
 /// <summary>
 /// Serializes <see cref="DateTime"/> values using the ISO <c>yyyy-MM-dd</c> format for Newtonsoft masking tests.
 /// </summary>
-public sealed class IsoDateOnlyNewtonsoftConverter : global::Newtonsoft.Json.JsonConverter<DateTime>
+public class IsoDateOnlyNewtonsoftConverter : global::Newtonsoft.Json.JsonConverter<DateTime>
 {
     public override void WriteJson(
         global::Newtonsoft.Json.JsonWriter writer,
@@ -51,7 +51,7 @@ public sealed class IsoDateOnlyNewtonsoftConverter : global::Newtonsoft.Json.Jso
 /// <summary>
 /// Model that exercises masking when a Newtonsoft.Json converter already formats the value.
 /// </summary>
-public sealed class CustomerWithNewtonsoftConverter
+public class CustomerWithNewtonsoftConverter
 {
     [global::Newtonsoft.Json.JsonConverter(typeof(IsoDateOnlyNewtonsoftConverter))]
     [Sensitive("####-**-**")]

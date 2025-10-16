@@ -28,7 +28,7 @@ public class MaskingTypeInfoModifier(IMaskingService maskingService)
 
             if (attr is not null && prop.PropertyType.IsProperPrimitive())
             {
-                prop.CustomConverter = GetOrAddScalarConverter(prop.PropertyType, attr);
+                prop.CustomConverter = GetOrAddScalarConverter(prop.PropertyType, attr, prop.CustomConverter);
                 continue;
             }
             
@@ -96,13 +96,16 @@ public class MaskingTypeInfoModifier(IMaskingService maskingService)
         return true;
     }
     
-    private JsonConverter GetOrAddScalarConverter(Type type, SensitiveAttribute attr)
+    private JsonConverter GetOrAddScalarConverter(
+        Type type, 
+        SensitiveAttribute attr,
+        JsonConverter? originalConverter)
     {
         var key = new ConverterKey(type, attr.Strategy, attr.Pattern);
         return Cache.GetOrAdd(key, k =>
         {
             var converter = typeof(MaskingScalarConverter<>).MakeGenericType(k.Type);
-            return (JsonConverter)Activator.CreateInstance(converter, maskingService, k.Strategy, k.Pattern)!;
+            return (JsonConverter)Activator.CreateInstance(converter, maskingService, k.Strategy, k.Pattern, originalConverter)!;
         });
     }
 
