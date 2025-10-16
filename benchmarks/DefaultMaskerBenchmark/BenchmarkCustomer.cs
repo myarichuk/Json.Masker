@@ -8,7 +8,7 @@ namespace DefaultMaskerBenchmark;
 /// <summary>
 /// Shared DTO used across serialization benchmarks so each framework masks identical payloads.
 /// </summary>
-public sealed class BenchmarkCustomer
+public class BenchmarkCustomer
 {
     /// <summary>
     /// Gets or sets the customer's name, which is never masked.

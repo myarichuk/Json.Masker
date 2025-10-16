@@ -347,11 +347,4 @@ public partial class DefaultMaskingService : IMaskingService
 
         return new string(buffer[..i]);
     }
-    
-    [GeneratedRegex(@"^(?<user>[^@\s]+)@(?<domain>[^@\s]+)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
-    private static partial Regex EmailRegex();
-    
-    [GeneratedRegex(@"^[A-Z]{2}\d{2}[A-Z0-9]{4}\d{7}([A-Z0-9]?){0,16}$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
-    private static partial Regex IbanRegex();
-    
 }

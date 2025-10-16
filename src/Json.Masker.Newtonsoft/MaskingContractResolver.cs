@@ -52,7 +52,7 @@ public class MaskingContractResolver(IMaskingService maskingService) : DefaultCo
     /// <param name="maskingService">The masking service used to mask values.</param>
     /// <param name="attr">The sensitive attribute that defines masking behavior.</param>
     /// <param name="converter">An optional converter defined on the member.</param>
-    internal class MaskingCollectionValueProvider(
+    private class MaskingCollectionValueProvider(
         IValueProvider inner,
         IMaskingService maskingService,
         SensitiveAttribute attr,
@@ -91,7 +91,7 @@ public class MaskingContractResolver(IMaskingService maskingService) : DefaultCo
 
                 var rawJson = sw.ToString();
 
-                if (rawJson.Length >= 2 && rawJson[0] == '"' && rawJson[^1] == '"')
+                if (rawJson is ['"', _, ..] && rawJson[^1] == '"')
                 {
                     using var sr = new StringReader(rawJson);
                     using var reader = new JsonTextReader(sr);
@@ -101,7 +101,11 @@ public class MaskingContractResolver(IMaskingService maskingService) : DefaultCo
                     
                     if (reader.Read())
                     {
-                        raw = reader.Value?.ToString();
+                        raw = reader.Value.TryConvertToString(out var valueAsString) ? 
+                            valueAsString :
+                            
+                            // should never reach this!
+                            reader.Value?.ToString();
                     }
                 }
                 else
@@ -110,12 +114,9 @@ public class MaskingContractResolver(IMaskingService maskingService) : DefaultCo
                 }
             }
 
-            if (raw.TryConvertToString(out var rawAsString))
-            {
-                return maskingService.Mask(rawAsString ?? string.Empty, attr.Strategy, attr.Pattern);
-            }
-
-            return maskingService.DefaultMask;
+            return raw.TryConvertToString(out var rawAsString) ? 
+                maskingService.Mask(rawAsString ?? string.Empty, attr.Strategy, attr.Pattern) : 
+                maskingService.DefaultMask;
         }
 
         /// <summary>
