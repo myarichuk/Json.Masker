@@ -1,7 +1,5 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
-
 {{ range .Versions }}
 ## {{ if .Tag.Previous -}}
 [{{ .Tag.Name }}]({{ $.Info.RepositoryURL }}/compare/{{ .Tag.Previous.Name }}...{{ .Tag.Name }}) - {{ datetime "2006-01-02" .Tag.Date }}
