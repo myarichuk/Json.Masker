@@ -1,3 +1,6 @@
+// Copyright (c) Michael Yarichuk. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 namespace DefaultMaskerBenchmark;
 
 /// <summary>
@@ -8,6 +11,7 @@ internal static class SampleDataFactory
     /// <summary>
     /// Creates a fresh <see cref="BenchmarkCustomer"/> used by each serialization scenario.
     /// </summary>
+    /// <returns>A populated <see cref="BenchmarkCustomer"/> instance.</returns>
     public static BenchmarkCustomer CreateCustomer() => new()
     {
         Name = "Alice",
@@ -28,11 +32,13 @@ internal static class SampleDataFactory
     /// <summary>
     /// Creates a JSON payload representing <see cref="BenchmarkCustomer"/> for the JsonMasking benchmark.
     /// </summary>
+    /// <returns>The serialized JSON payload.</returns>
     public static string CreateJsonMaskingPayload() => System.Text.Json.JsonSerializer.Serialize(CreateCustomer());
 
     /// <summary>
     /// Provides the target paths used by the JsonMasking library to redact fields.
     /// </summary>
+    /// <returns>The field selectors recognized by JsonMasking.</returns>
     public static string[] CreateJsonMaskingTargets() =>
     [
         nameof(BenchmarkCustomer.CreditCard),
