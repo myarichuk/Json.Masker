@@ -66,15 +66,10 @@ public sealed class MaskingScalarConverter<T> : JsonConverter<T>
             return;
         }
 
-        string masked; // fallback, can't convert value to string
-        if (value.TryConvertToString(out var valueAsString))
-        {
-            masked = _maskingService.Mask(valueAsString ?? string.Empty, _strategy, _pattern);
-        }
-        else
-        {
-            masked = _maskingService.DefaultMask;
-        }
+        var masked = // fallback, can't convert value to string
+            value.TryConvertToString(out var valueAsString) ? 
+            _maskingService.Mask(valueAsString ?? string.Empty, _strategy, _pattern) : 
+            _maskingService.DefaultMask;
 
         writer.WriteStringValue(masked);
     }

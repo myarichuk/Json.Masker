@@ -20,7 +20,7 @@ public class BasicTestsMaskingService
     public void NormalizeDigits_ShouldExtractOnlyDigits(string input, string expected)
     {
         Span<char> normalizedRaw = stackalloc char[input.Length];
-        var digitsCount = DefaultMaskingService.NormalizeDigits(input, normalizedRaw);
+        var digitsCount = DigitNormalizer.Normalize(input, normalizedRaw);
         var result = normalizedRaw[..digitsCount];
         Assert.Equal(expected, result);
     }
