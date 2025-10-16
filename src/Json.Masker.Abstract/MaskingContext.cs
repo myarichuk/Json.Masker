@@ -3,7 +3,7 @@ namespace Json.Masker.Abstract;
 /// <summary>
 /// Represents request-scoped information that influences masking behavior.
 /// </summary>
-public sealed class MaskingContext
+public class MaskingContext
 {
     /// <summary>
     /// Gets a value indicating whether masking is enabled for the current context.
