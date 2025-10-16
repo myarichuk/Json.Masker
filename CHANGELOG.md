@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v1.1.3-8](https://github.com/myarichuk/Json.Masker/compare/v1.1.1-3...v1.1.3-8) - 2025-10-16
+
+
+
+  
+### Refactoring
+
+- make improvements to newtonsoft masker, make some low level improvements and try to reduce allocations a bit more ([36aff67](https://github.com/myarichuk/Json.Masker/commit/36aff67cec7ab3c1aee52061c055a6e9b57a23d8))
+  
+- some more optimization, shave off some latency of masking ([b92e8ef](https://github.com/myarichuk/Json.Masker/commit/b92e8ef367c6b8c708d67576028e14eda6751613))
+  
+- minimize allocations and refactor for better flow ([035c556](https://github.com/myarichuk/Json.Masker/commit/035c556a5aa8eae38cd70dc94b096f80eb339ed4))
+  
+- **benchmarks:** unify serialization scenarios ([e8cac39](https://github.com/myarichuk/Json.Masker/commit/e8cac39e0869d8afc5c67f44f0baaf8e8ffeeca0))
+  
+  
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#63](https://github.com/myarichuk/Json.Masker/issues/63) from myarichuk/refactor/optimize
+  
+  
+
+
 ## [v1.1.1-3](https://github.com/myarichuk/Json.Masker/compare/v1.0.7-2...v1.1.1-3) - 2025-10-13
 
 
