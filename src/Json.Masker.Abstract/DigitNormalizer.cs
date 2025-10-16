@@ -31,15 +31,15 @@ internal static class DigitNormalizer
             for (var i = 0; i < input.Length; i++)
             {
                 var c = input[i];
-                
+
                 // branch-friendly digit test
                 // I mean, CPUs can predict one jump so unify range check into one comparison
-                if ((uint)(c - '0') <= 9u) 
+                if ((uint)(c - '0') <= 9u)
                 {
                     outputBuffer[count++] = c;
                 }
             }
-            
+
             return count;
         }
 
@@ -49,7 +49,7 @@ internal static class DigitNormalizer
         var simd = Vector<ushort>.Count;
 
         var iBlock = 0;
-        
+
         // process blocks
         for (; iBlock <= input.Length - simd; iBlock += simd)
         {

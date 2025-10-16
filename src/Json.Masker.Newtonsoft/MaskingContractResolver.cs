@@ -97,12 +97,12 @@ public class MaskingContractResolver(IMaskingService maskingService) : DefaultCo
 
                     // if we have DateTime value -> this will preserve the current culture
                     reader.DateParseHandling = DateParseHandling.None;
-                    
+
                     if (reader.Read())
                     {
-                        raw = reader.Value.TryConvertToString(out var valueAsString) ? 
+                        raw = reader.Value.TryConvertToString(out var valueAsString) ?
                             valueAsString :
-                            
+
                             // should never reach this!
                             reader.Value?.ToString();
                     }
@@ -113,8 +113,8 @@ public class MaskingContractResolver(IMaskingService maskingService) : DefaultCo
                 }
             }
 
-            return raw.TryConvertToString(out var rawAsString) ? 
-                maskingService.Mask(rawAsString ?? string.Empty, attr.Strategy, attr.Pattern) : 
+            return raw.TryConvertToString(out var rawAsString) ?
+                maskingService.Mask(rawAsString ?? string.Empty, attr.Strategy, attr.Pattern) :
                 maskingService.DefaultMask;
         }
 

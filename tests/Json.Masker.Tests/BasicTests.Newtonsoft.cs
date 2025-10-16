@@ -41,7 +41,7 @@ public partial class BasicTestsNewtonsoft
         Assert.Contains(expected, json);
         Assert.DoesNotContain(raw, json);
     }
-    
+
     [Fact]
     public void Should_properly_mask_collection_per_strategy()
     {
@@ -59,7 +59,7 @@ public partial class BasicTestsNewtonsoft
                 CreditCard = "4111111111111234",
                 SSN = "123456789",
                 Age = 20,
-                Hobbies = ["Jogging", "Skiing"]                
+                Hobbies = ["Jogging", "Skiing"]
             }, new()
             {
                 Name = "Jack",
@@ -68,16 +68,16 @@ public partial class BasicTestsNewtonsoft
                 Age = 30,
                 Hobbies = ["Sleeping", "Gaming"]
             }];
-        
+
         MaskingContextAccessor.Set(new MaskingContext { Enabled = true });
 
         var json = JsonConvert.SerializeObject(collection, Formatting.Indented, _options);
-    
+
         AssertSubstringCount("****-****-****-1234", collection.Count, json);
         AssertSubstringCount("***-**-6789", collection.Count, json);
         AssertSubstringCount("****", collection.Count, json);
         AssertSubstringCount("<redacted>", collection.Count * 2, json);
-        
+
         void AssertSubstringCount(string expectedStr, int expectedCount, string actualStr)
         {
             var actualSubstringCount = Regex.Matches(actualStr, Regex.Escape($"\"{expectedStr}\"")).Count;

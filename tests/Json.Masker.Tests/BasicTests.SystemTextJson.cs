@@ -48,7 +48,7 @@ public partial class BasicTestsSystemTextJson
         Assert.Contains(expected, json);
         Assert.DoesNotContain(raw, json);
     }
-    
+
     [Fact]
     public void Should_properly_mask_collection_per_strategy()
     {
@@ -66,7 +66,7 @@ public partial class BasicTestsSystemTextJson
                 CreditCard = "4111111111111234",
                 SSN = "123456789",
                 Age = 20,
-                Hobbies = ["Jogging", "Skiing"]                
+                Hobbies = ["Jogging", "Skiing"]
             }, new()
             {
                 Name = "Jack",
@@ -75,16 +75,16 @@ public partial class BasicTestsSystemTextJson
                 Age = 30,
                 Hobbies = ["Sleeping", "Gaming"]
             }];
-        
+
         MaskingContextAccessor.Set(new MaskingContext { Enabled = true });
 
         var json = JsonSerializer.Serialize(collection, _options);
-    
+
         AssertSubstringCount("****-****-****-1234", collection.Count, json);
         AssertSubstringCount("***-**-6789", collection.Count, json);
         AssertSubstringCount("\"****\"", collection.Count, json);
         AssertSubstringCount("<redacted>", collection.Count * 2, json);
-        
+
         void AssertSubstringCount(string expectedStr, int expectedCount, string actualStr)
         {
             var searchPattern = Regex.Escape(expectedStr);
