@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Masker.AspNet", "src\J
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Masker.AspNet.Newtonsoft", "src\Json.Masker.AspNet.Newtonsoft\Json.Masker.AspNet.Newtonsoft.csproj", "{FA810D73-09A9-43DC-B34C-22829DADEA3B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Json.Masker.Cli", "src\Json.Masker.Cli\Json.Masker.Cli.csproj", "{E1F0778A-5C5E-40F4-B8C2-55BD7486A22A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,6 +86,10 @@ Global
 		{FA810D73-09A9-43DC-B34C-22829DADEA3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA810D73-09A9-43DC-B34C-22829DADEA3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA810D73-09A9-43DC-B34C-22829DADEA3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1F0778A-5C5E-40F4-B8C2-55BD7486A22A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1F0778A-5C5E-40F4-B8C2-55BD7486A22A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1F0778A-5C5E-40F4-B8C2-55BD7486A22A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1F0778A-5C5E-40F4-B8C2-55BD7486A22A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,6 +104,7 @@ Global
 		{FFA03887-B55D-4BF3-BDE4-D155CDA91356} = {698242D0-C732-49B2-8FC8-1C973A81A118}
 		{471B1020-84E8-47DE-B287-82D202D5634A} = {698242D0-C732-49B2-8FC8-1C973A81A118}
 		{FA810D73-09A9-43DC-B34C-22829DADEA3B} = {698242D0-C732-49B2-8FC8-1C973A81A118}
+		{E1F0778A-5C5E-40F4-B8C2-55BD7486A22A} = {698242D0-C732-49B2-8FC8-1C973A81A118}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B2F59F0-7149-4FF1-BF84-43FFFBC1622E}
