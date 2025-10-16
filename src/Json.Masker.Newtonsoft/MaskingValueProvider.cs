@@ -1,12 +1,13 @@
 using Json.Masker.Abstract;
 using Newtonsoft.Json.Serialization;
+// ReSharper disable UnusedType.Global
 
 namespace Json.Masker.Newtonsoft;
 
 /// <summary>
 /// Wraps another <see cref="IValueProvider"/> to mask values before serialization.
 /// </summary>
-public sealed class MaskingValueProvider : IValueProvider
+public class MaskingValueProvider : IValueProvider
 {
     private readonly IValueProvider _inner;
     private readonly IMaskingService _maskingService;
@@ -33,8 +34,12 @@ public sealed class MaskingValueProvider : IValueProvider
     public object? GetValue(object target)
     {
         var value = _inner.GetValue(target);
-        var masked = _maskingService.Mask(value, _attr.Strategy, _attr.Pattern, MaskingContextAccessor.Current);
-        return masked;
+        if (value.TryConvertToString(out var valueAsString))
+        {
+            return _maskingService.Mask(valueAsString ?? string.Empty, _attr.Strategy, _attr.Pattern);
+        }
+        
+        return _maskingService.DefaultMask;
     }
 
     /// <summary>

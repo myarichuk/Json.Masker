@@ -50,7 +50,7 @@ Either way, masking kicks in once you mark your models and flip the context swit
 
 1. Annotate the bits of your model that shouldn't leak.
    ```csharp
-   public sealed class Customer
+   public class Customer
    {
        public string Name { get; set; } = string.Empty;
 

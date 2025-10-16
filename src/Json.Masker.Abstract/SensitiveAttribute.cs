@@ -4,7 +4,7 @@ namespace Json.Masker.Abstract;
 /// Identifies members whose values should be masked when serialized.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-public sealed class SensitiveAttribute : Attribute
+public class SensitiveAttribute : Attribute
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="SensitiveAttribute"/> class.
