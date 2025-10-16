@@ -12,7 +12,7 @@ namespace Json.Masker.SystemTextJson;
 public class MaskingTypeInfoModifier(IMaskingService maskingService)
 {
     private static readonly ConcurrentDictionary<ConverterKey, JsonConverter> Cache = new();
-    
+
     /// <summary>
     /// Configures the provided <see cref="JsonTypeInfo"/> to use masking converters for sensitive members.
     /// </summary>
@@ -31,7 +31,7 @@ public class MaskingTypeInfoModifier(IMaskingService maskingService)
                 prop.CustomConverter = GetOrAddScalarConverter(prop.PropertyType, attr, prop.CustomConverter);
                 continue;
             }
-            
+
             if (attr is not null && TryParseDictTypes(prop.PropertyType, out var keyT, out var valueT))
             {
                 if (keyT == typeof(string))
@@ -47,7 +47,7 @@ public class MaskingTypeInfoModifier(IMaskingService maskingService)
             {
                 prop.CustomConverter = GetOrAddEnumerableConverter(prop.PropertyType, elemOfT!, attr);
             }
-        }        
+        }
     }
 
     private static bool TryParseEnumType(Type type, out Type? elem)
@@ -57,14 +57,14 @@ public class MaskingTypeInfoModifier(IMaskingService maskingService)
             elem = type.GetElementType();
             return elem is not null;
         }
-        
+
         // costly, but don't see alternatives!
         if (type.IsGenericType)
         {
             var @enum = type.GetInterfaces()
                 .Concat([type])
                 .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>));
-            
+
             if (@enum is not null)
             {
                 elem = @enum.GetGenericArguments()[0];
@@ -81,10 +81,10 @@ public class MaskingTypeInfoModifier(IMaskingService maskingService)
         key = value = null;
         var dict = t.GetInterfaces()
             .Concat([t])
-            .FirstOrDefault(@interface => 
-                @interface.IsGenericType && 
+            .FirstOrDefault(@interface =>
+                @interface.IsGenericType &&
                 @interface.GetGenericTypeDefinition() == typeof(IDictionary<,>));
-        
+
         if (dict is null)
         {
             return false;
@@ -95,9 +95,9 @@ public class MaskingTypeInfoModifier(IMaskingService maskingService)
         value = args[1];
         return true;
     }
-    
+
     private JsonConverter GetOrAddScalarConverter(
-        Type type, 
+        Type type,
         SensitiveAttribute attr,
         JsonConverter? originalConverter)
     {
@@ -128,6 +128,6 @@ public class MaskingTypeInfoModifier(IMaskingService maskingService)
             return (JsonConverter)Activator.CreateInstance(converter, maskingService, attr.Strategy, attr.Pattern)!;
         });
     }
-    
+
     private record struct ConverterKey(Type Type, MaskingStrategy Strategy, string? Pattern);
 }

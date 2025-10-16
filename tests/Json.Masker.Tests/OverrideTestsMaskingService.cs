@@ -12,13 +12,13 @@ public class OverrideTestsMaskingService
     [Fact]
     public void Override_should_be_correctly_applied()
     {
-        var resultCreditCard = _svc.Mask("1234-456-789",MaskingStrategy.Creditcard, null);
-        var resultDefault = _svc.Mask("1234-456-789",MaskingStrategy.Default, null);
-        var resultPattern = _svc.Mask("1234-456-789",MaskingStrategy.Default,"*##*-***-***");
+        var resultCreditCard = _svc.Mask("1234-456-789", MaskingStrategy.Creditcard, null);
+        var resultDefault = _svc.Mask("1234-456-789", MaskingStrategy.Default, null);
+        var resultPattern = _svc.Mask("1234-456-789", MaskingStrategy.Default, "*##*-***-***");
 
-        Assert.Equal("!redacted!",resultCreditCard);
-        Assert.Equal(_svc.DefaultMask,resultDefault);
-        Assert.Equal("*23*-***-***",resultPattern);
+        Assert.Equal("!redacted!", resultCreditCard);
+        Assert.Equal(_svc.DefaultMask, resultDefault);
+        Assert.Equal("*23*-***-***", resultPattern);
 
     }
 

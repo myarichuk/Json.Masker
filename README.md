@@ -14,6 +14,15 @@ The repository contains the core abstractions plus concrete integrations for bot
 | `Json.Masker.AspNet` | Middleware and helpers that toggle masking per request and hook the System.Text.Json stack into ASP.NET Core. |
 | `Json.Masker.AspNet.Newtonsoft` | Middleware and helpers that wire the Newtonsoft.Json integration into ASP.NET Core's MVC pipeline. |
 
+## Samples
+
+The `samples/` folder contains minimal console applications that demonstrate how to enable masking for both serializers:
+
+* `Json.Masker.Sample.SystemTextJson` shows how to plug the `MaskingTypeInfoModifier` into `System.Text.Json`.
+* `Json.Masker.Sample.Newtonsoft` wires up the `MaskingContractResolver` for `Newtonsoft.Json`.
+
+Run them with `dotnet run --project <sample-project>` to see the masked and unmasked payloads side by side.
+
 All packages version together and ship to NuGet whenever `main` is updated.
 
 ## Quick start

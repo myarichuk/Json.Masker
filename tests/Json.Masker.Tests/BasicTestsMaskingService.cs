@@ -24,7 +24,7 @@ public class BasicTestsMaskingService
         var result = normalizedRaw[..digitsCount];
         Assert.Equal(expected, result);
     }
-    
+
     [Theory]
     [InlineData("4111 1111 1111 1234", "****-****-****-1234")]   // spaced
     [InlineData("4111-1111-1111-1234", "****-****-****-1234")]   // dashed
@@ -45,7 +45,7 @@ public class BasicTestsMaskingService
         var result = _svc.Mask(raw, MaskingStrategy.Ssn, null);
         Assert.Equal(expected, result);
     }
-    
+
     [Theory]
     [InlineData("john.doe@example.com", "j*****@e****.com")]
     [InlineData("a@example.org", "*@e****.org")]
@@ -73,11 +73,11 @@ public class BasicTestsMaskingService
     [InlineData("****", MaskingStrategy.Default)]
     public void Should_return_expected_default_or_redacted_masks(string expected, MaskingStrategy strategy)
     {
-        var result = _svc.Mask("anything", strategy,  null);
+        var result = _svc.Mask("anything", strategy, null);
         Assert.Equal(expected, result);
     }
-    
-    
+
+
     [Theory]
     [InlineData("Fo1234", "##****", "Fo****")]
     [InlineData("Fo1234", "##********", "Fo****")]// extra pattern ignored
