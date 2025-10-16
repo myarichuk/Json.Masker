@@ -1,6 +1,16 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+
+## [v1.1.11-2](https://github.com/myarichuk/Json.Masker/compare/v1.1.9-2...v1.1.11-2) - 2025-10-16
+
+
+
+  
+  
+
+
+
+
 
 
 ## [v1.1.9-2](https://github.com/myarichuk/Json.Masker/compare/v1.1.7-2...v1.1.9-2) - 2025-10-16
