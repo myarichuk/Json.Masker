@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
 using Json.Masker.Abstract;
 using Newtonsoft.Json;
