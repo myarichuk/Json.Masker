@@ -273,11 +273,11 @@ Releases are automated through GitHub Actions:
 
 The current performance benchmarks look like this:  
 
-| Method                                    | Mean       | Error     | StdDev    | Median     | Gen0   | Allocated |
-|-------------------------------------------|-----------:|----------:|----------:|-----------:|-------:|----------:|
-| NewtonsoftSerialization (Json.Masker)     | 1,691.8 ns | 182.84 ns | 539.10 ns | 1,407.0 ns | 0.2050 |    2576 B |
-| SystemTextJsonSerialization (Json.Masker) | 1,713.7 ns |  94.32 ns | 273.65 ns | 1,668.7 ns | 0.0954 |    1224 B |
-| JsonDataMaskingSerialization              | 8,185.4 ns | 215.26 ns | 600.06 ns | 8,040.9 ns | 0.3662 |    4856 B |
-| JsonMaskingSerialization                  | 4,844.0 ns | 168.92 ns | 453.79 ns | 4,749.0 ns | 0.2975 |    3744 B |
-| ByndyusoftSystemTextJsonSerialization     |   320.9 ns |  14.02 ns |  40.01 ns |   305.8 ns | 0.0124 |     160 B |
-| MicrosoftComplianceRedactionSerialization |   601.6 ns |  11.81 ns |  33.71 ns |   593.6 ns | 0.0744 |     944 B |
+| Method                                  | Mean       | Error     | StdDev    | Ratio | RatioSD | Gen0   | Allocated | Alloc Ratio |
+|-----------------------------------------|-----------:|----------:|----------:|------:|--------:|-------:|----------:|------------:|
+| Plain_SystemTextJson (no masking!)      |   501.6 ns |  10.10 ns |  21.30 ns |  1.00 |    0.00 | 0.0591 |     752 B |        1.00 |
+| JsonMasker_Newtonsoft (Json.Masker)     |   990.0 ns |  14.70 ns |  29.01 ns |  1.97 |    0.09 | 0.1698 |    2152 B |        2.86 |
+| JsonMasker_SystemTextJson (Json.Masker) |   801.0 ns |  15.44 ns |  21.14 ns |  1.62 |    0.07 | 0.0515 |     648 B |        0.86 |
+| JsonDataMasking_Newtonsoft              | 8,085.0 ns | 161.61 ns | 311.37 ns | 16.08 |    0.98 | 0.5188 |    6761 B |        8.99 |
+| JsonMasking_PayloadMasking              | 7,013.2 ns |  50.64 ns |  47.37 ns | 13.90 |    0.37 | 0.4272 |    5720 B |        7.61 |
+| Byndyusoft_SystemTextJson               |   324.4 ns |   5.13 ns |   4.80 ns |  0.64 |    0.02 | 0.0181 |     232 B |        0.31 |
