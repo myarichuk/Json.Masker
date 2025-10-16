@@ -14,14 +14,16 @@ namespace DefaultMaskerBenchmark;
 
 /*
 Latest:
-| Method                     | Mean        | Error     | StdDev    | Ratio | RatioSD | Gen0   | Allocated | Alloc Ratio |
-|--------------------------- |------------:|----------:|----------:|------:|--------:|-------:|----------:|------------:|
-| Plain_SystemTextJson       |    658.9 ns |  12.76 ns |  10.65 ns |  1.00 |    0.00 | 0.0591 |     752 B |        1.00 |
-| JsonMasker_Newtonsoft      |  1,340.2 ns |  26.34 ns |  46.12 ns |  2.06 |    0.12 | 0.1698 |    2152 B |        2.86 |
-| JsonMasker_SystemTextJson  |  1,022.7 ns |  13.77 ns |  10.75 ns |  1.56 |    0.02 | 0.0515 |     648 B |        0.86 |
-| JsonDataMasking_Newtonsoft | 11,168.1 ns | 220.77 ns | 374.89 ns | 16.66 |    0.54 | 0.4883 |    6761 B |        8.99 |
-| JsonMasking_PayloadMasking |  9,311.7 ns | 167.70 ns | 130.93 ns | 14.18 |    0.28 | 0.4272 |    5720 B |        7.61 |
-| Byndyusoft_SystemTextJson  |    430.7 ns |   8.43 ns |  13.12 ns |  0.65 |    0.02 | 0.0181 |     232 B |        0.31 |
+
+| Method                     | Mean       | Error     | StdDev    | Median     | Ratio | RatioSD | Gen0   | Allocated | Alloc Ratio |
+|--------------------------- |-----------:|----------:|----------:|-----------:|------:|--------:|-------:|----------:|------------:|
+| Plain_SystemTextJson       |   570.9 ns |  16.05 ns |  45.27 ns |   556.4 ns |  1.00 |    0.00 | 0.0591 |     752 B |        1.00 |
+| JsonMasker_Newtonsoft      | 1,271.5 ns |  65.40 ns | 184.46 ns | 1,275.2 ns |  2.24 |    0.34 | 0.1698 |    2152 B |        2.86 |
+| JsonMasker_SystemTextJson  |   860.7 ns |  37.36 ns | 108.97 ns |   813.0 ns |  1.52 |    0.21 | 0.0515 |     648 B |        0.86 |
+| JsonDataMasking_Newtonsoft | 8,155.5 ns | 161.22 ns | 363.90 ns | 8,068.0 ns | 14.24 |    1.47 | 0.4883 |    6761 B |        8.99 |
+| JsonMasking_PayloadMasking | 6,957.8 ns | 140.71 ns | 382.81 ns | 6,860.4 ns | 12.31 |    1.07 | 0.4272 |    5720 B |        7.61 |
+| Byndyusoft_SystemTextJson  |   514.8 ns |  61.66 ns | 169.84 ns |   471.6 ns |  0.90 |    0.29 | 0.0181 |     232 B |        0.31 |
+
  */
 
 /// <summary>
