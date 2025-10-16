@@ -1,12 +1,13 @@
 using Json.Masker.Abstract;
 using Newtonsoft.Json.Serialization;
+// ReSharper disable UnusedType.Global
 
 namespace Json.Masker.Newtonsoft;
 
 /// <summary>
 /// Wraps another <see cref="IValueProvider"/> to mask values before serialization.
 /// </summary>
-public sealed class MaskingValueProvider : IValueProvider
+public class MaskingValueProvider : IValueProvider
 {
     private readonly IValueProvider _inner;
     private readonly IMaskingService _maskingService;
