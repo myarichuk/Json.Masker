@@ -2,8 +2,8 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-// ReSharper disable VirtualMemberNeverOverridden.Global
 
+// ReSharper disable VirtualMemberNeverOverridden.Global
 namespace Json.Masker.Abstract;
 
 /// <summary>
@@ -18,7 +18,6 @@ public partial class DefaultMaskingService : IMaskingService
     /// <inheritdoc />
     public virtual string Mask(ReadOnlySpan<char> str, MaskingStrategy strategy, string? pattern)
     {
-        
         if (!string.IsNullOrWhiteSpace(pattern))
         {
             return ApplyCustomPattern(str, pattern);
@@ -77,18 +76,6 @@ public partial class DefaultMaskingService : IMaskingService
         return $"***-**-{properLast4}";
     }
 
-    private static void PadLeft(Span<char> destination, ReadOnlySpan<char> source, char paddingChar)
-    {
-        if (source.Length > destination.Length)
-        {
-            throw new ArgumentException("Source is longer than destination.");
-        }
-
-        var padLength = destination.Length - source.Length;
-        destination[..padLength].Fill(paddingChar);
-        source.CopyTo(destination[padLength..]);
-    }
-    
     /// <summary>
     /// Masks an email address by obscuring parts of the user and domain sections.
     /// </summary>
@@ -158,32 +145,6 @@ public partial class DefaultMaskingService : IMaskingService
         return new string(buffer[..outputIndex]);
     }
 
-    private static bool TrySplitEmail(ReadOnlySpan<char> email, out ReadOnlySpan<char> user, out ReadOnlySpan<char> domain)
-    {
-        user = default;
-        domain = default;
-
-        var at = email.IndexOf('@');
-        if (at <= 0 || at >= email.Length - 1)
-        {
-            return false;
-        }
-
-        if (email.Slice(at + 1).IndexOf('@') >= 0)
-        {
-            return false;                 // must be exactly one '@'
-        }
-
-        if (email.IndexOfAny([' ', '\t', '\r', '\n']) >= 0)
-        {
-            return false;           // no whitespace
-        }
-
-        user = email[..at];
-        domain = email[(at + 1)..];
-        return true;
-    }
-
     /// <summary>
     /// Masks an International Bank Account Number (IBAN), revealing only key sections.
     /// </summary>
@@ -248,6 +209,7 @@ public partial class DefaultMaskingService : IMaskingService
 
             dst[c++] = char.ToUpperInvariant(ch);
         }
+
         return c;
     }
 
@@ -281,7 +243,45 @@ public partial class DefaultMaskingService : IMaskingService
                 return false;
             }
         }
-        
+
+        return true;
+    }
+
+    private static void PadLeft(Span<char> destination, ReadOnlySpan<char> source, char paddingChar)
+    {
+        if (source.Length > destination.Length)
+        {
+            throw new ArgumentException("Source is longer than destination.");
+        }
+
+        var padLength = destination.Length - source.Length;
+        destination[..padLength].Fill(paddingChar);
+        source.CopyTo(destination[padLength..]);
+    }
+
+    private static bool TrySplitEmail(ReadOnlySpan<char> email, out ReadOnlySpan<char> user, out ReadOnlySpan<char> domain)
+    {
+        user = default;
+        domain = default;
+
+        var at = email.IndexOf('@');
+        if (at <= 0 || at >= email.Length - 1)
+        {
+            return false;
+        }
+
+        if (email.Slice(at + 1).IndexOf('@') >= 0)
+        {
+            return false;                 // must be exactly one '@'
+        }
+
+        if (email.IndexOfAny([' ', '\t', '\r', '\n']) >= 0)
+        {
+            return false;           // no whitespace
+        }
+
+        user = email[..at];
+        domain = email[(at + 1)..];
         return true;
     }
 

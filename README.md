@@ -11,6 +11,8 @@ The repository contains the core abstractions plus concrete integrations for bot
 | `Json.Masker.Abstract` | Attribute, masking strategies, context accessors, and the default masking service. This transient package isn't published to NuGet; it just keeps the shared bits tidy for the two adapters. |
 | `Json.Masker.Newtonsoft` | Plug-and-play `ContractResolver` that wraps sensitive members before Newtonsoft writes them out. |
 | `Json.Masker.SystemTextJson` | `JsonTypeInfo` modifier that swaps in masking converters when the built-in source generator runs. |
+| `Json.Masker.AspNet` | Middleware and helpers that toggle masking per request and hook the System.Text.Json stack into ASP.NET Core. |
+| `Json.Masker.AspNet.Newtonsoft` | Middleware and helpers that wire the Newtonsoft.Json integration into ASP.NET Core's MVC pipeline. |
 
 All packages version together and ship to NuGet whenever `main` is updated.
 
@@ -22,7 +24,13 @@ Install the package that matches your serializer:
 dotnet add package Json.Masker.Newtonsoft
 # or
 dotnet add package Json.Masker.SystemTextJson
+# optional web helpers
+dotnet add package Json.Masker.AspNet
+dotnet add package Json.Masker.AspNet.Newtonsoft
 ```
+
+The ASP.NET Core helpers are optional but recommended whenever you want to flip masking on or off per request without writing
+boilerplate middleware.
 
 ### Wire it up
 
@@ -33,6 +41,7 @@ Pick the style that fits your app:
   * `IJsonMaskingConfigurator` as a singleton, wired to the serializer-specific implementation (`NewtonsoftJsonMaskingConfigurator` or `SystemTextJsonMaskingConfigurator`).
 
   Once that extension is in place you can inject `IJsonMaskingConfigurator` wherever you configure the serializer (for example in MVC setup) and let it bolt on the masking bits for you.
+  Pair it with `app.UseNewtonsoftJsonMasking()` or `app.UseTextJsonMasking()` from the ASP.NET helper packages to flip masking on and off per request.
 * **Wire it manually** if you're configuring the serializer yourself or aren't using DI. Just new up `DefaultMaskingService` (or your own implementation) and pass it into the resolver/modifier shown in the manual samples below.
 
   The options expose a writeable `MaskingService` property, so you can swap in your own masking logic:
@@ -54,19 +63,30 @@ Either way, masking kicks in once you mark your models and flip the context swit
    {
        public string Name { get; set; } = string.Empty;
 
-       [Sensitive(MaskingStrategy.Creditcard)]
-       public string CreditCard { get; set; } = string.Empty;
+        [Sensitive(MaskingStrategy.Creditcard)]
+        public string CreditCard { get; set; } = string.Empty;
 
-       [Sensitive(MaskingStrategy.Ssn)]
-       public string SSN { get; set; } = string.Empty;
+        [Sensitive(MaskingStrategy.Ssn)]
+        public string SSN { get; set; } = string.Empty;
 
-       [Sensitive]
-       public int Age { get; set; }
+        [Sensitive(MaskingStrategy.Email)]
+        public string Email { get; set; } = string.Empty;
 
-       [Sensitive(MaskingStrategy.Redacted)]
-       public List<string> Hobbies { get; set; } = [];
+        [Sensitive(MaskingStrategy.Iban)]
+        public string BankAccount { get; set; } = string.Empty;
+
+        [Sensitive]
+        public int Age { get; set; }
+
+        [Sensitive(MaskingStrategy.Redacted)]
+        public List<string> Hobbies { get; set; } = [];
+
+        [Sensitive("##-****-####")]
+        public string LoyaltyNumber { get; set; } = string.Empty;
    }
    ```
+   The optional string parameter on <code>[Sensitive]</code> uses <code>#</code> to copy a character from the source value and
+   <code>*</code> to mask it, allowing simple custom formats without a bespoke masking service.
 2. Turn masking on for the current request or operation by setting the ambient context (middleware is a great place for this):
    ```csharp
    MaskingContextAccessor.Set(new MaskingContext { Enabled = true });
@@ -96,6 +116,11 @@ builder.Services
         configurator.Configure(opts.SerializerSettings));
 
 var app = builder.Build();
+
+app.UseNewtonsoftJsonMasking();
+
+app.MapControllers();
+app.Run();
 ```
 
 Swap out `AddNewtonsoftJson()` for the default `System.Text.Json` stack and tweak the options wiring:
@@ -112,6 +137,13 @@ builder.Services
     .AddOptions<JsonOptions>()
     .Configure<IJsonMaskingConfigurator>((opts, configurator) =>
         configurator.Configure(opts.SerializerOptions));
+
+var app = builder.Build();
+
+app.UseTextJsonMasking();
+
+app.MapControllers();
+app.Run();
 ```
 
 In both cases the extension ensures DI knows about:
@@ -142,8 +174,11 @@ Masked output ends up looking like:
   "Name": "Alice",
   "CreditCard": "****-****-****-1234",
   "SSN": "***-**-6789",
+  "Email": "a*****@g****.com",
+  "BankAccount": "GB** **** **** **** 1234",
   "Age": "****",
-  "Hobbies": ["<redacted>", "<redacted>"]
+  "Hobbies": ["<redacted>", "<redacted>"],
+  "LoyaltyNumber": "12-****-3456"
 }
 ```
 
@@ -209,6 +244,8 @@ The built-in `DefaultMaskingService` supports a few common strategies:
 | `MaskingStrategy.Creditcard` | `****-****-****-1234` (keeps the last four digits) |
 | `MaskingStrategy.Ssn` | `***-**-6789` |
 | `MaskingStrategy.Redacted` | `<redacted>` |
+| `MaskingStrategy.Email` | `a*****@d****.com` (keeps the first character and domain suffix) |
+| `MaskingStrategy.Iban` | `GB** **** **** **** 1234` (keeps the country code and last four characters) |
 
 You can roll your own `IMaskingService` and plug it in through `MaskingOptions` if you want custom behavior (different patterns, role-based rules, etc.).
 
