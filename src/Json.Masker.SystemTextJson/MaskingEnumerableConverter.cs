@@ -4,51 +4,41 @@ using Json.Masker.Abstract;
 
 namespace Json.Masker.SystemTextJson;
 
-/// <summary>
-/// JSON converter that masks sensitive values within enumerable collections.
-/// </summary>
-/// <typeparam name="T">The element type of the enumerable.</typeparam>
-/// <param name="maskingService">The masking service used to produce masked values.</param>
-/// <param name="strategy">The strategy that determines how masking is applied.</param>
-/// <param name="pattern">Custom masking pattern to apply non-standard masking.</param>
-public class MaskingEnumerableConverter<T>(
+public class MaskingEnumerableConverter<TCollection, TElement>(
     IMaskingService maskingService,
     MaskingStrategy strategy,
     string? pattern)
-    : JsonConverter<IEnumerable<T>>
+    : JsonConverter<TCollection>
+    where TCollection : IEnumerable<TElement>
 {
-    /// <summary>
-    /// Deserialization is not supported for sensitive values.
-    /// </summary>
-    /// <param name="reader">The reader that would supply JSON content.</param>
-    /// <param name="typeToConvert">The type that would be deserialized.</param>
-    /// <param name="options">The serializer options in use.</param>
-    /// <returns>This method always throws a <see cref="NotSupportedException"/>.</returns>
-    /// <exception cref="NotSupportedException">Always thrown because deserialization is not supported.</exception>
-    public override IEnumerable<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        => throw new NotSupportedException("Sensitive values should not be deserialized");
+    private static readonly bool ElementIsScalar = IsScalar(typeof(TElement));
 
-    /// <summary>
-    /// Writes the masked representation of the enumerable to the provided writer.
-    /// </summary>
-    /// <param name="writer">The writer to receive the masked values.</param>
-    /// <param name="value">The enumerable containing potentially sensitive values.</param>
-    /// <param name="options">The serializer options in use.</param>
-    public override void Write(Utf8JsonWriter writer, IEnumerable<T>? value, JsonSerializerOptions options)
+    public override TCollection? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        => JsonSerializer.Deserialize<TCollection>(ref reader, options);
+
+    public override void Write(Utf8JsonWriter writer, TCollection value, JsonSerializerOptions options)
     {
-        if (value is null)
-        {
-            writer.WriteNullValue();
-            return;
-        }
-
         writer.WriteStartArray();
-        foreach (var v in value)
+        foreach (var item in value ?? Enumerable.Empty<TElement>())
         {
-            var masked = maskingService.Mask(v, strategy, pattern, MaskingContextAccessor.Current);
-            writer.WriteStringValue(masked);
+            if (ElementIsScalar)
+            {
+                var masked = maskingService.Mask(item?.ToString(), strategy, pattern);
+                writer.WriteStringValue(masked);
+            }
+            else
+            {
+                JsonSerializer.Serialize(writer, item, options);
+            }
         }
-
+        
         writer.WriteEndArray();
+    }
+
+    private static bool IsScalar(Type t)
+    {
+        t = Nullable.GetUnderlyingType(t) ?? t;
+        return t.IsPrimitive || t == typeof(string) || t == typeof(decimal)
+               || t == typeof(DateTime) || t == typeof(DateTimeOffset) || t == typeof(Guid) || t.IsEnum;
     }
 }

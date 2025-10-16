@@ -72,7 +72,9 @@ public class MaskingContractResolver(IMaskingService maskingService) : DefaultCo
                 var masked = new List<string>();
                 foreach (var item in enumerable)
                 {
-                    masked.Add(maskingService.Mask(item, attr.Strategy, attr.Pattern, MaskingContextAccessor.Current) ?? "****");
+                    masked.Add(item.TryConvertToString(out var itemAsString)
+                        ? maskingService.Mask((itemAsString ?? string.Empty).AsSpan(), attr.Strategy, attr.Pattern)
+                        : maskingService.DefaultMask);
                 }
 
                 return masked;
@@ -108,7 +110,12 @@ public class MaskingContractResolver(IMaskingService maskingService) : DefaultCo
                 }
             }
 
-            return maskingService.Mask(raw, attr.Strategy, attr.Pattern, MaskingContextAccessor.Current) ?? "****";
+            if (raw.TryConvertToString(out var rawAsString))
+            {
+                return maskingService.Mask(rawAsString ?? string.Empty, attr.Strategy, attr.Pattern);
+            }
+
+            return maskingService.DefaultMask;
         }
 
         /// <summary>

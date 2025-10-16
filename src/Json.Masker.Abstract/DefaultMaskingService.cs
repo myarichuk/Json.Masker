@@ -1,5 +1,7 @@
-using System.Text;
+using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+// ReSharper disable VirtualMemberNeverOverridden.Global
 
 namespace Json.Masker.Abstract;
 
@@ -9,27 +11,19 @@ namespace Json.Masker.Abstract;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public partial class DefaultMaskingService : IMaskingService
 {
-    /// <summary>
-    /// Gets the default mask applied when no specific strategy is provided.
-    /// </summary>
-    public virtual string DefaultMask => "****";
+    /// <inheritdoc/>
+    public string DefaultMask => "****";
 
     /// <inheritdoc />
-    public virtual string Mask(object? value, MaskingStrategy strategy, string? pattern, MaskingContext ctx)
+    public virtual string Mask(ReadOnlySpan<char> str, MaskingStrategy strategy, string? pattern)
     {
-        if (!ctx.Enabled || value is null)
-        {
-            return value?.ToString() ?? string.Empty;
-        }
-
-        var str = value.ToString() ?? string.Empty;
         
         if (!string.IsNullOrWhiteSpace(pattern))
         {
             return ApplyCustomPattern(str, pattern);
         }
         
-        return string.IsNullOrEmpty(str)
+        return str.IsEmpty
             ? string.Empty
             : strategy switch
             {
@@ -47,16 +41,17 @@ public partial class DefaultMaskingService : IMaskingService
     /// </summary>
     /// <param name="raw">The raw credit card value to mask.</param>
     /// <returns>The masked credit card number.</returns>
-    protected virtual string MaskCreditCard(string raw)
+    protected virtual string MaskCreditCard(ReadOnlySpan<char> raw)
     {
-        var digits = NormalizeDigits(raw);
+        Span<char> normalizedRaw = stackalloc char[raw.Length];
+        var digitsCount = NormalizeDigits(raw, normalizedRaw);
+        var digits = normalizedRaw[..digitsCount];
         if (digits.Length == 0)
         {
             return DefaultMask;
         }
-
-        var span = digits.AsSpan();
-        var last4 = span.Length >= 4 ? span[^4..] : span;
+        
+        var last4 = digits.Length >= 4 ? digits[^4..] : digits;
         return $"****-****-****-{last4}";
     }
 
@@ -65,28 +60,42 @@ public partial class DefaultMaskingService : IMaskingService
     /// </summary>
     /// <param name="raw">The raw SSN value to mask.</param>
     /// <returns>The masked SSN.</returns>
-    protected virtual string MaskSsn(string raw)
+    protected virtual string MaskSsn(ReadOnlySpan<char> raw)
     {
-        var digits = NormalizeDigits(raw);
+        Span<char> normalizedRaw = stackalloc char[raw.Length];
+        var digitsCount = NormalizeDigits(raw, normalizedRaw);
+        var digits = normalizedRaw[..digitsCount];
         if (digits.Length == 0)
         {
             return "***-**-****";
         }
 
-        var span = digits.AsSpan();
-        var last4 = span.Length >= 4 ? span[^4..] : span;
-
-        return $"***-**-{last4.ToString().PadLeft(4, '*')}";
+        var last4 = digits.Length >= 4 ? digits[^4..] : digits;
+        Span<char> properLast4 = stackalloc char[4];
+        PadLeft(properLast4, last4, '*');
+        return $"***-**-{properLast4}";
     }
 
+    private static void PadLeft(Span<char> destination, ReadOnlySpan<char> source, char paddingChar)
+    {
+        if (source.Length > destination.Length)
+        {
+            throw new ArgumentException("Source is longer than destination.");
+        }
+
+        var padLength = destination.Length - source.Length;
+        destination[..padLength].Fill(paddingChar);
+        source.CopyTo(destination[padLength..]);
+    }
+    
     /// <summary>
     /// Masks an email address by obscuring parts of the user and domain sections.
     /// </summary>
     /// <param name="raw">The raw email value to mask.</param>
     /// <returns>The masked email address.</returns>
-    protected virtual string MaskEmail(string raw)
+    protected virtual string MaskEmail(ReadOnlySpan<char> raw)
     {
-        var match = EmailRegex().Match(raw);
+        var match = EmailRegex().Match(new string(raw));
         if (!match.Success)
         {
             return "****@****";
@@ -124,75 +133,145 @@ public partial class DefaultMaskingService : IMaskingService
     /// </summary>
     /// <param name="raw">The raw IBAN value to mask.</param>
     /// <returns>The masked IBAN.</returns>
-    protected virtual string MaskIban(string raw)
+    protected virtual string MaskIban(ReadOnlySpan<char> raw)
     {
-        var compact = raw.Replace(" ", string.Empty).ToUpperInvariant();
-        if (!IbanRegex().IsMatch(compact))
+        Span<char> buffer = stackalloc char[raw.Length];
+        var count = 0;
+        foreach (var c in raw)
+        {
+            if (c != ' ')
+            {
+                buffer[count++] = char.ToUpperInvariant(c);
+            }
+        }
+        
+        var normalizedIban = buffer[..count];
+        
+        if (!IbanRegex().IsMatch(normalizedIban))
         {
             return DefaultMask;
         }
 
-        var visible = compact.Length >= 4 ? compact[^4..] : compact;
-        return $"{compact[..2]}** **** **** **** {visible}";
+        var visible = normalizedIban.Length >= 4 ? normalizedIban[^4..] : normalizedIban;
+        return $"{normalizedIban[..2]}** **** **** **** {visible}";
     }
-
-    private static string ApplyCustomPattern(string input, string pattern)
+    
+    // the idea: input-driven masking, pattern applies to input, leftovers get masked, output never longer than input
+    private static string ApplyCustomPattern(ReadOnlySpan<char> input, ReadOnlySpan<char> pattern)
     {
-        var sb = new StringBuilder(input.Length);
-        int i = 0;
-
-        foreach (var c in pattern)
+        if (input.IsEmpty)
         {
-            if (i >= input.Length)
-            {
-                break;
-            }
+            return string.Empty;
+        }
 
-            switch (c)
+        if (pattern.IsEmpty)
+        {
+            return new string(input);
+        }
+
+        var maxLen = Math.Max(pattern.Length, input.Length);
+        Span<char> buffer = stackalloc char[maxLen];
+
+        var outputIndex = 0;
+        var inputIndex = 0;
+
+        for (; outputIndex < pattern.Length && inputIndex < input.Length; outputIndex++)
+        {
+            var p = pattern[outputIndex];
+            switch (p)
             {
                 case '#':
-                    sb.Append(input[i++]);
+                    buffer[outputIndex] = input[inputIndex++];
                     break;
+
                 case '*':
-                    sb.Append('*');
-                    i++;
+                    buffer[outputIndex] = '*';
+                    inputIndex++;
                     break;
+
                 default:
-                    sb.Append(c);
-                    if (i < input.Length && input[i] == c)
+                    buffer[outputIndex] = p;
+                    if (input[inputIndex] == p)
                     {
-                        i++;
+                        inputIndex++;
                     }
 
                     break;
             }
         }
 
-        while (i++ < input.Length)
+        // remaining chars? mask them
+        while (inputIndex < input.Length && outputIndex < buffer.Length)
         {
-            sb.Append('*');
+            buffer[outputIndex++] = '*';
+            inputIndex++;
         }
 
-        return sb.ToString();
+        return new string(buffer[..outputIndex]);
     }
 
-    private static string NormalizeDigits(ReadOnlySpan<char> raw)
+    [GeneratedRegex(@"^(?<user>[^@\s]+)@(?<domain>[^@\s]+)$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex EmailRegex();
+    
+    [GeneratedRegex(@"^[A-Z]{2}\d{2}[A-Z0-9]{4}\d{7}([A-Z0-9]?){0,16}$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+    private static partial Regex IbanRegex();
+    
+    internal static int NormalizeDigits(ReadOnlySpan<char> input, Span<char> outputBuffer)
     {
-        var sb = new StringBuilder(raw.Length);
-        foreach (var c in raw)
+        if (outputBuffer.Length < input.Length)
         {
-            if (c is >= '0' and <= '9')
+            throw new ArgumentException("Output buffer too small", nameof(outputBuffer));
+        }
+        
+        var count = 0;
+
+        if (Vector.IsHardwareAccelerated)
+        {
+            var zero = new Vector<ushort>('0');
+            var nine = new Vector<ushort>('9');
+            var simdLength = Vector<ushort>.Count;
+
+            var i = 0;
+            for (; i <= input.Length - simdLength; i += simdLength)
             {
-                sb.Append(c);
+                // load 8 or 16 chars at once
+                var chunk = new Vector<ushort>(MemoryMarshal.Cast<char, ushort>(input.Slice(i, simdLength)));
+
+                // true = 0xFFFF, false = 0x0000
+                var geZero = Vector.GreaterThanOrEqual(chunk, zero);
+                var leNine = Vector.LessThanOrEqual(chunk, nine);
+                var mask = Vector.BitwiseAnd(geZero, leNine);
+
+                for (var j = 0; j < simdLength; j++)
+                {
+                    if (mask[j] != 0)
+                    {
+                        outputBuffer[count++] = (char)chunk[j];
+                    }
+                }
+            }
+
+            // tail
+            for (; i < input.Length; i++)
+            {
+                var c = input[i];
+                if (c is >= '0' and <= '9')
+                {
+                    outputBuffer[count++] = c;
+                }
+            }
+        }
+        else
+        {
+            foreach (var c in input)
+            {
+                if (c is >= '0' and <= '9')
+                {
+                    outputBuffer[count++] = c;
+                }
             }
         }
 
-        return sb.ToString();
-    }
-
-    [GeneratedRegex(@"^(?<user>[^@\s]+)@(?<domain>[^@\s]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant)]
-    private static partial Regex EmailRegex();
-    
-    [GeneratedRegex(@"^[A-Z]{2}\d{2}[A-Z0-9]{4}\d{7}([A-Z0-9]?){0,16}$", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant)]
-    private static partial Regex IbanRegex();
+        return count;
+    }    
 }
