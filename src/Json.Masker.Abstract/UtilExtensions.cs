@@ -2,14 +2,30 @@
 
 namespace Json.Masker.Abstract;
 
+/// <summary>
+/// Provides helper extensions for converting values to invariant string representations.
+/// </summary>
 public static class UtilExtensions
 {
+    /// <summary>
+    /// Attempts to convert the provided value into its invariant string representation.
+    /// </summary>
+    /// <typeparam name="T">The value type.</typeparam>
+    /// <param name="value">The value to convert.</param>
+    /// <param name="str">When this method returns, contains the converted string if the conversion was successful; otherwise, <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> when conversion succeeds; otherwise, <see langword="false"/>.</returns>
     public static bool TryConvertToString<T>(this T? value, out string? str)
     {
         str = value.ToInvariantString();
         return str != null;
     }
 
+    /// <summary>
+    /// Converts a value to an invariant string when possible.
+    /// </summary>
+    /// <typeparam name="T">The value type.</typeparam>
+    /// <param name="value">The value to convert.</param>
+    /// <returns>The invariant string representation, or <see langword="null"/> when conversion is not possible.</returns>
     private static string? ToInvariantString<T>(this T? value)
     {
         switch (value)

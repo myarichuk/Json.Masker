@@ -9,6 +9,10 @@ using Json.Masker.Abstract;
 
 namespace Json.Masker.SystemTextJson;
 
+/// <summary>
+/// <see cref="JsonConverter{T}"/> that masks scalar values when the current <see cref="MaskingContext"/> is enabled.
+/// </summary>
+/// <typeparam name="T">The scalar type that will be masked.</typeparam>
 public class MaskingScalarConverter<T>(
     IMaskingService maskingService,
     MaskingStrategy strategy,
@@ -16,6 +20,12 @@ public class MaskingScalarConverter<T>(
     JsonConverter<T>? inner = null)
     : JsonConverter<T>
 {
+    /// <summary>
+    /// Writes the masked representation of the provided value.
+    /// </summary>
+    /// <param name="writer">The target writer.</param>
+    /// <param name="value">The value to write.</param>
+    /// <param name="options">Serializer options supplied by System.Text.Json.</param>
     public override void Write(Utf8JsonWriter writer, T? value, JsonSerializerOptions options)
     {
         var ctx = MaskingContextAccessor.Current;
@@ -68,6 +78,14 @@ public class MaskingScalarConverter<T>(
         }
     }
 
+    /// <summary>
+    /// Deserialization is intentionally unsupported for sensitive types.
+    /// </summary>
+    /// <param name="reader">Unused reader instance.</param>
+    /// <param name="typeToConvert">Unused target type.</param>
+    /// <param name="options">Unused serializer options.</param>
+    /// <returns>Nothing; this method always throws.</returns>
+    /// <exception cref="NotSupportedException">Always thrown because reading is not implemented.</exception>
     public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         => throw new NotSupportedException("Deserialization not supported for a sensitive type");
 
@@ -139,5 +157,4 @@ public class MaskingScalarConverter<T>(
             ArrayPool<byte>.Shared.Return(rented);
         }
     }
-
 }

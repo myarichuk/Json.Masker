@@ -1,5 +1,6 @@
-﻿using Json.Masker.Abstract;
+using Json.Masker.Abstract;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
@@ -11,7 +12,7 @@ namespace Json.Masker.Newtonsoft;
 public static class NewtonsoftMaskingExtensions
 {
     /// <summary>
-    /// Adds JSON masking services configured for the <see cref="Newtonsoft.Json"/> serializer.
+    /// Adds JSON masking services configured for the <see cref="JsonSerializer"/> serializer.
     /// </summary>
     /// <param name="services">
     /// The <see cref="IServiceCollection"/> to which JSON masking services will be added.
