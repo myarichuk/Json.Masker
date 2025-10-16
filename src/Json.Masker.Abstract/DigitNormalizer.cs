@@ -5,10 +5,19 @@ using System.Runtime.InteropServices;
 
 namespace Json.Masker.Abstract;
 
+/// <summary>
+/// Utility methods for extracting digits from strings while preserving their order.
+/// </summary>
 internal static class DigitNormalizer
 {
     private static readonly int SmallInputSimdCutoff = Vector<ushort>.Count * 2;
 
+    /// <summary>
+    /// Copies digits from the input span into the destination buffer, skipping non-numeric characters.
+    /// </summary>
+    /// <param name="input">The source characters to inspect.</param>
+    /// <param name="outputBuffer">The destination buffer that receives the digits.</param>
+    /// <returns>The number of digits written to <paramref name="outputBuffer"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static int Normalize(ReadOnlySpan<char> input, Span<char> outputBuffer)
     {
