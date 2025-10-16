@@ -11,10 +11,10 @@ public class Customer
 
     [Sensitive(MaskingStrategy.Ssn)]
     public string SSN { get; set; } = string.Empty;
-    
+
     [Sensitive]
     public int Age { get; set; }
 
-    [Sensitive(MaskingStrategy.Redacted)] 
+    [Sensitive(MaskingStrategy.Redacted)]
     public List<string> Hobbies { get; set; } = [];
 }

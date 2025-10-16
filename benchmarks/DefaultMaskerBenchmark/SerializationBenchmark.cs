@@ -1,3 +1,6 @@
+// Copyright (c) Michael Yarichuk. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System;
 using System.Text.Json;
 using BenchmarkDotNet.Attributes;
@@ -35,44 +38,47 @@ Latest:
 [MemoryDiagnoser]
 public class SerializationBenchmark
 {
-    private static readonly MaskingContext DisabledMaskingContext = new();
     private const string JsonMaskingReplacement = "****";
+    private static readonly MaskingContext DisabledMaskingContext = new();
 
-    private readonly MaskingContext _maskingContext = new() { Enabled = true };
-    private BenchmarkCustomer _customer = null!;
-    private BenchmarkCustomer _byndyusoftCustomer = null!;
+    private readonly MaskingContext maskingContext = new() { Enabled = true };
+    private BenchmarkCustomer customer = null!;
+    private BenchmarkCustomer byndyusoftCustomer = null!;
 
-    private JsonSerializerSettings _jsonMaskerNewtonsoftSettings = null!;
-    private JsonSerializerOptions _jsonMaskerSystemTextOptions = null!;
-    private JsonSerializerOptions _byndyusoftOptions = null!;
-    private string _jsonMaskingPayload = string.Empty;
-    private string[] _jsonMaskingTargets = [];
+    private JsonSerializerSettings jsonMaskerNewtonsoftSettings = null!;
+    private JsonSerializerOptions jsonMaskerSystemTextOptions = null!;
+    private JsonSerializerOptions byndyusoftOptions = null!;
+    private string jsonMaskingPayload = string.Empty;
+    private string[] jsonMaskingTargets = [];
 
+    /// <summary>
+    /// Initializes shared state for each benchmark run.
+    /// </summary>
     [GlobalSetup]
     public void Setup()
     {
         var maskingService = new DefaultMaskingService();
 
-        _customer = SampleDataFactory.CreateCustomer();
-        _byndyusoftCustomer = SampleDataFactory.CreateCustomer();
+        this.customer = SampleDataFactory.CreateCustomer();
+        this.byndyusoftCustomer = SampleDataFactory.CreateCustomer();
 
         // Json.Masker (Newtonsoft)
         var newtonsoftConfigurator = new NewtonsoftJsonMaskingConfigurator(maskingService);
-        _jsonMaskerNewtonsoftSettings = new JsonSerializerSettings();
-        newtonsoftConfigurator.Configure(_jsonMaskerNewtonsoftSettings);
+        this.jsonMaskerNewtonsoftSettings = new JsonSerializerSettings();
+        newtonsoftConfigurator.Configure(this.jsonMaskerNewtonsoftSettings);
 
         // Json.Masker (System.Text.Json)
         var systemTextConfigurator = new SystemTextJsonMaskingConfigurator(maskingService);
-        _jsonMaskerSystemTextOptions = new JsonSerializerOptions();
-        systemTextConfigurator.Configure(_jsonMaskerSystemTextOptions);
+        this.jsonMaskerSystemTextOptions = new JsonSerializerOptions();
+        systemTextConfigurator.Configure(this.jsonMaskerSystemTextOptions);
 
         // Byndyusoft.MaskedSerialization
-        _byndyusoftOptions = new JsonSerializerOptions();
-        MaskedSerializationHelper.SetupOptionsForMaskedSerialization(_byndyusoftOptions);
+        this.byndyusoftOptions = new JsonSerializerOptions();
+        MaskedSerializationHelper.SetupOptionsForMaskedSerialization(this.byndyusoftOptions);
 
         // JsonMasking
-        _jsonMaskingPayload = SampleDataFactory.CreateJsonMaskingPayload();
-        _jsonMaskingTargets = SampleDataFactory.CreateJsonMaskingTargets();
+        this.jsonMaskingPayload = SampleDataFactory.CreateJsonMaskingPayload();
+        this.jsonMaskingTargets = SampleDataFactory.CreateJsonMaskingTargets();
 
         MaskingContextAccessor.Set(DisabledMaskingContext);
     }
@@ -84,8 +90,9 @@ public class SerializationBenchmark
     /// <summary>
     /// Baseline: plain System.Text.Json serialization without any masking.
     /// </summary>
+    /// <returns>The serialized JSON payload.</returns>
     [Benchmark(Baseline = true)]
-    public string Plain_SystemTextJson() => JsonSerializer.Serialize(_customer);
+    public string Plain_SystemTextJson() => JsonSerializer.Serialize(this.customer);
 
     // --------------------------------------------------
     // JSON.MASKER
@@ -94,16 +101,18 @@ public class SerializationBenchmark
     /// <summary>
     /// Json.Masker using Newtonsoft.Json.
     /// </summary>
+    /// <returns>The masked JSON payload.</returns>
     [Benchmark]
     public string JsonMasker_Newtonsoft() =>
-        SerializeWithMaskingContext(() => JsonConvert.SerializeObject(_customer, Formatting.None, _jsonMaskerNewtonsoftSettings));
+        this.SerializeWithMaskingContext(() => JsonConvert.SerializeObject(this.customer, Formatting.None, this.jsonMaskerNewtonsoftSettings));
 
     /// <summary>
     /// Json.Masker using System.Text.Json.
     /// </summary>
+    /// <returns>The masked JSON payload.</returns>
     [Benchmark]
     public string JsonMasker_SystemTextJson() =>
-        SerializeWithMaskingContext(() => JsonSerializer.Serialize(_customer, _jsonMaskerSystemTextOptions));
+        this.SerializeWithMaskingContext(() => JsonSerializer.Serialize(this.customer, this.jsonMaskerSystemTextOptions));
 
     // --------------------------------------------------
     // JSONDATAMASKING
@@ -112,6 +121,7 @@ public class SerializationBenchmark
     /// <summary>
     /// JsonDataMasking library (masks before serialization).
     /// </summary>
+    /// <returns>The masked JSON payload.</returns>
     [Benchmark]
     public string JsonDataMasking_Newtonsoft()
     {
@@ -126,9 +136,10 @@ public class SerializationBenchmark
     /// <summary>
     /// JsonMasking library (string-based masking).
     /// </summary>
+    /// <returns>The masked JSON payload.</returns>
     [Benchmark]
     public string JsonMasking_PayloadMasking() =>
-        _jsonMaskingPayload.MaskFields(_jsonMaskingTargets, JsonMaskingReplacement);
+        this.jsonMaskingPayload.MaskFields(this.jsonMaskingTargets, JsonMaskingReplacement);
 
     // --------------------------------------------------
     // BYNDYUSOFT
@@ -137,17 +148,17 @@ public class SerializationBenchmark
     /// <summary>
     /// Byndyusoft.MaskedSerialization with System.Text.Json.
     /// </summary>
+    /// <returns>The masked JSON payload.</returns>
     [Benchmark]
     public string Byndyusoft_SystemTextJson() =>
-        JsonSerializer.Serialize(_byndyusoftCustomer, _byndyusoftOptions);
+        JsonSerializer.Serialize(this.byndyusoftCustomer, this.byndyusoftOptions);
 
     // --------------------------------------------------
     // Helper
     // --------------------------------------------------
-
     private string SerializeWithMaskingContext(Func<string> serializer)
     {
-        MaskingContextAccessor.Set(_maskingContext);
+        MaskingContextAccessor.Set(this.maskingContext);
         try
         {
             return serializer();

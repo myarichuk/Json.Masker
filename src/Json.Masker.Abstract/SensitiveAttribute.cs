@@ -15,7 +15,7 @@ public class SensitiveAttribute : Attribute
         Pattern = null;
         Strategy = strategy;
     }
-    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="SensitiveAttribute"/> class.
     /// </summary>
@@ -30,7 +30,7 @@ public class SensitiveAttribute : Attribute
     /// Gets the masking strategy that should be applied to the decorated member.
     /// </summary>
     public MaskingStrategy Strategy { get; }
-    
+
     /// <summary>
     /// Gets the custom masking pattern that should be applied to the decorated member.
     /// </summary>
