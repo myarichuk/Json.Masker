@@ -1,7 +1,7 @@
 using Json.Masker.Abstract;
 using Newtonsoft.Json.Serialization;
-// ReSharper disable UnusedType.Global
 
+// ReSharper disable UnusedType.Global
 namespace Json.Masker.Newtonsoft;
 
 /// <summary>

@@ -1,23 +1,22 @@
-﻿using Json.Masker.Abstract;
+using Json.Masker.Abstract;
 using Microsoft.AspNetCore.Http;
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 namespace Json.Masker.AspNet;
 
 /// <summary>
-/// A middleware 
+/// Middleware that toggles the ambient <see cref="MaskingContext"/> for a request based on a predicate.
 /// </summary>
-/// <param name="next">a delegate to execute next in chain of the delegate</param>
-/// <param name="shouldMask">A delegate to decide whether to mask any serialization of the current context or not</param>
+/// <param name="next">The next middleware delegate in the ASP.NET Core pipeline.</param>
+/// <param name="shouldMask">Predicate that determines whether masking should be enabled for the current request.</param>
 // ReSharper disable once ClassNeverInstantiated.Global
 public class DecideEnablingMaskingMiddleware(RequestDelegate next, Func<HttpContext, bool>? shouldMask)
 {
     private readonly Func<HttpContext, bool> _shouldMask = shouldMask ?? (_ => false);
 
     /// <summary>
-    /// Invokes the middleware
+    /// Executes the middleware pipeline while applying the masking context if required.
     /// </summary>
-    /// <param name="context">HttpContext of the current, ongoing call</param>
+    /// <param name="context">The <see cref="HttpContext"/> for the current request.</param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     public async Task InvokeAsync(HttpContext context)
     {
