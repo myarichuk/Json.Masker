@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 
 
+## [v1.1.9-2](https://github.com/myarichuk/Json.Masker/compare/v1.1.7-2...v1.1.9-2) - 2025-10-16
+
+
+
+### Build
+
+- **benchmarks:** suppress strong-name warnings # Conflicts: #	src/Json.Masker.Abstract/DefaultMaskingService.cs #	src/Json.Masker.Abstract/UtilExtensions.cs #	src/Json.Masker.AspNet.Newtonsoft/JsonMaskingMiddlewareExtension.cs #	src/Json.Masker.AspNet/JsonMaskingMiddlewareExtension.cs #	src/Json.Masker.Newtonsoft/MaskingValueProvider.cs #	src/Json.Masker.Newtonsoft/NewtonsoftMaskingExtensions.cs #	src/Json.Masker.SystemTextJson/MaskingEnumerableConverter.cs #	src/Json.Masker.SystemTextJson/MaskingScalarConverter.cs #	src/Json.Masker.SystemTextJson/MaskingStringDictionaryConverter.cs #	src/Json.Masker.SystemTextJson/TypeExtensions.cs ([67f6bae](https://github.com/myarichuk/Json.Masker/commit/67f6bae0abea92433f00eb10d204525451042ccb))
+  
+  
+  
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#68](https://github.com/myarichuk/Json.Masker/issues/68) from myarichuk/codex/organize-sample-projects-and-improve-clarity
+  
+  
+
+
 ## [v1.1.7-2](https://github.com/myarichuk/Json.Masker/compare/v1.1.5-2...v1.1.7-2) - 2025-10-16
 
 
