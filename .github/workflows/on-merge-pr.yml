@@ -72,6 +72,8 @@ jobs:
           mkdir -p package
           dotnet pack src/Json.Masker.Newtonsoft/Json.Masker.Newtonsoft.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
           dotnet pack src/Json.Masker.SystemTextJson/Json.Masker.SystemTextJson.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+          dotnet pack src/Json.Masker.AspNet/Json.Masker.AspNet.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+          dotnet pack src/Json.Masker.AspNet.Newtonsoft/Json.Masker.AspNet.Newtonsoft.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
 
       - uses: actions/upload-artifact@v4
         with:
@@ -130,6 +132,14 @@ jobs:
       - name: Publish Json.Masker.SystemTextJson package
         if: env.NUGET_TOKEN != ''
         run: dotnet nuget push package/Json.Masker.SystemTextJson*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_TOKEN }} --skip-duplicate
+
+      - name: Publish Json.Masker.AspNet package
+        if: env.NUGET_TOKEN != ''
+        run: dotnet nuget push package/Json.Masker.AspNet*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_TOKEN }} --skip-duplicate
+
+      - name: Publish Json.Masker.AspNet.Newtonsoft package
+        if: env.NUGET_TOKEN != ''
+        run: dotnet nuget push package/Json.Masker.AspNet.Newtonsoft*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_TOKEN }} --skip-duplicate
 
   changelog-release:
     name: Update Changelog & Release (git-chglog)
