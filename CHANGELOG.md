@@ -1,6 +1,23 @@
 # Changelog
 
 
+## [v1.1.14-2](https://github.com/myarichuk/Json.Masker/compare/v1.1.11-2...v1.1.14-2) - 2025-10-17
+
+
+
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#71](https://github.com/myarichuk/Json.Masker/issues/71) from myarichuk/codex/add-github-actions-publishing-for-projects
+  
+  
+
+
 ## [v1.1.11-2](https://github.com/myarichuk/Json.Masker/compare/v1.1.9-2...v1.1.11-2) - 2025-10-16
 
 
