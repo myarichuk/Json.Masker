@@ -1,0 +1,132 @@
+name: Manual Package Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      package-group:
+        description: "Package group to publish"
+        type: choice
+        options:
+          - core
+          - aspnet
+        default: core
+        required: true
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: manual-publish-${{ github.ref }}-${{ github.event.inputs.package-group }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-pack:
+    name: Build & Pack
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.gitversion.outputs.semVer }}
+      nuget-version: ${{ steps.gitversion.outputs.assemblySemVer }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v4
+        with:
+          versionSpec: '6.x'
+
+      - name: Determine version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v4
+        with:
+          configFilePath: ./.github/gitversion.yml
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: >
+          dotnet build --configuration Release --no-restore
+          -p:ContinuousIntegrationBuild=true
+          -p:CI=true
+          -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+          -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }}
+          -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
+          -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
+          -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
+
+      - name: Test
+        run: >
+          dotnet test --configuration Release --no-build --verbosity normal
+          -p:ContinuousIntegrationBuild=true
+          -p:CI=true
+          -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+          -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
+          -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
+
+      - name: Pack core packages
+        if: github.event.inputs.package-group == 'core'
+        run: |
+          mkdir -p package
+          dotnet pack src/Json.Masker.Newtonsoft/Json.Masker.Newtonsoft.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+          dotnet pack src/Json.Masker.SystemTextJson/Json.Masker.SystemTextJson.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+
+      - name: Pack aspnet packages
+        if: github.event.inputs.package-group == 'aspnet'
+        run: |
+          mkdir -p package
+          dotnet pack src/Json.Masker.AspNet/Json.Masker.AspNet.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+          dotnet pack src/Json.Masker.AspNet.Newtonsoft/Json.Masker.AspNet.Newtonsoft.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: |
+            package/*.nupkg
+            package/*.snupkg
+
+  publish-nuget:
+    name: Publish (NuGet)
+    runs-on: ubuntu-latest
+    needs: [build-and-pack]
+    env:
+      NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
+    steps:
+      - name: NuGet token not supplied
+        if: env.NUGET_TOKEN == ''
+        run: echo "NUGET_TOKEN secret is not configured. Skipping publish step."
+
+      - name: Setup .NET
+        if: env.NUGET_TOKEN != ''
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 8.0.x
+
+      - uses: actions/download-artifact@v5
+        if: env.NUGET_TOKEN != ''
+        with:
+          name: nupkg
+          path: package
+
+      - name: Publish core packages
+        if: env.NUGET_TOKEN != '' && github.event.inputs.package-group == 'core'
+        run: |
+          dotnet nuget push package/Json.Masker.Newtonsoft*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_TOKEN }} --skip-duplicate
+          dotnet nuget push package/Json.Masker.SystemTextJson*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_TOKEN }} --skip-duplicate
+
+      - name: Publish aspnet packages
+        if: env.NUGET_TOKEN != '' && github.event.inputs.package-group == 'aspnet'
+        run: |
+          dotnet nuget push package/Json.Masker.AspNet*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_TOKEN }} --skip-duplicate
+          dotnet nuget push package/Json.Masker.AspNet.Newtonsoft*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_TOKEN }} --skip-duplicate
