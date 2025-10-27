@@ -113,7 +113,7 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         if: env.NUGET_TOKEN != ''
         with:
           name: nupkg
