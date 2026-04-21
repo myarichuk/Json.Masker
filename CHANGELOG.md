@@ -1,6 +1,247 @@
 # Changelog
 
 
+## [v1.1.18-2](https://github.com/myarichuk/Json.Masker/compare/v1.1.14-2...v1.1.18-2) - 2026-04-21
+
+
+
+### Build
+
+- disable implicit static web assets in sample ([5adfb1b](https://github.com/myarichuk/Json.Masker/commit/5adfb1bf7d3695e7e82dfeade42a679e10f19c0a))
+  
+- **benchmarks:** suppress strong-name warnings # Conflicts: #	src/Json.Masker.Abstract/DefaultMaskingService.cs #	src/Json.Masker.Abstract/UtilExtensions.cs #	src/Json.Masker.AspNet.Newtonsoft/JsonMaskingMiddlewareExtension.cs #	src/Json.Masker.AspNet/JsonMaskingMiddlewareExtension.cs #	src/Json.Masker.Newtonsoft/MaskingValueProvider.cs #	src/Json.Masker.Newtonsoft/NewtonsoftMaskingExtensions.cs #	src/Json.Masker.SystemTextJson/MaskingEnumerableConverter.cs #	src/Json.Masker.SystemTextJson/MaskingScalarConverter.cs #	src/Json.Masker.SystemTextJson/MaskingStringDictionaryConverter.cs #	src/Json.Masker.SystemTextJson/TypeExtensions.cs ([e61002d](https://github.com/myarichuk/Json.Masker/commit/e61002d72b5d81c72307d66243c7120629153da3))
+  
+  
+  
+### CI
+
+- fix gitversion configuration ([69cb55d](https://github.com/myarichuk/Json.Masker/commit/69cb55da6d50c8f43a1d0dd8d97ee52a75d4349d))
+  
+- install dotnet 8 in workflows ([47f6e4b](https://github.com/myarichuk/Json.Masker/commit/47f6e4b8877f17b3197d9b5234a9d0b4f526edb8))
+  
+  
+  
+  
+### Documentation
+
+- clarify masking defaults ([21026f2](https://github.com/myarichuk/Json.Masker/commit/21026f2bb2e69685cfcea3599922b2d192a08c30))
+  
+- expand plumbing guidance ([a1d131e](https://github.com/myarichuk/Json.Masker/commit/a1d131e25e75f8d0b5c6066e385932451a3d0cac))
+  
+  
+  
+### Features
+
+- make default masking service more customizable ([1b1ffbe](https://github.com/myarichuk/Json.Masker/commit/1b1ffbebd4df6166aec032f676e846aa8c3c4b33))
+  
+- implement custom masking pattern support (DSL-like) ([163ccb7](https://github.com/myarichuk/Json.Masker/commit/163ccb7c98ff78c6e2b200fe5ee79d8189487e28))
+  
+- more masking patterns ([163b64f](https://github.com/myarichuk/Json.Masker/commit/163b64fdbcff3d20e35fd5f6d2c24f23f9af616d))
+  
+- implement basic functionality for both newtonsoft and system.text.json ([854f304](https://github.com/myarichuk/Json.Masker/commit/854f3048de0ee65953728e8b47712f262c814c03))
+  
+- **benchmarks:** expand masking comparisons ([725ef0a](https://github.com/myarichuk/Json.Masker/commit/725ef0a728bface42a9804781edf97c728d27c43))
+  
+  
+  
+### Fixes
+
+- revert changelog generator template so it would properly work ([81765fd](https://github.com/myarichuk/Json.Masker/commit/81765fd5b00c9d17214ebe9ee96fcba4fa0179ed))
+  
+- revert changelog generator template so it would properly work ([76cd867](https://github.com/myarichuk/Json.Masker/commit/76cd8676918bc598dbc68ff05345126382628b97))
+  
+- literal handling in pattern masks ([1f94ce8](https://github.com/myarichuk/Json.Masker/commit/1f94ce84e680fe2a721b6358a717f0c2a2546f5d))
+  
+- solve merge conflict ([fce7f4c](https://github.com/myarichuk/Json.Masker/commit/fce7f4c8331526f3ec8fc6e3c4bcce4884e86cc1))
+  
+- restore writable masking service option ([00e2d78](https://github.com/myarichuk/Json.Masker/commit/00e2d782c405ed92dfd520b3da4a455983b0c73c))
+  
+-  missing parameter at reflection ctor ([6737dee](https://github.com/myarichuk/Json.Masker/commit/6737dee23dc476e5002f143e92b1b58b97afa3c9))
+  
+- make sure no irrelevant warnings during compilation ([a468c8a](https://github.com/myarichuk/Json.Masker/commit/a468c8a10a3f19fc0d5cb62b90932ca0ee53758a))
+  
+- **CI:** fix changelog tool paths (hopefully kek) ([b3b4ec2](https://github.com/myarichuk/Json.Masker/commit/b3b4ec296ae7116ad4a62b152abeb351bf159fb1))
+  
+- **CI:** another tentative (experiment) to make the friggin' changelog generation work ([70fb9c7](https://github.com/myarichuk/Json.Masker/commit/70fb9c7e15c06da873903ed59af6cdffbc6493d7))
+  
+- **CI:** hopefully last tweak of changelog and releases ([99d8b6b](https://github.com/myarichuk/Json.Masker/commit/99d8b6b2053d271f37d4ddf1aa50e235dadea4b8))
+  
+- **CI:** changelog template ([8d71214](https://github.com/myarichuk/Json.Masker/commit/8d71214114d88cdcbab804d1ae30980b2d9c707c))
+  
+- **CI:** adjust github action (fix release generation) and adjust changelog template ([f3d9f45](https://github.com/myarichuk/Json.Masker/commit/f3d9f453683ac0467020d9526b1df486420e0d27))
+  
+- **CI:** adjust changlog template ([c837ab8](https://github.com/myarichuk/Json.Masker/commit/c837ab8625a330943257c42c530552436967f3c5))
+  
+- **CI:** changelog related paths ([486c613](https://github.com/myarichuk/Json.Masker/commit/486c613ce228bf9f93eacb3a67cf422b887bee8f))
+  
+- **CI:** make sure github action that triggers on PR runs even if new commit is added ([a69c01a](https://github.com/myarichuk/Json.Masker/commit/a69c01a8307bae7d1b18eebf76a779eff39174a0))
+  
+- **CI:** fix git-chlog installation ([c506eba](https://github.com/myarichuk/Json.Masker/commit/c506ebabd9f2b2f18e073ce583a7f445e3eb125e))
+  
+- **CI:** fix github action yml syntax (facepalm) ([962e46f](https://github.com/myarichuk/Json.Masker/commit/962e46f97148bf4d1103c31baa6d7e562f35bcbd))
+  
+- **CI:** try to switch the github action that does changelog generation ([0204a02](https://github.com/myarichuk/Json.Masker/commit/0204a02ad6d3a2cdf74982917b7733b70dc83439))
+  
+- **CI:** unify tags and remove crap ([0ec7022](https://github.com/myarichuk/Json.Masker/commit/0ec702251dcbaf11550d5b91f83646ba366a75cd))
+  
+- **CI:** tentative fix - trying to supply version to changelog github action manually ([336dd8b](https://github.com/myarichuk/Json.Masker/commit/336dd8b87aca40db73dda64740e43cadb4e11bb4))
+  
+- **CI:** attempt to properly generate changelog ([ba55629](https://github.com/myarichuk/Json.Masker/commit/ba556296d0b83df8a54167efcb8ce3f01f653c7c))
+  
+- **CI:** remove unneeded pr labeler ([c335b49](https://github.com/myarichuk/Json.Masker/commit/c335b4936f932a08ccc3710343165ce7deac9aab))
+  
+- **CI:** try to finally make the changelog work! ([02d57e4](https://github.com/myarichuk/Json.Masker/commit/02d57e40bd4e7d0b3b3552af7b7460a4c9b9a50f))
+  
+- **ci:** now maybe publish pipeline would work (meh) ([cf23691](https://github.com/myarichuk/Json.Masker/commit/cf23691be8a74a2f52b6ce1790807b81c1a24fc1))
+  
+- **ci:** now properly fix changelog generation (stupid copy-paste error!) ([b939f77](https://github.com/myarichuk/Json.Masker/commit/b939f77035d58482ab4afff0ed2c39f976883b4b))
+  
+- **ci:** finally adjust all missing gitversion variables ([2f27e2c](https://github.com/myarichuk/Json.Masker/commit/2f27e2c48be9749629ae68c804973888b77d3df8))
+  
+- **ci:** adjust gitversion action output variable name ([d15df25](https://github.com/myarichuk/Json.Masker/commit/d15df25e6ea7a1f3c679470d6522176d86b054c6))
+  
+- **ci:** proper config for gitversion ([350c52f](https://github.com/myarichuk/Json.Masker/commit/350c52fbe24e6e9b51e0b789526ae87251d6a281))
+  
+- **ci:** try to fix gitversion versioning issue ([cdccd09](https://github.com/myarichuk/Json.Masker/commit/cdccd093c81238c75d504954a7898d90998a4f72))
+  
+- **ci:** use GitVersion 6.x ([c8d957a](https://github.com/myarichuk/Json.Masker/commit/c8d957abdb65050ab76772403efd3d605e387d41))
+  
+- **tests:** make sure we don't use url escaping encoder for tests for system.text.json ([95d5f17](https://github.com/myarichuk/Json.Masker/commit/95d5f17a31335730b3f6d72cdb73a399b0d4d7fb))
+  
+  
+  
+### Performance
+
+- aggressively optimize JSON masking for performance and allocations ([3a9c981](https://github.com/myarichuk/Json.Masker/commit/3a9c981d4cc90eb0114b11947b69c68eb686912a))
+  
+- reduce allocations in scalar masking ([b0cd56d](https://github.com/myarichuk/Json.Masker/commit/b0cd56dc323b964796809fecd6908d9f44af35c2))
+  
+  
+  
+### Refactoring
+
+- make improvements to newtonsoft masker, make some low level improvements and try to reduce allocations a bit more ([7023866](https://github.com/myarichuk/Json.Masker/commit/7023866505ec98997f4bc2a867ea0bc5e6252f22))
+  
+- some more optimization, shave off some latency of masking ([9bc94e7](https://github.com/myarichuk/Json.Masker/commit/9bc94e75c545a499e84e6a16721835bcef985e56))
+  
+- minimize allocations and refactor for better flow ([fcf73b7](https://github.com/myarichuk/Json.Masker/commit/fcf73b721104cfef059de3de6540c67ba402be47))
+  
+- showcase masking strategies in sample data ([124ba88](https://github.com/myarichuk/Json.Masker/commit/124ba880f909ce1214f0e01d7d94b254223b03c8))
+  
+- make default mask overridable ([4520b98](https://github.com/myarichuk/Json.Masker/commit/4520b98bb2fd87629f8c1a3d47ad6ee2851cc3b2))
+  
+- **benchmarks:** unify serialization scenarios ([56aa6f8](https://github.com/myarichuk/Json.Masker/commit/56aa6f844f3fed5b16aeeafd2ec35163a0e1723d))
+  
+  
+  
+### Style
+
+- add xml docs and fix ordering in default masking service ([8ac72b2](https://github.com/myarichuk/Json.Masker/commit/8ac72b2c0c2f077baed7bd7438c9ae784538a37f))
+  
+  
+  
+### Tests
+
+- more tests and fix pattern edge case ([a3a71f2](https://github.com/myarichuk/Json.Masker/commit/a3a71f2fb6b8f7bd69ef6d340f3cddc43ead6512))
+  
+- handle more edge cases - to be more specific, add tests for cases where pre-existing converters exist - they should be respected by maskers ([4f5b2d4](https://github.com/myarichuk/Json.Masker/commit/4f5b2d4abe9eb8e9f7d4a782c70e0e2e5ca0df7c))
+  
+- implement tests for custom pattern masking ([f4c4de6](https://github.com/myarichuk/Json.Masker/commit/f4c4de629fa324f16c49d43690a18d6a525791f7))
+  
+- implement basic tests to test happy paths ([b3b0611](https://github.com/myarichuk/Json.Masker/commit/b3b06115c3707bbf26639b1e44e7b8c486e3c1e3))
+  
+  
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#85](https://github.com/myarichuk/Json.Masker/issues/85) from myarichuk/jules-fix-branch-9626565017479977773
+  
+- Merge pull request [#71](https://github.com/myarichuk/Json.Masker/issues/71) from myarichuk/codex/add-github-actions-publishing-for-projects
+  
+- Merge pull request [#68](https://github.com/myarichuk/Json.Masker/issues/68) from myarichuk/codex/organize-sample-projects-and-improve-clarity
+  
+- Merge pull request [#66](https://github.com/myarichuk/Json.Masker/issues/66) from myarichuk/codex/add-xml-documentation-and-update-readme
+  
+- Merge pull request [#63](https://github.com/myarichuk/Json.Masker/issues/63) from myarichuk/refactor/optimize
+  
+- Merge pull request [#61](https://github.com/myarichuk/Json.Masker/issues/61) from myarichuk/chore/improve-benchmark-and-optimize
+  
+- Merge pull request [#56](https://github.com/myarichuk/Json.Masker/issues/56) from myarichuk/codex/add-libraries-to-benchmark-project
+  
+- Merge pull request [#55](https://github.com/myarichuk/Json.Masker/issues/55) from myarichuk/adjust-benchmark
+  
+- Merge pull request [#54](https://github.com/myarichuk/Json.Masker/issues/54) from myarichuk/codex/add-xml-docs-and-improve-benchmark-readability
+  
+- Merge pull request [#53](https://github.com/myarichuk/Json.Masker/issues/53) from myarichuk/codex/add-benchmarks-folder-and-implement-benchmark.net
+  
+- Merge pull request [#49](https://github.com/myarichuk/Json.Masker/issues/49) from myarichuk/feat/add-integration-sample
+  
+- Merge pull request [#47](https://github.com/myarichuk/Json.Masker/issues/47) from myarichuk/codex/add-xml-comments-and-fix-style-warnings
+  
+- Merge pull request [#44](https://github.com/myarichuk/Json.Masker/issues/44) from myarichuk/feat/more-flexible-masker
+  
+- Merge pull request [#43](https://github.com/myarichuk/Json.Masker/issues/43) from myarichuk/codex/suggest-missing-edge-cases-for-tests
+  
+- Merge pull request [#42](https://github.com/myarichuk/Json.Masker/issues/42) from myarichuk/codex/suggest-improvements-for-developer-story
+  
+- Merge pull request [#41](https://github.com/myarichuk/Json.Masker/issues/41) from myarichuk/codex/conduct-detailed-code-review
+  
+- Merge pull request [#40](https://github.com/myarichuk/Json.Masker/issues/40) from myarichuk/codex/add-xml-documentation-comments-and-tests
+  
+- Merge pull request [#39](https://github.com/myarichuk/Json.Masker/issues/39) from myarichuk/feat/custom-pattern
+  
+- Merge pull request [#38](https://github.com/myarichuk/Json.Masker/issues/38) from myarichuk/feat/more-mask-patterns
+  
+- Merge pull request [#37](https://github.com/myarichuk/Json.Masker/issues/37) from myarichuk/codex/add-xml-documentation-comments-for-public-items
+  
+- Merge pull request [#36](https://github.com/myarichuk/Json.Masker/issues/36) from myarichuk/codex/update-readme-with-examples-and-descriptions
+  
+- Merge pull request [#15](https://github.com/myarichuk/Json.Masker/issues/15) from myarichuk/dependabot/nuget/StyleCop.Analyzers.Unstable-1.2.0.556
+  
+- Merge pull request [#17](https://github.com/myarichuk/Json.Masker/issues/17) from myarichuk/dependabot/nuget/src/Json.Masker.Newtonsoft/Newtonsoft.Json-13.0.4
+  
+- Merge pull request [#20](https://github.com/myarichuk/Json.Masker/issues/20) from myarichuk/dependabot/nuget/tests/Json.Masker.Tests/xunit.runner.visualstudio-3.1.5
+  
+- Merge pull request [#21](https://github.com/myarichuk/Json.Masker/issues/21) from myarichuk/dependabot/nuget/tests/Json.Masker.Tests/Microsoft.NET.Test.Sdk-18.0.0
+  
+- Merge pull request [#27](https://github.com/myarichuk/Json.Masker/issues/27) from myarichuk/fix/try-to-make-things-generate-changelog
+  
+- Merge pull request [#25](https://github.com/myarichuk/Json.Masker/issues/25) from myarichuk/fix/try-to-make-things-generate-changelog
+  
+- Merge pull request [#24](https://github.com/myarichuk/Json.Masker/issues/24) from myarichuk/fix/try-to-make-things-generate-changelog
+  
+- Merge pull request [#23](https://github.com/myarichuk/Json.Masker/issues/23) from myarichuk/fix/try-to-make-things-generate-changelog
+  
+- Merge pull request [#22](https://github.com/myarichuk/Json.Masker/issues/22) from myarichuk/implement-basic-functionality
+  
+- Merge pull request [#14](https://github.com/myarichuk/Json.Masker/issues/14) from myarichuk/codex/evaluate-ci-pipeline-for-changelog-generation
+  
+- Merge pull request [#12](https://github.com/myarichuk/Json.Masker/issues/12) from myarichuk/fix/versioning-issue2
+  
+- Merge pull request [#11](https://github.com/myarichuk/Json.Masker/issues/11) from myarichuk/fix/versioning-issue
+  
+- Merge pull request [#10](https://github.com/myarichuk/Json.Masker/issues/10) from myarichuk/codex/fix-ci-build-issues-and-update-versioning
+  
+- Merge pull request [#9](https://github.com/myarichuk/Json.Masker/issues/9) from myarichuk/codex/fix-gitversion.tool-version-error
+  
+- Merge pull request [#8](https://github.com/myarichuk/Json.Masker/issues/8) from myarichuk/codex/refactor-project-structure-and-ci-setup
+  
+- Merge pull request [#1](https://github.com/myarichuk/Json.Masker/issues/1) from myarichuk/dependabot/github_actions/actions/checkout-5
+  
+- Merge pull request [#7](https://github.com/myarichuk/Json.Masker/issues/7) from myarichuk/codex/update-to-.net-8-in-global.json
+  
+- Merge pull request [#6](https://github.com/myarichuk/Json.Masker/issues/6) from myarichuk/codex/adjust-project-structure-for-multiple-json-libraries
+  
+- Merge pull request [#5](https://github.com/myarichuk/Json.Masker/issues/5) from myarichuk/codex/rename-placeholders-to-json.masker-and-michael-yarichuk
+  
+  
+
+
 ## [v1.1.14-2](https://github.com/myarichuk/Json.Masker/compare/v1.1.11-2...v1.1.14-2) - 2025-10-17
 
 
