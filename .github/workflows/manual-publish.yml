@@ -89,7 +89,7 @@ jobs:
           dotnet pack src/Json.Masker.AspNet/Json.Masker.AspNet.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
           dotnet pack src/Json.Masker.AspNet.Newtonsoft/Json.Masker.AspNet.Newtonsoft.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: nupkg
           path: |
