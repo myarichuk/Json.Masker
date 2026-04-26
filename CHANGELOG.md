@@ -1,6 +1,23 @@
 # Changelog
 
 
+## [v1.1.20-2](https://github.com/myarichuk/Json.Masker/compare/v1.1.18-2...v1.1.20-2) - 2026-04-26
+
+
+
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#82](https://github.com/myarichuk/Json.Masker/issues/82) from myarichuk/dependabot/nuget/benchmarks/DefaultMaskerBenchmark/Microsoft.Extensions.Compliance.Redaction-9.10.0
+  
+  
+
+
 ## [v1.1.18-2](https://github.com/myarichuk/Json.Masker/compare/v1.1.14-2...v1.1.18-2) - 2026-04-21
 
 
