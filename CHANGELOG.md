@@ -1,6 +1,41 @@
 # Changelog
 
 
+## [v1.1.25-2](https://github.com/myarichuk/Json.Masker/compare/v1.1.20-2...v1.1.25-2) - 2026-09-23
+
+
+
+### Build
+
+- **deps:** bump actions/setup-dotnet from 5 to 6 ([76f59dc](https://github.com/myarichuk/Json.Masker/commit/76f59dc9a60f7e98c48f90e551b8a02182565bd0))
+  
+- **deps:** bump actions/checkout from 5 to 7 ([27873b9](https://github.com/myarichuk/Json.Masker/commit/27873b99e0085f5a567fe77d8d5b4939afdabd79))
+  
+  
+  
+### CI
+
+- add Json.Masker.Abstract to publishing workflows ([d1d7440](https://github.com/myarichuk/Json.Masker/commit/d1d744001d731fbbdabee59b3ffa1aa53adb6fbd))
+  
+  
+  
+  
+  
+
+
+
+
+### Merges
+
+- Merge pull request [#92](https://github.com/myarichuk/Json.Masker/issues/92) from myarichuk/dependabot/nuget/benchmarks/DefaultMaskerBenchmark/Microsoft.Extensions.DependencyInjection-10.0.7
+  
+- Merge pull request [#93](https://github.com/myarichuk/Json.Masker/issues/93) from myarichuk/dependabot/github_actions/actions/checkout-7
+  
+- Merge pull request [#94](https://github.com/myarichuk/Json.Masker/issues/94) from myarichuk/dependabot/github_actions/actions/setup-dotnet-6
+  
+  
+
+
 ## [v1.1.20-2](https://github.com/myarichuk/Json.Masker/compare/v1.1.18-2...v1.1.20-2) - 2026-04-26
 
 
