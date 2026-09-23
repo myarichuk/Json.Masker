@@ -70,6 +70,7 @@ jobs:
       - name: Pack NuGet
         run: |
           mkdir -p package
+          dotnet pack src/Json.Masker.Abstract/Json.Masker.Abstract.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
           dotnet pack src/Json.Masker.Newtonsoft/Json.Masker.Newtonsoft.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
           dotnet pack src/Json.Masker.SystemTextJson/Json.Masker.SystemTextJson.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
           dotnet pack src/Json.Masker.AspNet/Json.Masker.AspNet.csproj --configuration Release --no-build -o package -p:ContinuousIntegrationBuild=true -p:CI=true -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }} -p:PackageVersion=${{ steps.gitversion.outputs.assemblySemVer }} -p:Version=${{ steps.gitversion.outputs.assemblySemVer }}
@@ -124,6 +125,10 @@ jobs:
         with:
           name: nupkg
           path: package
+
+      - name: Publish Json.Masker.Abstract package
+        if: env.NUGET_TOKEN != ''
+        run: dotnet nuget push package/Json.Masker.Abstract*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ env.NUGET_TOKEN }} --skip-duplicate
 
       - name: Publish Json.Masker.Newtonsoft package
         if: env.NUGET_TOKEN != ''
